@@ -1,15 +1,18 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
+const cors = require("cors");
+const productRoutes = require("./routes/product");
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(process.env.PORT, () => {
   console.log("Listening on PORT 3000");
 });
 
-app.get("/", (req, res) => {
-  res.send("nice");
-});
+app.use("/", productRoutes);
+app.use(cors());
 
 const connectDB = async () => {
   try {
