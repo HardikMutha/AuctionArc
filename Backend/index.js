@@ -5,14 +5,15 @@ require("dotenv").config();
 const cors = require("cors");
 const productRoutes = require("./routes/product");
 const bodyParser = require("body-parser");
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ extended: true }));
 
 app.listen(process.env.PORT, () => {
   console.log("Listening on PORT 3000");
 });
 
 app.use("/", productRoutes);
-app.use(cors());
 
 const connectDB = async () => {
   try {

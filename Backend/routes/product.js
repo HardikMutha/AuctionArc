@@ -4,11 +4,13 @@ const productModel = require("../models/product");
 const productSchemaValidation = require("../validatedata");
 
 const validateProduct = async (req, res, next) => {
+  console.log(req.body);
   try {
     const isvalid = await productSchemaValidation.validateAsync(req.body);
     if (!isvalid) return res.sendStatus(400);
     next();
   } catch (err) {
+    console.log(err);
     return res.sendStatus(401);
   }
 };

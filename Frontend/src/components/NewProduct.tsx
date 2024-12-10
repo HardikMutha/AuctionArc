@@ -1,7 +1,33 @@
 import "../styles/NewProduct.css";
+import axios from "axios";
 const NewProduct = () => {
-  const handleSubmit = (evt: object) => {
-    console.log(evt);
+  const handleSubmit = (evt: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    target: any;
+    preventDefault: () => void;
+  }) => {
+    evt.preventDefault();
+    const productDetails = {
+      name: evt.target[0].value,
+      description: evt.target[1].value,
+      images: evt.target[2].value,
+      category: evt.target[3].value,
+      listingPrice: parseFloat(evt.target[4].value),
+      duration: new Date(),
+      productSeller: "6757231c22b9b895928c3a7b",
+      bidHistory: parseFloat(evt.target[4].value),
+    };
+    const addData = async () => {
+      try {
+        await axios.post(
+          "http://localhost:3000/add-newproduct",
+          productDetails
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    addData();
   };
   return (
     <div>
@@ -12,10 +38,7 @@ const NewProduct = () => {
             action="/add-newproduct"
             method="post"
             className="flex flex-col p-4 px-4"
-            onSubmit={(evt) => {
-              evt.preventDefault();
-              handleSubmit(evt);
-            }}
+            onSubmit={handleSubmit}
           >
             <input type="text" placeholder="Name" name="name" className="m-2" />
             <input
@@ -43,7 +66,7 @@ const NewProduct = () => {
               placeholder="Duration"
               className="m-2"
             />
-            <button typeof="Submit">Submit</button>
+            <button className="border-2 p-2 font-semibold">Submit</button>
           </form>
         </div>
       </div>
