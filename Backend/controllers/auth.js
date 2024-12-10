@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { createSecretToken } = require("./jwt_token_generation");
 const { scryptSync, randomBytes } = require("crypto");
+const { signupSchema, loginSchema } = require("./validate_form");
 
 // const encryptPassword = (password, salt) => {
 //     return scryptSync(password, salt, 32).toString('hex');
@@ -26,13 +27,9 @@ const createUser = async (req, res) => {
     console.log('Request body:', req.body);
 
     try {
-        if (!(
-            req.body.email &&
-            req.body.password &&
-            req.body.name &&
-            req.body.username
-        )) {
-            return res.status(400).send('Please Fullfill all requirements');
+        const { error } = signupSchema.validate(req.body);
+        if (error) {
+            return res.status(400).send(`Validation error: ${error.details[0].message}`);
         }
 
         const existingUser = await User.findOne({ email: req.body.email })
@@ -61,7 +58,7 @@ const createUser = async (req, res) => {
             httpOnly: true,    // Prevent client-side access
             secure: false,     // Use `true` only for HTTPS
             sameSite: "Lax",   // Allow basic cross-origin
-          });
+        });
         console.log("cookie set successfully", token)
         res.json(user);
         console.log("New User added !");
@@ -75,11 +72,9 @@ const loginUser = async (req, res) => {
     console.log('Request body:', req.body);
 
     try {
-        if (!(
-            req.body.email &&
-            req.body.password
-        )) {
-            return res.status(400).send('Please Fullfill all requirements');
+        const { error } = loginSchema.validate(req.body);
+        if (error) {
+            return res.status(400).send(`Validation error: ${error.details[0].message}`);
         }
 
         const existingUser = await User.findOne({ email: req.body.email })
@@ -93,7 +88,7 @@ const loginUser = async (req, res) => {
             httpOnly: true,    // Prevent client-side access
             secure: false,     // Use `true` only for HTTPS
             sameSite: "Lax",   // Allow basic cross-origin
-          });
+        });
         console.log("Logged IN!")
         res.json({ token });
     } catch (err) {
@@ -101,4 +96,4 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = {createUser, loginUser}
+module.exports = { createUser, loginUser }
