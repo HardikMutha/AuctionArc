@@ -1,7 +1,7 @@
 const express = require("express");
 const productRoutes = express.Router();
 const productModel = require("../models/product");
-const productSchemaValidation = require("../validatedata");
+const { productSchemaValidation } = require("../controllers/validate_form");
 
 const validateProduct = async (req, res, next) => {
   console.log(req.body);

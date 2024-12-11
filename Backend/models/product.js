@@ -8,12 +8,37 @@ const productSchema = new mongoose.Schema({
   category: String,
   listingPrice: Number,
   auctionStatus: { type: Boolean, default: true },
-  duration: Date,
+  duration: {
+    type: Date,
+    default: Date.now,
+  },
   productSeller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  bidHistory: [Number],
+  bidHistory: {
+    type: [
+      {
+        bidder: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        bidAmount: {
+          type: Number,
+        },
+        bidDate: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    default: [],
+  },
+  soldTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("ProductModel", productSchema);

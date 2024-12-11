@@ -1,6 +1,20 @@
 import "../styles/NewProduct.css";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const NewProduct = () => {
+  const notify = () =>
+    toast.success("Added to database successfully", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   const handleSubmit = (evt: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: any;
@@ -23,6 +37,7 @@ const NewProduct = () => {
           "http://localhost:3000/add-newproduct",
           productDetails
         );
+        notify();
       } catch (err) {
         console.log(err);
       }
@@ -31,6 +46,7 @@ const NewProduct = () => {
   };
   return (
     <div>
+      <ToastContainer />
       <div className="flex flex-col items-center">
         <h1 className="text-3xl">Add New Product</h1>
         <div className="border-2  rounded-md mt-6">
