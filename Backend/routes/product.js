@@ -24,11 +24,11 @@ productRoutes
     const newProduct = new productModel(req.body);
     console.log(newProduct);
     try {
-      // await newProduct.save();
+      await newProduct.save();
       res.status(200).send("Added to database successfully");
     } catch (err) {
-      console.log();
-      res.status(400).send("Error adding product");
+      console.log(err);
+      res.status(400).send(err);
     }
   });
 

@@ -29,7 +29,6 @@ const NewProduct = () => {
       listingPrice: parseFloat(evt.target[4].value),
       duration: new Date(),
       productSeller: "6757231c22b9b895928c3a7b",
-      bidHistory: parseFloat(evt.target[4].value),
     };
     const addData = async () => {
       try {

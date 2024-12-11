@@ -1,12 +1,11 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 const createSecretToken = function (id) {
-  return jwt.sign({ id }, process.env.TOKEN_KEY, {
+  return jwt.sign({ id }, process.env.SECRET_HASH_STRING, {
     expiresIn: 3 * 24 * 60 * 60,
   });
 };
-
 
 const authenticateUser = (req, res, next) => {
   console.log("Cookies received by server:", req.headers.cookie); // Log raw cookie header
@@ -18,7 +17,7 @@ const authenticateUser = (req, res, next) => {
   }
 
   try {
-    const verifiedUser = jwt.verify(token, process.env.TOKEN_KEY);
+    const verifiedUser = jwt.verify(token, process.env.SECRET_HASH_STRING);
     req.user = verifiedUser;
     next();
   } catch (err) {

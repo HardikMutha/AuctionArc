@@ -15,6 +15,7 @@ const productSchema = new mongoose.Schema({
   productSeller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    default: "6757231c22b9b895928c3a7b",
   },
   bidHistory: {
     type: [
@@ -37,7 +38,7 @@ const productSchema = new mongoose.Schema({
   soldTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    default: "",
+    default: "6757231c22b9b895928c3a7b",
   },
 });
 
