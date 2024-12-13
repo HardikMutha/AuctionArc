@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
 app.use("/auth", authRoutes);
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(process.env.PORT, () => {
   console.log("Listening on PORT 3000");

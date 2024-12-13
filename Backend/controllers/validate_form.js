@@ -22,7 +22,6 @@ const productSchemaValidation = joi.object({
   listingPrice: joi.number().required(),
   auctionStatus: joi.boolean(),
   duration: joi.date().required(),
-  productSeller: joi.string(),
 });
 
 module.exports = { signupSchema, loginSchema, productSchemaValidation };

@@ -4,25 +4,6 @@ const { signupSchema, loginSchema } = require("./validate_form");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-// const encryptPassword = (password, salt) => {
-//     return scryptSync(password, salt, 32).toString('hex');
-// };
-
-// const hashPassword = (password) => {
-//     // Any random string here (ideally should be at least 16 bytes)
-//     const salt = randomBytes(16).toString('hex');
-//     return encryptPassword(password, salt) + salt;
-// };
-
-// const matchPassword = (password, hash) => {
-//     // extract salt from the hashed string
-//     // our hex password length is 32*2 = 64
-//     const salt = hash.slice(64);
-//     const originalPassHash = hash.slice(0, 64);
-//     const currentPassHash = hashPassword(password, salt);
-//     return originalPassHash === currentPassHash;
-// };
-
 const hashPassword = async (password) => {
   try {
     const hash = await bcrypt.hash(password, saltRounds);
@@ -36,11 +17,10 @@ const hashPassword = async (password) => {
 const matchPassword = async (password, hashed_password) => {
   try {
     const result = await bcrypt.compare(password, hashed_password);
-    if (!result) return false;
-    else return true;
+    return result;
   } catch (err) {
     console.log("Invalid Password");
-    return "Invalid";
+    return false;
   }
 };
 
@@ -58,8 +38,7 @@ const createUser = async (req, res) => {
       return res.status(409).send("User already exists, please log in");
     }
 
-    // hash = hashPassword(req.body.password);
-    hash = req.body.password;
+    hash = await hashPassword(req.body.password);
 
     const newUser = new User({
       name: req.body.name,
@@ -80,18 +59,16 @@ const createUser = async (req, res) => {
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
     });
-    console.log("cookie set successfully", token);
+    //console.log("cookie set successfully", token);
     res.json(user);
     console.log("New User added !");
     return;
   } catch (err) {
-    console.log("Got an error", err);
+    res.status(400).send("An Error occured while creating the user");
   }
 };
 
 const loginUser = async (req, res) => {
-  console.log("Request body:", req.body);
-
   try {
     const { error } = loginSchema.validate(req.body);
     if (error) {
@@ -101,7 +78,10 @@ const loginUser = async (req, res) => {
     }
 
     const existingUser = await User.findOne({ email: req.body.email });
-    if (!existingUser || !(req.body.password === existingUser.password_hash)) {
+    if (!existingUser) return res.status(404).send("User Not Found");
+    const password = req.body.password;
+    const result = await matchPassword(password, existingUser.password_hash);
+    if (!existingUser || !result) {
       return res.status(409).send("Invalid Credentials");
     }
 

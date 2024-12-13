@@ -24,7 +24,19 @@ const userSchema = new Schema({
     ref: "ProductModel",
     default: [],
   },
-  ongoingBids: {},
+  ongoingBids: [
+    {
+      type: {
+        product: {
+          type: Schema.Types.ObjectId,
+          ref: "ProductModel",
+        },
+        bidAmount: {
+          type: Number,
+        },
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", userSchema);
