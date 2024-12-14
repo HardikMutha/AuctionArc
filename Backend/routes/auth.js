@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router();
-const { createUser, loginUser } = require("../controllers/auth")
-
+const { createUser, loginUser, deleteUser } = require("../controllers/auth")
+const { createSecretToken, authenticateUser } = require("../controllers/jwt_token_generation")
 router.post("/signup", createUser);
 router.post("/login", loginUser);
 router.get("/logout", (req, res) => {
@@ -10,6 +10,7 @@ router.get("/logout", (req, res) => {
     res.json({ message: "Logged Out" })
 });
 
+router.get("/delete-account",authenticateUser, deleteUser)
 module.exports = router;
 
 

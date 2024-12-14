@@ -13,7 +13,7 @@ const authenticateUser = (req, res, next) => {
   var token = req.headers.cookie; // Safely access the token
   // console.log(token)
   if (!token) {
-    return res.status(401).send("Access Denied: No Token Provided");
+      res.status(401).send("Access Denied: No Token Provided");
   }
 
   try {

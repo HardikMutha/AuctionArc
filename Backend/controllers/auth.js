@@ -50,7 +50,7 @@ const createUser = async (req, res) => {
     await newUser.save();
     
     // Cookie name == Token
-    const token = createSecretToken(existingUser._id);
+    const token = createSecretToken(newUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
       httpOnly: true, // Prevent client-side access
@@ -62,7 +62,7 @@ const createUser = async (req, res) => {
 
     // console.log("cookie set successfully", token);
     console.log("New User added !");
-    return;
+    return res.status(200).json(req.body);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -100,4 +100,24 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser };
+const deleteUser = async (req, res) => {
+  try {
+    const userID = req.user.id;
+    console.log(userID)
+    const doc = await User.findOne({_id : userID});
+
+    if(!userID || !doc) {
+      return res.status(201).json({msg : "please log in!"})
+    } else {
+      res.clearCookie("token")
+      // res.json({ message: "Logged Out" })
+      User.deleteOne(doc).then((result) => console.log(result));
+      return res.status(200).json({msg : "user deleted!"}) ;
+    }
+  } catch(err) {
+    console.log(err);
+    return res.status(500).json({msg : "error"})
+  }
+
+}
+module.exports = { createUser, loginUser, deleteUser };
