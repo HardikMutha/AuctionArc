@@ -6,8 +6,8 @@ const router = express.Router();
 
 // Protected routes verified by authenticateUser function
 router.get("/", authenticateUser, displayWishList);
-router.post("/add-to-wishlist", authenticateUser, addToWishList);
-router.post("/remove-from-wishlist", authenticateUser, removeFromWishlist);
+router.post("/add-to-wishlist/:id", authenticateUser, addToWishList);
+router.post("/remove-from-wishlist/:id", authenticateUser, removeFromWishlist);
 
 
 module.exports = router;

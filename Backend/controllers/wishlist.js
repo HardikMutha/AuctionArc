@@ -1,34 +1,31 @@
 const User = require("../models/user")
 
 const addToWishList = async (req, res, next) => {
+    console.log("Hello Fu");
     if (!req.user) {
-        return res.status(404).send("No such user exists!")
+        return res.status(404).json({ msg: "Please Login!" })
     }
 
-    if (!req.query.product_id) {
-        return res.status(404).send("No suh product ID Exists!")
+    if (!req.params.id) {
+        return res.status(404).json({ msg: "No product id given!" })
     }
 
-    const productID = req.query.product_id
-    console.log("Product ID", productID)
+    const productID = req.params.id;
+    // console.log("Product ID", productID);
     const userID = req.user.id;
-    console.log("User ID", userID)
+    // console.log("User ID", userID);
     try {
         const user = await User.findOne({ _id: userID });
 
-        console.log(user)
+        // console.log(user)
         if (!user.wishList.includes(productID)) {
             user.wishList.push(productID);
             await user.save()
-            return res.status(200).send("Item added successfully");
+            return res.status(200).json({ msg: "Item added successfully" });
         }
 
         else if (user.wishList.includes(productID)) {
-            return res.status(200).send("Item is already in wishlist");
-        }
-
-        else {
-            return res.status(404).send("No such User Exists");
+            return res.status(200).send({ msg: "Item is already in wishlist" });
         }
     } catch (err) {
         console.log(err);
@@ -38,38 +35,33 @@ const addToWishList = async (req, res, next) => {
 
 const removeFromWishlist = async (req, res, next) => {
     if (!req.user) {
-        return res.status(404).send("No such user exists!")
+        return res.status(404).json({ msg: "Please Login!" })
     }
 
-    if (!req.query.product_id) {
-        return res.status(404).send("No product ID Given!")
+    if (!req.params.id) {
+        return res.status(404).json({ msg: "No product ID given!" })
     }
 
-    const productID = req.query.product_id
-    console.log("Product ID", productID)
+    const productID = req.params.id
+    // console.log("Product ID", productID);
     const userID = req.user.id;
-    console.log("User ID", userID)
+    // console.log("User ID", userID);
     try {
         const user = await User.findOne({ _id: userID });
 
-
         if (user.wishList.includes(productID)) {
             const index = user.wishList.indexOf(productID);
-            user.wishList.splice(index, 1)
-            console.log(user)
+            user.wishList.splice(index, 1) // removing the product from the list
             await user.save()
-            return res.status(200).send("Item Removed successfully");
+            return res.status(200).json({ msg: "Item Removed successfully" });
         }
 
         else if (!user.wishList.includes(productID)) {
-            return res.status(200).send("Item wasnt present in wishlist");
-        }
-
-        else {
-            return res.status(404).send("No such User Exists");
+            return res.status(200).json({ msg: "Item wasnt present in wishlist" });
         }
     } catch (err) {
         console.log(err);
+        return res.status(500).json({ msg: err })
     }
     next()
 }
@@ -77,7 +69,7 @@ const removeFromWishlist = async (req, res, next) => {
 const displayWishList = async (req, res, next) => {
     // Check if the user exists in the request
     if (!req.user) {
-        return res.status(404).send("No such user exists");
+        return res.status(404).json({ msg: "Please Login!" })
     }
 
     const userID = req.user.id;
@@ -92,10 +84,9 @@ const displayWishList = async (req, res, next) => {
         // console.log(user);
         res.json({ "wishList": user.wishList }); // Assuming the wishlist is a field in your user schema
     } catch (err) {
-        console.error(err);
-        res.status(500).send("An error occurred while fetching the wishlist");
+        console.log(err);
+        return res.status(500).send({ msg: "An error occurred while fetching the wishlist" });
     }
-
     next();
 };
 
