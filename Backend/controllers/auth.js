@@ -47,21 +47,24 @@ const createUser = async (req, res) => {
       password_hash: hash,
     });
 
-    const user = await newUser.save();
-
-    // Creates the jwt token
-    const token = createSecretToken(user._id);
+    await newUser.save();
     
     // Cookie name == Token
+    const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
+      httpOnly: true, // Prevent client-side access
+      secure: false, // Use `true` only for HTTPS
+      sameSite: "Lax", // Allow basic cross-origin
     });
-    console.log("cookie set successfully", token);
-    req.user = user
+    //console.log("cookie set successfully", token);
+    // res.json(user);
+
+    // console.log("cookie set successfully", token);
     console.log("New User added !");
     return;
   } catch (err) {
-    res.status(400).send("An Error occured while creating the user");
+    res.status(400).send(err);
   }
 };
 
@@ -85,11 +88,12 @@ const loginUser = async (req, res) => {
     const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
+      httpOnly: true, // Prevent client-side access
+      secure: false, // Use `true` only for HTTPS
+      sameSite: "Lax", // Allow basic cross-origin
     });
 
     console.log("Logged IN!");
-    // console.log(req)
-    res.user = existingUser;
     res.json({ token });
   } catch (err) {
     console.log("Got an error", err);

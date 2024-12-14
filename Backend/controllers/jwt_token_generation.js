@@ -10,8 +10,8 @@ const createSecretToken = function (id) {
 const authenticateUser = (req, res, next) => {
   // console.log("Cookies received by server:", req.headers.cookie); // Log raw cookie header
   // console.log("Parsed Cookies:", req.cookies); // Log parsed cookies
-
-  const token = req.cookies?.token; // Safely access the token
+  var token = req.headers.cookie; // Safely access the token
+  // console.log(token)
   if (!token) {
     return res.status(401).send("Access Denied: No Token Provided");
   }

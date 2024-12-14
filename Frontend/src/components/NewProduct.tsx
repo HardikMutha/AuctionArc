@@ -71,7 +71,7 @@ const NewProduct = () => {
             />
             <input
               type="number"
-              name="images"
+              name="listingprice"
               placeholder="Listing-Price"
               className="m-2"
             />

@@ -1,7 +1,6 @@
 const User = require("../models/user")
 
 const addToWishList = async (req, res, next) => {
-    console.log("Hello Fu");
     if (!req.user) {
         return res.status(404).json({ msg: "Please Login!" })
     }
