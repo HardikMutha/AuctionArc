@@ -17,8 +17,10 @@ const authenticateUser = (req, res, next) => {
   }
 
   try {
+    token = token.replace("token=", "")
     const verifiedUser = jwt.verify(token, process.env.SECRET_HASH_STRING);
     req.user = verifiedUser;
+    delete token
     next();
   } catch (err) {
     res.status(403).send("Invalid Token");

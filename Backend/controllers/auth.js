@@ -51,16 +51,13 @@ const createUser = async (req, res) => {
 
     // Creates the jwt token
     const token = createSecretToken(user._id);
-
+    
     // Cookie name == Token
     res.cookie("token", token, {
       path: "/", // Accessible across the app
-      httpOnly: true, // Prevent client-side access
-      secure: false, // Use `true` only for HTTPS
-      sameSite: "Lax", // Allow basic cross-origin
     });
-    //console.log("cookie set successfully", token);
-    res.json(user);
+    console.log("cookie set successfully", token);
+    req.user = user
     console.log("New User added !");
     return;
   } catch (err) {
@@ -88,11 +85,11 @@ const loginUser = async (req, res) => {
     const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
-      httpOnly: true, // Prevent client-side access
-      secure: false, // Use `true` only for HTTPS
-      sameSite: "Lax", // Allow basic cross-origin
     });
+
     console.log("Logged IN!");
+    // console.log(req)
+    res.user = existingUser;
     res.json({ token });
   } catch (err) {
     console.log("Got an error", err);
