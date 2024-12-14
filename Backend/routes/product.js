@@ -26,6 +26,7 @@ productRoutes
   .post(authenticateUser, validateProduct, async (req, res) => {
     const userid = req.user?.id;
     console.log(req.body);
+    req.body.category = req.body.category.toLowerCase();
     const inputData = req.body;
     const newProduct = {
       ...inputData,
@@ -126,7 +127,26 @@ productRoutes
       res.status(400).json({ message: "Invalid Request Nigga" });
     }
   });
+productRoutes.
+  route("/get-similar-products/:id")
+  .get(authenticateUser, async(req, res) => {
 
+    const productID = req.params?.id;
+
+    const product = await productModel.findOne({ _id : productID });
+    if(!product) return res.status(404).json({ message: "Invalid Product Id" });
+
+    const productCategory = (product.category).toLowerCase();
+    if(!productCategory) return res.status(404).json({ message: "Invalid Product Id" });
+    // console.log(productCategory);
+    if(!product) return res.status(404).json({ message: "Invalid Product Id" });
+
+    const similarProducts = await productModel.find({ category : productCategory, _id: { $ne: productID }  });
+    console.log(similarProducts);
+
+    return res.status(200).json(similarProducts);
+    
+  })
 // Todo -  Figure out the update Model for Bid.
 
 module.exports = productRoutes;
