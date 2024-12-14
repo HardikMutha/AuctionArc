@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bidModel = require("./bids");
+const product = require("./product");
 
 const userSchema = new Schema({
   username: {
@@ -31,8 +33,9 @@ const userSchema = new Schema({
           type: Schema.Types.ObjectId,
           ref: "ProductModel",
         },
-        bidAmount: {
-          type: Number,
+        Bid: {
+          type: Schema.Types.ObjectId,
+          ref: "bidModel",
         },
       },
     },

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const userModel = require("./user.js");
+const bidModel = require("./bids.js");
 
 const productSchema = new mongoose.Schema({
   name: String,
@@ -18,21 +19,7 @@ const productSchema = new mongoose.Schema({
     default: "6757231c22b9b895928c3a7b",
   },
   bidHistory: {
-    type: [
-      {
-        bidder: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        bidAmount: {
-          type: Number,
-        },
-        bidDate: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "bidModel" }],
     default: [],
   },
   soldTo: {
