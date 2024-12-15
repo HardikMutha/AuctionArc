@@ -5,7 +5,10 @@ const userModel = require("../models/user");
 const { productSchemaValidation } = require("../controllers/validate_form");
 const jwt = require("jsonwebtoken");
 const bidModel = require("../models/bids");
-const { authenticateUser } = require("../controllers/jwt_token_generation");
+const {
+  authenticateUser,
+  checkProductOwner,
+} = require("../controllers/jwt_token_generation");
 
 const validateProduct = async (req, res, next) => {
   try {
@@ -18,6 +21,7 @@ const validateProduct = async (req, res, next) => {
   }
 };
 
+// add new-product route
 productRoutes
   .route("/add-newproduct")
   .get(authenticateUser, async (req, res) => {
@@ -47,6 +51,50 @@ productRoutes
     }
   });
 
+// Update Route for Products
+// Image Updation not Included
+productRoutes
+  .route("/update-product/:id")
+  .put(authenticateUser, checkProductOwner, async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      const productId = req.params.id;
+      const updatedContent = req.body;
+      if (!productId)
+        return res.status(400).json({ message: "Invalid Request" });
+      const product = await productModel.findByIdAndUpdate(
+        productId,
+        updatedContent
+      );
+      return res.status(200).json({ message: "Product Updated Successfully" });
+    } catch (err) {
+      console.log(err);
+      res.status(403).json({ message: "Invalid Product Id" });
+    }
+  });
+
+// Delete Route For Products
+
+productRoutes
+  .route("/delete-product/:id")
+  .post(authenticateUser, checkProductOwner, async (req, res) => {
+    const userid = req.user?.id;
+    const productId = req.params.id;
+    const foundUser = await userModel.findById(userid);
+    foundUser.products.pull({ _id: productId });
+    await foundUser.save();
+    console.log(foundUser);
+    const allUsers = await userModel.find();
+    for (let i = 0; i < allUsers.length; i++) {
+      const newArr = allUsers[i].ongoingBids.filter(
+        (bid) => !bid.Bid._id.equals(productId)
+      );
+      allUsers[i].updateOne({ ongoingBids: newArr });
+    }
+    await productModel.findByIdAndDelete(productId);
+    return res.status(200).json({ message: "The value has been removed" });
+  });
+
 productRoutes
   .route("/show-my-products")
   .get(authenticateUser, async (req, res) => {
@@ -60,6 +108,8 @@ productRoutes
       res.status(404).send("User Not Found");
     }
   });
+
+// Placing a Bid
 
 productRoutes
   .route("/place-bid/:id")
@@ -117,36 +167,44 @@ productRoutes
       const foundProduct = await productModel.findById(productId);
       foundProduct.bidHistory.pull({ _id: bidId });
       await foundProduct.save();
-      foundUser.ongoingBids.pull({
-        "type.Bid._id": bidId,
-      });
-      await foundUser.save();
+      const newArr = foundUser.ongoingBids.filter(
+        (bid) => !bid.Bid.equals(bidId)
+      );
+      const updatedUser = await userModel.findByIdAndUpdate(userid, {
+        ongoingBids: newArr,
+      }); // This returns the previous state of the updated user model,To obtain newState,pass {new:true} as parameter
       return res.status(200).json({ message: "Bid Removed Successfully" });
     } catch (err) {
       console.log(err);
       res.status(400).json({ message: "Invalid Request Nigga" });
     }
   });
-productRoutes.
-  route("/get-similar-products/:id")
-  .get(authenticateUser, async(req, res) => {
 
+productRoutes
+  .route("/get-similar-products/:id")
+  .get(authenticateUser, async (req, res) => {
     const productID = req.params?.id;
 
-    const product = await productModel.findOne({ _id : productID });
-    if(!product) return res.status(404).json({ message: "Invalid Product Id" });
+    const product = await productModel.findOne({ _id: productID });
+    if (!product)
+      return res.status(404).json({ message: "Invalid Product Id" });
 
-    const productCategory = (product.category).toLowerCase();
-    if(!productCategory) return res.status(404).json({ message: "Invalid Product Id" });
+    const productCategory = product.category.toLowerCase();
+    if (!productCategory)
+      return res.status(404).json({ message: "Invalid Product Id" });
     // console.log(productCategory);
-    if(!product) return res.status(404).json({ message: "Invalid Product Id" });
+    if (!product)
+      return res.status(404).json({ message: "Invalid Product Id" });
 
-    const similarProducts = await productModel.find({ category : productCategory, _id: { $ne: productID }  });
+    const similarProducts = await productModel.find({
+      category: productCategory,
+      _id: { $ne: productID },
+    });
     console.log(similarProducts);
 
     return res.status(200).json(similarProducts);
-    
-  })
+  });
+
 // Todo -  Figure out the update Model for Bid.
 
 module.exports = productRoutes;

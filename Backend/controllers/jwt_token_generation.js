@@ -1,5 +1,8 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
+const productModel = require("../models/product");
+const mongoose = require("mongoose");
+const userModel = require("../models/user");
 
 const createSecretToken = function (id) {
   return jwt.sign({ id }, process.env.SECRET_HASH_STRING, {
@@ -13,18 +16,34 @@ const authenticateUser = (req, res, next) => {
   var token = req.headers.cookie; // Safely access the token
   // console.log(token)
   if (!token) {
-      res.status(401).send("Access Denied: No Token Provided");
+    res.status(401).send("Access Denied: No Token Provided");
   }
 
   try {
-    token = token.replace("token=", "")
+    token = token.replace("token=", "");
     const verifiedUser = jwt.verify(token, process.env.SECRET_HASH_STRING);
     req.user = verifiedUser;
-    delete token
+    delete token;
     next();
   } catch (err) {
     res.status(403).send("Invalid Token");
   }
 };
 
-module.exports = { createSecretToken, authenticateUser };
+// MiddleWare to check if the user is the product owner for DELETE request.
+const checkProductOwner = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const productId = req.params.id;
+    const foundUser = await userModel.findById(userId);
+    const products = foundUser.products;
+    if (!products.includes(productId))
+      return res.status(401).json({ message: "Product Not Found Nigga" });
+    next();
+  } catch (err) {
+    console.log(err);
+    return res.status(404).json({ message: "Invalid User Id" });
+  }
+};
+
+module.exports = { createSecretToken, authenticateUser, checkProductOwner };

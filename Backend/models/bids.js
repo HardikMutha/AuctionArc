@@ -15,10 +15,6 @@ const bidSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
-  // bidProduct: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: "ProductModel",
-  // },
 });
 
 module.exports = mongoose.model("bidModel", bidSchema);
