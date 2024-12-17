@@ -15,7 +15,7 @@ const Homepage = () => {
         );
         if (response.status == 200) {
           login.setisLoggedIn(true);
-          console.log(response.data);
+          // console.log(response.data);
           localStorage.setItem("user", response.data);
         }
       } catch (err) {

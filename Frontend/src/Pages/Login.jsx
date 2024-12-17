@@ -57,10 +57,6 @@ export default function Login() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState("");
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
   const login = React.useContext(LoginContext);
@@ -68,8 +64,6 @@ export default function Login() {
   const validateInputs = () => {
     const email = document.getElementById("email");
     const password = document.getElementById("password");
-    const name = document.getElementById("name");
-    const username = document.getElementById("username");
 
     let isValid = true;
 
@@ -91,23 +85,6 @@ export default function Login() {
       setPasswordErrorMessage("");
     }
 
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage("Name is required.");
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage("");
-    }
-    if (!username.value || username.value.length < 1) {
-      setUsernameError(true);
-      setUsernameErrorMessage("Username is required.");
-      isValid = false;
-    } else {
-      setUsernameError(false);
-      setUsernameErrorMessage("");
-    }
-
     return isValid;
   };
 
@@ -116,32 +93,32 @@ export default function Login() {
     setLoading(true);
     const data = new FormData(event.currentTarget);
     const userdata = {
-      name: data.get("name"),
-      username: data.get("username"),
       email: data.get("email"),
       password: data.get("password"),
     };
-    console.log(login);
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/signup",
+        "http://localhost:3000/auth/login",
         userdata,
         { withCredentials: true }
       );
+      console.log(response.data);
       localStorage.setItem("user", response.data);
       setLoading(false);
       login.setisLoggedIn(true);
       navigate("/");
+      // toast.success("Welcome Back Nigga");
+      // setTimeout(() => {
+      //   navigate("/");
+      // }, 6000);
     } catch (err) {
-      console.log(err);
-      console.log(err.response);
-      if (err.response?.status == 409) {
-        toast.error(err.response.data.message);
-      } else toast.error("An Error Occured Please try again");
+      console.log(err.status);
+      if (err.status == 409)
+        toast.error("Invalid Credentials Please Try Again");
+      else if (err.status == 404) toast.error("User Not Found Please Sign Up");
+      else toast.error("An Error Occured Please Try Again Later");
       document.getElementById("email").value = "";
       document.getElementById("password").value = "";
-      document.getElementById("name").value = "";
-      document.getElementById("username").value = "";
       setLoading(false);
     }
   };

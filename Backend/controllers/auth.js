@@ -90,9 +90,8 @@ const loginUser = async (req, res) => {
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
     });
-
     console.log("Logged IN!");
-    res.json({ token });
+    res.json(existingUser);
   } catch (err) {
     console.log("Got an error", err);
   }
