@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 import SearchBar from "./components/SearchBar";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
