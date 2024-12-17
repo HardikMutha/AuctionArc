@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const userModel = require("../models/user");
 const { createUser, loginUser, deleteUser } = require("../controllers/auth");
 const { authenticateUser } = require("../controllers/jwt_token_generation");
 router.post("/signup", createUser);
@@ -7,6 +9,11 @@ router.post("/login", loginUser);
 router.get("/logout", (req, res) => {
   res.clearCookie("token");
   res.json({ message: "Logged Out" });
+});
+router.post("/authenticate-user", authenticateUser, async (req, res) => {
+  console.log(req.user.id);
+  const foundUser = await userModel.findById(req.user.id);
+  return res.status(200).json(foundUser);
 });
 
 router.get("/delete-account", authenticateUser, deleteUser);

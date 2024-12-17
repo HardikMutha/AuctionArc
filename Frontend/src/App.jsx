@@ -3,13 +3,15 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import LoginContext from "./contexts/LoginContext";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { useState } from "react";
 function App() {
-  const loginContext = {
-    isLoggedIn: false,
-  };
+  const [isLoggedIn, setisLoggedIn] = useState(false);
   return (
     <>
-      <LoginContext.Provider value={loginContext}>
+      <LoginContext.Provider value={{ isLoggedIn, setisLoggedIn }}>
+        <ToastContainer />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Homepage />} />

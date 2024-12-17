@@ -13,10 +13,10 @@ const createSecretToken = function (id) {
 const authenticateUser = (req, res, next) => {
   // console.log("Cookies received by server:", req.headers.cookie); // Log raw cookie header
   // console.log("Parsed Cookies:", req.cookies); // Log parsed cookies
-  var token = req.headers.cookie; // Safely access the token
+  var token = req.headers?.cookie; // Safely access the token
   // console.log(token)
   if (!token) {
-    res.status(401).send("Access Denied: No Token Provided");
+    return res.status(401).send("Access Denied: No Token Provided");
   }
 
   try {
@@ -26,7 +26,7 @@ const authenticateUser = (req, res, next) => {
     delete token;
     next();
   } catch (err) {
-    res.status(403).send("Invalid Token");
+    return res.status(403).json({ message: "Invalid Token" });
   }
 };
 

@@ -10,7 +10,11 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router";
+import axios from "axios";
+import Spinner from "../components/Spinner";
+import LoginContext from "../contexts/LoginContext";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -50,18 +54,24 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function NewSignup() {
+export default function Signup() {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
+  const [usernameError, setUsernameError] = React.useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
+  const login = React.useContext(LoginContext);
 
   const validateInputs = () => {
     const email = document.getElementById("email");
     const password = document.getElementById("password");
     const name = document.getElementById("name");
+    const username = document.getElementById("username");
 
     let isValid = true;
 
@@ -91,27 +101,69 @@ export default function NewSignup() {
       setNameError(false);
       setNameErrorMessage("");
     }
+    if (!username.value || username.value.length < 1) {
+      setUsernameError(true);
+      setUsernameErrorMessage("Username is required.");
+      isValid = false;
+    } else {
+      setUsernameError(false);
+      setUsernameErrorMessage("");
+    }
 
     return isValid;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (nameError || emailError || passwordError) {
-      return;
-    }
+    setLoading(true);
     const data = new FormData(event.currentTarget);
-    console.log({
+    const userdata = {
       name: data.get("name"),
+      username: data.get("username"),
       email: data.get("email"),
       password: data.get("password"),
-    });
+    };
+    console.log(login);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/auth/signup",
+        userdata,
+        { withCredentials: true }
+      );
+      localStorage.setItem("user", response.data);
+      setLoading(false);
+      login.setisLoggedIn(true);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      console.log(err.response);
+      if (err.response?.status == 409) {
+        toast.error(err.response.data.message);
+      } else toast.error("An Error Occured Please try again");
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("name").value = "";
+      document.getElementById("username").value = "";
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <CssBaseline enableColorScheme />
+
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
@@ -142,6 +194,20 @@ export default function NewSignup() {
               />
             </FormControl>
             <FormControl>
+              <FormLabel htmlFor="username">Username</FormLabel>
+              <TextField
+                autoComplete="username"
+                name="username"
+                required
+                fullWidth
+                id="username"
+                placeholder="jonsnow123"
+                error={usernameError}
+                helperText={usernameErrorMessage}
+                color={usernameError ? "error" : "primary"}
+              />
+            </FormControl>
+            <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
                 required
@@ -162,7 +228,7 @@ export default function NewSignup() {
                 required
                 fullWidth
                 name="password"
-                placeholder="••••••"
+                placeholder="Password"
                 type="password"
                 id="password"
                 autoComplete="new-password"
@@ -186,13 +252,14 @@ export default function NewSignup() {
             <Typography sx={{ textAlign: "center" }}>
               Already have an account?{" "}
               <Link
-                href="/material-ui/getting-started/templates/sign-in/"
+                href="../login"
                 variant="body2"
                 sx={{ alignSelf: "center" }}
               >
                 Login
               </Link>
             </Typography>
+            {loading ? <Spinner /> : null}
           </Box>
         </Card>
       </SignUpContainer>

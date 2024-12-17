@@ -30,41 +30,39 @@ const createUser = async (req, res) => {
     if (error) {
       return res
         .status(400)
-        .send(`Validation error: ${error.details[0].message}`);
+        .json({ message: `Validation error: ${error.details[0].message}` });
     }
 
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
-      return res.status(409).send("User already exists, please log in");
+      return res
+        .status(409)
+        .json({ message: "User already exists, please log in" });
     }
 
     hash = await hashPassword(req.body.password);
 
     const newUser = new User({
-      name: req.body.name,
       username: req.body.username,
       email: req.body.email,
       password_hash: hash,
     });
 
-    await newUser.save();
-    
+    const savedUser = await newUser.save();
+
     // Cookie name == Token
     const token = createSecretToken(newUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
-      httpOnly: true, // Prevent client-side access
+      httpOnly: false, // Prevent client-side access
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
     });
-    //console.log("cookie set successfully", token);
-    // res.json(user);
-
-    // console.log("cookie set successfully", token);
-    console.log("New User added !");
-    return res.status(200).json(req.body);
+    return res.status(200).json({ savedUser, token });
   } catch (err) {
-    res.status(400).send(err);
+    res
+      .status(400)
+      .json({ message: "An Error Occured Please try again later" });
   }
 };
 
@@ -74,7 +72,7 @@ const loginUser = async (req, res) => {
     if (error) {
       return res
         .status(400)
-        .send(`Validation error: ${error.details[0].message}`);
+        .json({ message: `Validation error: ${error.details[0].message}` });
     }
 
     const existingUser = await User.findOne({ email: req.body.email });
@@ -82,7 +80,7 @@ const loginUser = async (req, res) => {
     const password = req.body.password;
     const result = await matchPassword(password, existingUser.password_hash);
     if (!existingUser || !result) {
-      return res.status(409).send("Invalid Credentials");
+      return res.status(409).json({ message: "Invalid Credentials" });
     }
 
     const token = createSecretToken(existingUser._id);
@@ -103,21 +101,20 @@ const loginUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const userID = req.user.id;
-    console.log(userID)
-    const doc = await User.findOne({_id : userID});
+    console.log(userID);
+    const doc = await User.findOne({ _id: userID });
 
-    if(!userID || !doc) {
-      return res.status(201).json({msg : "please log in!"})
+    if (!userID || !doc) {
+      return res.status(201).json({ msg: "please log in!" });
     } else {
-      res.clearCookie("token")
+      res.clearCookie("token");
       // res.json({ message: "Logged Out" })
       User.deleteOne(doc).then((result) => console.log(result));
-      return res.status(200).json({msg : "user deleted!"}) ;
+      return res.status(200).json({ msg: "user deleted!" });
     }
-  } catch(err) {
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({msg : "error"})
+    return res.status(500).json({ msg: "error" });
   }
-
-}
+};
 module.exports = { createUser, loginUser, deleteUser };
