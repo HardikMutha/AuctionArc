@@ -205,6 +205,32 @@ productRoutes
     return res.status(200).json(similarProducts);
   });
 
+productRoutes.route("/all-products").get(async (req, res) => {
+  // const allProducts = await productModel.find();
+  // console.log(allProducts);
+  // res.status(200).
+  try {
+    const allProducts = await productModel.find();
+    console.log(allProducts);
+    res.status(200).json(allProducts);
+  } catch (err) {
+    res.status(404).json({ message: "Please Try again later" });
+  }
+});
+productRoutes.route("/products/:id").get(async (req, res) => {
+  const productId = req.params.id;
+  if (!productId) {
+    res.status(404).json({ message: "Invalid Product ID" });
+  }
+  try {
+    const foundProduct = await productModel.findById(productId);
+    res.status(200).json(foundProduct);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send("Product Not Found ");
+  }
+});
+
 // Todo -  Figure out the update Model for Bid.
 
 module.exports = productRoutes;
