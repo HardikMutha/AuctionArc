@@ -16,7 +16,6 @@ const loginSchema = joi.object({
 
 const productSchemaValidation = joi.object({
   name: joi.string(),
-  username: joi.string().required(),
   description: joi.string().required(),
   images: [joi.string().required().uri()],
   category: joi.string().required(),

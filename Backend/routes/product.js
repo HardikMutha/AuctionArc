@@ -17,7 +17,7 @@ const validateProduct = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    return res.status(401).send("Unauthorized Access");
+    return res.status(401).send("Validation of Data Failed");
   }
 };
 
@@ -29,7 +29,7 @@ productRoutes
   })
   .post(authenticateUser, validateProduct, async (req, res) => {
     const userid = req.user?.id;
-    console.log(req.body);
+    console.log(userid);
     req.body.category = req.body.category.toLowerCase();
     const inputData = req.body;
     const newProduct = {
