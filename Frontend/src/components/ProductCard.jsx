@@ -2,8 +2,7 @@ import { Container, Typography } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
 
-function ProductCard(productDetails) {
-    console.log(productDetails.productDetails)
+function ProductCard({ productDetails }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -11,6 +10,7 @@ function ProductCard(productDetails) {
             style={{
                 borderRadius: "20px",
                 width: "350px",
+                height: "400px",
                 border: "1px solid #ccc",
                 boxShadow: "10px 10px 5px #ccc",
                 display: "flex",
@@ -21,18 +21,19 @@ function ProductCard(productDetails) {
                 transform: isHovered ? "scale(1.02)" : "scale(1)",
             }}
             onMouseEnter={() => setIsHovered(true)} // Set hover state to true
-            onMouseLeave={() => setIsHovered(false)} // Set hover state to false        
+            onMouseLeave={() => setIsHovered(false)} // Set hover state to false    
+            key = {productDetails._id} 
         >
-            <div style={{ position: "relative" }}>
+            <div style={{ width : "100%", height: "80%", position: "relative", display : "flex", justifyContent : "center"}}>
                 <img
                     style={{
                         objectFit: "cover",
                         width: "100%",
-                        height: "auto",
+                        height: "100%",
                         borderBottomLeftRadius: "20px",
                         borderBottomRightRadius: "20px", // Ensure image respects rounded corners
                     }}
-                    src="https://neemans.com/cdn/shop/files/ND-EBSneaker-PebbleGrey-_WebOptimized_a_1600x.jpg?v=1724987944"
+                    src= {productDetails.images[0] || "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png" }
                     alt="Product"
                 />
 
@@ -51,10 +52,10 @@ function ProductCard(productDetails) {
 
             <Container sx={{ padding: 2 }}>
                 <Typography variant="h5" sx={{ color: "black" }}>
-                    {productDetails.productDetails.name}
+                    {productDetails.name}
                 </Typography>
                 <Typography variant="h6" sx={{ color: "gray" }}>
-                    {"$ " + productDetails.productDetails.listingPrice}
+                    {"$ " + productDetails.listingPrice}
                 </Typography>
             </Container>
         </div>
