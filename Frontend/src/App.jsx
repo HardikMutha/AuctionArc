@@ -6,7 +6,6 @@ import Signup from "./Pages/Signup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
-import Navbar from "./components/Navbar";
 import SellAProduct from "./Pages/SellAProduct";
 
 function App() {
