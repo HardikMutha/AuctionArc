@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -13,27 +12,30 @@ import { styled } from "@mui/material/styles";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import Spinner from "../components/Spinner";
 import LoginContext from "../contexts/LoginContext";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
-  width: "100%",
+  width: "100vw",
+  height: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: "auto",
   boxShadow:
     "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   [theme.breakpoints.up("sm")]: {
-    width: "450px",
+    width: "600px",
   },
 }));
 
 const SellProductContainer = styled(Stack)(({ theme }) => ({
-  height: "",
-  minHeight: "100%",
+  minHeight: "100vh",
   backgroundColor: "rgba(249,136,102,0.7)",
   // backgroundImage:
   //   "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
@@ -57,13 +59,14 @@ const SellProductContainer = styled(Stack)(({ theme }) => ({
 export default function SellAProduct() {
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
-  
+
   const [descriptionError, setDescriptionError] = React.useState(false);
-  const [descriptionErrorMessage, setDescriptionErrorMessage] = React.useState("");
+  const [descriptionErrorMessage, setDescriptionErrorMessage] =
+    React.useState("");
 
   const [imagesError, setImagesError] = React.useState(false);
   const [imagesErrorMessage, setImagesErrorMessage] = React.useState("");
-  
+
   const [categoryError, setCategoryError] = React.useState(false);
   const [categoryErrorMessage, setCategoryErrorMessage] = React.useState("");
 
@@ -72,7 +75,6 @@ export default function SellAProduct() {
 
   const [durationError, setDurationError] = React.useState(false);
   const [durationErrorMessage, setDurationErrorMessage] = React.useState("");
-
 
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
@@ -134,18 +136,19 @@ export default function SellAProduct() {
       name: data.get("name"),
       description: data.get("description"),
       category: data.get("category"),
-      images : data.get("images"),
-      listingPrice: data.get("listingPrice"),
-      duration : data.get("duration")
+      images: data.get("images"),
+      listingPrice: parseFloat(data.get("listingPrice")),
+      duration: data.get("duration"),
     };
     console.log(login); // Ensure token is present and valid
+    console.log(productData)
     try {
       const response = await axios.post(
         "http://localhost:3000/add-newproduct",
         productData,
         { withCredentials: true }
       );
-      console.log(response)
+      console.log(response);
       setLoading(false);
       navigate("/");
     } catch (err) {
@@ -207,7 +210,7 @@ export default function SellAProduct() {
               <FormLabel htmlFor="description">Description</FormLabel>
               <TextField
                 autoComplete="description"
-                type = "text area"
+                type="text area"
                 name="description"
                 fullWidth
                 id="description"
@@ -222,14 +225,19 @@ export default function SellAProduct() {
               <TextField
                 required
                 fullWidth
+                type = "file"
                 id="images"
-                placeholder="images"
+                placeholder="Upload Product Images..."
                 name="images"
                 autoComplete="images"
                 variant="outlined"
                 error={imagesError}
                 helperText={imagesErrorMessage}
                 color={imagesError ? "error" : "primary"}
+                inputProps={{
+                  multiple: true,
+                  accept: "image/*",
+                }}
               />
             </FormControl>
             <FormControl>
@@ -247,36 +255,48 @@ export default function SellAProduct() {
                 color={categoryError ? "error" : "primary"}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="listingPrice">Listing Price</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="listingPrice"
-                type = "number"
-                placeholder="Category"
-                id="category"
-                autoComplete="product-category"
-                variant="outlined"
-                error={ListingError}
-                helperText={ListingErrorMessage}
-                color={ListingError ? "error" : "primary"}
-              />
-              <FormLabel htmlFor="duration">Auction Duration</FormLabel>
-              <TextField
-                fullWidth
-                name="duration"
-                type = "date"
-                placeholder="Category"
-                id="category"
-                autoComplete="product-category"
-                variant="outlined"
-                error={ListingError}
-                helperText={ListingErrorMessage}
-                color={ListingError ? "error" : "primary"}
-              />
-            </FormControl>
-            
+
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ marginTop: 2, alignItems: "center" }}
+            >
+              <FormControl sx={{ flex: 1 }}>
+                <FormLabel htmlFor="listingPrice">Listing Price</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  name="listingPrice"
+                  type="float"
+                  step="0.01"
+                  placeholder="Listing Price"
+                  id="listingPrice"
+                  autoComplete="product-category"
+                  variant="outlined"
+                  error={ListingError}
+                  helperText={ListingErrorMessage}
+                  color={ListingError ? "error" : "primary"}
+                />
+              </FormControl>
+
+              <FormControl sx={{ flex: 1 }}>
+                <FormLabel htmlFor="duration">Auction Duration</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  type = "date"
+                  name="duration"
+                  step="0.01"
+                  placeholder="Duration of Auction"
+                  id="duration"
+                  autoComplete="duration"
+                  variant="outlined"
+                  error={durationError}
+                  helperText={durationErrorMessage}
+                  color={durationError ? "error" : "primary"}
+                />  
+              </FormControl>
+            </Stack>
             <Button
               type="submit"
               fullWidth
@@ -287,7 +307,6 @@ export default function SellAProduct() {
               Start Auction!
             </Button>
           </Box>
-         
         </Card>
       </SellProductContainer>
     </>

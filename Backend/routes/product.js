@@ -37,7 +37,7 @@ productRoutes
       productSeller: userid,
       bidHistory: [],
       soldTo: userid,
-    };
+    };  
     const finalProduct = new productModel(newProduct);
     try {
       const savedProduct = await finalProduct.save();
