@@ -5,6 +5,9 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import GavelIcon from "@mui/icons-material/Gavel";
+import TimerIcon from '@mui/icons-material/Timer';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -55,6 +58,11 @@ export default function ProductPage() {
             <Typography variant="h3" sx={{ fontWeight: "450" }}>
               Product Name
             </Typography>
+            <div style = {{color : "gray", display : "flex", gap : "20px"}}>
+              <div><LocalOfferIcon/> Fashion</div>
+              <div><LocalOfferIcon/> Formals</div>
+              <div><LocalOfferIcon/> Electronics</div>
+            </div>
             <div
               style={{ display: "flex", flexDirection: "column", gap: "20px" }}
             >
@@ -127,6 +135,9 @@ export default function ProductPage() {
               >
                 <GavelIcon /> Place Bid!
               </button>
+            </div>
+            <div>
+                <TimerIcon/> Auction live till : 12/12/1212
             </div>
           </div>
         </div>
