@@ -13,10 +13,12 @@ import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import LoginContext from "../contexts/LoginContext";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import Spinner from "../components/Spinner";
+
+// Important Note -  The problem of dealing with mutiple files is likely due to usage of MUI form.
+// The backend code is fine and frontend needs modification.
+// One of the possible solutions is switching to standard form and then manually implementing validation
+// As of now only single files are being handled
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -37,8 +39,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 const SellProductContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100vh",
   backgroundColor: "rgba(249,136,102,0.7)",
-  // backgroundImage:
-  //   "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
   backgroundRepeat: "no-repeat",
   padding: theme.spacing(2),
   [theme.breakpoints.up("sm")]: {
@@ -140,17 +140,19 @@ export default function SellAProduct() {
       listingPrice: parseFloat(data.get("listingPrice")),
       duration: data.get("duration"),
     };
-    console.log(login); // Ensure token is present and valid
-    console.log(productData)
+
     try {
       const response = await axios.post(
         "http://localhost:3000/add-newproduct",
         productData,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
       console.log(response);
       setLoading(false);
-      navigate("/");
+      // navigate("/");
     } catch (err) {
       console.log(err);
       console.log(err.response);
@@ -191,6 +193,7 @@ export default function SellAProduct() {
             component="form"
             onSubmit={handleSubmit}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            encType="multipart/form-data"
           >
             <FormControl>
               <FormLabel htmlFor="name">Name of Product</FormLabel>
@@ -222,21 +225,20 @@ export default function SellAProduct() {
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="images">Images</FormLabel>
-              <TextField
+              <input
                 required
-                fullWidth
-                type = "file"
+                type="file"
                 id="images"
-                placeholder="Upload Product Images..."
                 name="images"
-                autoComplete="images"
-                variant="outlined"
-                error={imagesError}
-                helperText={imagesErrorMessage}
-                color={imagesError ? "error" : "primary"}
-                inputProps={{
-                  multiple: true,
-                  accept: "image/*",
+                multiple
+                accept="image/*"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  marginTop: "10px",
+                  padding: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
                 }}
               />
             </FormControl>
@@ -284,7 +286,7 @@ export default function SellAProduct() {
                 <TextField
                   required
                   fullWidth
-                  type = "date"
+                  type="date"
                   name="duration"
                   step="0.01"
                   placeholder="Duration of Auction"
@@ -294,7 +296,7 @@ export default function SellAProduct() {
                   error={durationError}
                   helperText={durationErrorMessage}
                   color={durationError ? "error" : "primary"}
-                />  
+                />
               </FormControl>
             </Stack>
             <Button
@@ -307,6 +309,7 @@ export default function SellAProduct() {
               Start Auction!
             </Button>
           </Box>
+          {loading ? <Spinner /> : null}
         </Card>
       </SellProductContainer>
     </>

@@ -9,6 +9,14 @@ const {
   authenticateUser,
   checkProductOwner,
 } = require("../controllers/jwt_token_generation");
+const multer = require("multer");
+const { storage } = require("../Cloudinary.js");
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+// const upload = multer({ dest: "../uploads/" });
 
 const validateProduct = async (req, res, next) => {
   try {
@@ -27,29 +35,39 @@ productRoutes
   .get(authenticateUser, async (req, res) => {
     res.send("Welcome Back");
   })
-  .post(authenticateUser, validateProduct, async (req, res) => {
-    const userid = req.user?.id;
-    console.log(userid);
-    req.body.category = req.body.category.toLowerCase();
-    const inputData = req.body;
-    const newProduct = {
-      ...inputData,
-      productSeller: userid,
-      bidHistory: [],
-      soldTo: userid,
-    };  
-    const finalProduct = new productModel(newProduct);
-    try {
-      const savedProduct = await finalProduct.save();
-      const currentUser = await userModel.findById(userid);
-      currentUser.products.push(savedProduct._id);
-      await currentUser.save();
-      res.status(200).send("Added to database successfully");
-    } catch (err) {
-      console.log(err);
-      res.status(400).send(err);
+  .post(
+    authenticateUser,
+    upload.array("images", 12),
+    validateProduct,
+    async (req, res) => {
+      const userid = req.user?.id;
+      const inputFiles = req.files;
+      const inputData = req.body;
+      console.log(inputFiles);
+      console.log(inputData);
+      const images = inputFiles.map((f) => f.path);
+      const newProduct = {
+        ...inputData,
+        images: images,
+        productSeller: userid,
+        bidHistory: [],
+        soldTo: userid,
+      };
+      console.log(newProduct);
+      const finalProduct = new productModel(newProduct);
+      try {
+        const savedProduct = await finalProduct.save();
+        const currentUser = await userModel.findById(userid);
+        currentUser.products.push(savedProduct._id);
+        await currentUser.save();
+        res.status(200).send("Added to database successfully");
+      } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+      }
     }
-  });
+  );
+// .post(authenticateUser, validateProduct, async (req, res) => {
 
 // Update Route for Products
 // Image Updation not Included
@@ -192,7 +210,6 @@ productRoutes
     const productCategory = product.category.toLowerCase();
     if (!productCategory)
       return res.status(404).json({ message: "Invalid Product Id" });
-    // console.log(productCategory);
     if (!product)
       return res.status(404).json({ message: "Invalid Product Id" });
 
@@ -206,12 +223,8 @@ productRoutes
   });
 
 productRoutes.route("/all-products").get(async (req, res) => {
-  // const allProducts = await productModel.find();
-  // console.log(allProducts);
-  // res.status(200).
   try {
     const allProducts = await productModel.find();
-    console.log(allProducts);
     res.status(200).json(allProducts);
   } catch (err) {
     res.status(404).json({ message: "Please Try again later" });

@@ -53,7 +53,6 @@ const Homepage = () => {
         placeholder="Search..."
         value={searchQuery}
         onChange={(evt) => {
-          console.log("nice");
           setsearchQuery(evt.target.value);
         }}
       />
