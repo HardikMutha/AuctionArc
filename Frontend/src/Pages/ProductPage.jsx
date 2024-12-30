@@ -1,146 +1,200 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import { Container } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { 
+  Container, 
+  Typography, 
+  Box,
+  Button,
+  Stack,
+  Chip,
+  Paper,
+  Grid2,
+  useTheme,
+  useMediaQuery 
+} from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import GavelIcon from "@mui/icons-material/Gavel";
-import TimerIcon from '@mui/icons-material/Timer';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-
+import TimerIcon from "@mui/icons-material/Timer";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import { format } from 'date-fns';
 
 export default function ProductPage() {
   const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  console.log(id);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/products/${id}`);
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("Error Fetching Product : ", error);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
   return (
     <>
       <Navbar />
-      <Container sx={{ width: "80%", height: "200vh", mt: "25vh" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            padding: "20px",
-          }}
+      <Container 
+        maxWidth="lg" 
+        sx={{ 
+          pt: { xs: 8, md: 12 },
+          pb: 8,
+          marginTop : 10
+        }}
+      >
+        <Grid2 
+          container 
+          spacing={{ xs: 2, md: 4 }} 
+          alignItems="center"
+          justifyContent="center"
         >
-          <div
-            style={{
-              backgroundColor: "coral",
-              width: "450px",
-              height: "450px",
-              borderRadius: "20px",
-            }}
-          >
-            <img
-              alt="product"
-              style={{
-                height: "100%",
-                width: "100%",
-                borderRadius: "20px",
-                objectFit: "cover",
+          {/* Product Image */}
+          <Grid2 item xs={12} md={6}>
+            <Paper
+              elevation={3}
+              sx={{
+                borderRadius: 4,
+                overflow: 'hidden',
+                aspectRatio: '1/1',
+                width: '100%',
+                maxWidth: { xs: '100%', md: 500 },
+                mx: 'auto'
               }}
-              src="https://cdn.mos.cms.futurecdn.net/39CUYMP8vJqHAYGVzUghBX.jpg"
-            ></img>
-          </div>
-          <div
-            style={{
-              borderRadius: "20px",
-              backgroundColor: "white",
-              width: "50%",
-              height: "450px",
-              padding: "30px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-evenly",
-            }}
-          >
-            <Typography variant="h3" sx={{ fontWeight: "450" }}>
-              Product Name
-            </Typography>
-            <div style = {{color : "gray", display : "flex", gap : "20px"}}>
-              <div><LocalOfferIcon/> Fashion</div>
-              <div><LocalOfferIcon/> Formals</div>
-              <div><LocalOfferIcon/> Electronics</div>
-            </div>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
             >
-              <Typography variant="h5" sx={{ fontWeight: "450" }}>
-                {"$ " + 12.99}
-              </Typography>
-              <Typography>
-                This is a sample product description that highlights the key
-                features and benefits of the product. It is designed to provide
-                value to customers.cription
-              </Typography>
-            </div>
+              <Box
+                component="img"
+                src= {product?.images[0] || "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"}
+                alt="product"
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+              />
+            </Paper>
+          </Grid2>
 
-            <div
-              className="buttons"
-              style={{ display: "flex", justifyContent: "space-around" }}
+          {/* Product Details */}
+          <Grid2 item xs={12} md={6}>
+            <Box
+              sx={{
+                borderRadius: 4,
+                p: { xs: 3, md: 4 },
+                height: '100%',
+                maxWidth: { xs: '100%', md: 500 },
+                mx: 'auto'
+              }}
             >
-              <button
-                style={{
-                  display: "flex",
-                  width: "200px",
-                  justifyContent: "space-evenly",
-                  backgroundColor: "#E43A36",
-                  padding: "10px",
-                  borderRadius: "20px",
-                  transition:
-                    "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#D32F2F";
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 8px rgba(0, 0, 0, 0.2)";
-                  e.currentTarget.style.color = "#FFFFFF";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#E43A36";
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.color = "#000000"; // or original text color
-                }}
-              >
-                <FavoriteBorderIcon /> Add to Wishlist
-              </button>
+              <Stack spacing={3}>
+                {/* Title */}
+                <Typography 
+                  variant={isMobile ? "h4" : "h3"} 
+                  fontWeight="500"
+                >
+                  {product?.name || "Product Name"}
+                </Typography>
 
-              <button
-                style={{
-                  display: "flex",
-                  width: "200px",
-                  justifyContent: "space-evenly",
-                  backgroundColor: "#FFD700",
-                  padding: "10px",
-                  borderRadius: "20px",
-                  transition:
-                    "background-color 0.3s, transform 0.3s, box-shadow 0.3s",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "black";
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 8px rgba(0, 0, 0, 0.2)";
-                  e.currentTarget.style.color = "#FFFFFF";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#FFD700";
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.color = "#000000"; // or original text color
-                }}
-              >
-                <GavelIcon /> Place Bid!
-              </button>
-            </div>
-            <div>
-                <TimerIcon/> Auction live till : 12/12/1212
-            </div>
-          </div>
-        </div>
+                {/* Tags */}
+                <Stack 
+                  direction="row" 
+                  spacing={1} 
+                  flexWrap="wrap" 
+                  sx={{ gap: 1 }}
+                >
+                  {/* {['Fashion', 'Formals', 'Electronics'].map((tag) => ( */}
+                    <Chip
+                      key={product?.category}
+                      icon={<LocalOfferIcon />}
+                      label={product?.category}
+                      variant="outlined"
+                      size={isMobile ? "small" : "medium"}
+                    />
+                  {/* ))} */}
+                </Stack>
+
+                {/* Price and Description */}
+                <Box>
+                  <Typography 
+                    variant={isMobile ? "h5" : "h4"} 
+                    fontWeight="500" 
+                    gutterBottom
+                  >
+                    ${product?.listingPrice || "0.00"}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {product?.description || "Product description"}
+                  </Typography>
+                </Box>
+
+                {/* Action Buttons */}
+                <Stack 
+                  direction={{ xs: 'column', sm: 'row' }} 
+                  spacing={2}
+                  sx={{ width: '100%' }}
+                >
+                  <Button
+                    variant="contained"
+                    size={isMobile ? "medium" : "large"}
+                    startIcon={<FavoriteBorderIcon />}
+                    fullWidth
+                    sx={{
+                      borderRadius: 8,
+                      bgcolor: '#E43A36',
+                      '&:hover': {
+                        bgcolor: '#D32F2F',
+                        transform: 'scale(1.02)',
+                        transition: 'all 0.3s'
+                      }
+                    }}
+                  >
+                    Add to Wishlist
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size={isMobile ? "medium" : "large"}
+                    startIcon={<GavelIcon />}
+                    fullWidth
+                    sx={{
+                      borderRadius: 8,
+                      bgcolor: '#FFD700',
+                      color: 'black',
+                      '&:hover': {
+                        bgcolor: 'black',
+                        color: 'white',
+                        transform: 'scale(1.02)',
+                        transition: 'all 0.3s'
+                      }
+                    }}
+                  >
+                    Place Bid!
+                  </Button>
+                </Stack>
+
+                {/* Timer */}
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    color: 'text.secondary'
+                  }}
+                >
+                  <TimerIcon />
+                  <Typography>
+                    Auction live till:  {product?.duration.slice(0, 10)|| "N/A"}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
+          </Grid2>
+        </Grid2>
       </Container>
     </>
   );
