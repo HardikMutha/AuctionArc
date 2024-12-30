@@ -184,7 +184,6 @@ productRoutes
   .route("/get-similar-products/:id")
   .get(authenticateUser, async (req, res) => {
     const productID = req.params?.id;
-
     const product = await productModel.findOne({ _id: productID });
     if (!product)
       return res.status(404).json({ message: "Invalid Product Id" });

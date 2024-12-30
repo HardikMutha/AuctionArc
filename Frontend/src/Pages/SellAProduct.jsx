@@ -225,7 +225,7 @@ export default function SellAProduct() {
               <TextField
                 required
                 fullWidth
-                type = "file"
+                // type = "file"
                 id="images"
                 placeholder="Upload Product Images..."
                 name="images"
