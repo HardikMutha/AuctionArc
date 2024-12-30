@@ -2,6 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import LoginContext from "../contexts/LoginContext";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import ProductCard from "../components/ProductCard";
+import Navbar from "../components/Navbar";
+import searchQueryContext from "../contexts/SearchQuery";
 
 const Homepage = () => {
   const login = useContext(LoginContext);
@@ -17,7 +20,7 @@ const Homepage = () => {
         );
         if (response.status == 200) {
           login.setisLoggedIn(true);
-          localStorage.setItem("user", response.data);
+          localStorage.setItem("user", JSON.stringify(response.data));
         }
       } catch (err) {
         console.log(err);
@@ -43,29 +46,35 @@ const Homepage = () => {
   }, []);
 
   return (
-    <div>
-      {login.isLoggedIn ? <h1>You are logged in</h1> : null}
-      <h1>Hello World</h1>
-      <input
-        type="text"
-        name="search-query"
-        className="border-2 rounded-md p-2 placeholder:text-red-400"
-        placeholder="Search..."
-        value={searchQuery}
-        onChange={(evt) => {
-          console.log("nice");
-          setsearchQuery(evt.target.value);
-        }}
-      />
-      <div>
-        {AllProducts.filter((product) =>
-          product.name.startsWith(searchQuery)
-        ).map((product) => (
-          <p key={product._id}>{product.name}</p>
-        ))}
+    <>
+      <searchQueryContext.Provider
+        value={(searchQuery, setsearchQuery)}
+      ></searchQueryContext.Provider>
+      <Navbar />
+      <div className="mt-[5vw]">
+        {login.isLoggedIn ? <h1>You are logged in</h1> : null}
+        <input
+          type="text"
+          name="search-query"
+          className="border-2 rounded-md p-2 placeholder:text-red-400"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={(evt) => {
+            setsearchQuery(evt.target.value);
+          }}
+        />
+        <div className="grid grid-rows-5 grid-cols-3">
+          {AllProducts.filter((product) =>
+            product.name.startsWith(searchQuery)
+          ).map((product) => (
+            <div key={product._id}>
+              <ProductCard productDetails={product} />
+            </div>
+          ))}
+        </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
-    </div>
+    </>
   );
 };
 

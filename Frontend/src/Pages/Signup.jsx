@@ -123,7 +123,6 @@ export default function Signup() {
       email: data.get("email"),
       password: data.get("password"),
     };
-    console.log(login);
     try {
       const response = await axios.post(
         "http://localhost:3000/auth/signup",

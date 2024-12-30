@@ -6,7 +6,7 @@ import Signup from "./Pages/Signup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
-import Navbar from "./components/Navbar";
+import Userdashboard from "./Pages/Userdashboard";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
@@ -19,6 +19,7 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/dashboard" element={<Userdashboard />} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

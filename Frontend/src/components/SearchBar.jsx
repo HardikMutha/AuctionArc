@@ -3,10 +3,13 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
-import Box from "@mui/material/Box";
+import { useContext } from "react";
+import searchQueryContext from "../contexts/SearchQuery";
 
 export default function SearchBar() {
   const [query, setQuery] = React.useState("");
+  const Queries = useContext(searchQueryContext);
+  console.log(Queries);
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Search Query : ", query);
@@ -19,7 +22,11 @@ export default function SearchBar() {
           variant="outlined"
           type="search"
           placeholder=""
-          onChange={(e) => setQuery(e.target.value)}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            Queries.setsearchQuery(e.target.value);
+          }}
           sx={{
             borderRadius: "40px",
             boxShadow: 3,

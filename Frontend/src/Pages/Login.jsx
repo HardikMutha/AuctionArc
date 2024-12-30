@@ -102,15 +102,10 @@ export default function Login() {
         userdata,
         { withCredentials: true }
       );
-      console.log(response.data);
-      localStorage.setItem("user", response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
       setLoading(false);
       login.setisLoggedIn(true);
       navigate("/");
-      // toast.success("Welcome Back Nigga");
-      // setTimeout(() => {
-      //   navigate("/");
-      // }, 6000);
     } catch (err) {
       console.log(err.status);
       if (err.status == 409)
