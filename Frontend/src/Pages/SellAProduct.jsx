@@ -228,6 +228,7 @@ export default function SellAProduct() {
               <input
                 required
                 type="file"
+                fullWidth
                 id="images"
                 name="images"
                 multiple
