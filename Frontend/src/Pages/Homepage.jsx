@@ -4,7 +4,22 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
-import searchQueryContext from "../contexts/SearchQuery";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid2";
+import "../styles/Homepage.css";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  ...theme.applyStyles("dark", {
+    backgroundColor: "#1A2027",
+  }),
+}));
 
 const Homepage = () => {
   const login = useContext(LoginContext);
@@ -47,31 +62,32 @@ const Homepage = () => {
 
   return (
     <>
-      <searchQueryContext.Provider
-        value={(searchQuery, setsearchQuery)}
-      ></searchQueryContext.Provider>
-      <Navbar />
-      <div className="mt-[5vw]">
+      <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
+      <div className="mt-[7vw]">
         {login.isLoggedIn ? <h1>You are logged in</h1> : null}
-        <input
-          type="text"
-          name="search-query"
-          className="border-2 rounded-md p-2 placeholder:text-red-400"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(evt) => {
-            setsearchQuery(evt.target.value);
+        <h1 className="text-5xl font-semibold text-center m-10 font-[]">
+          All Products
+        </h1>
+        <Box
+          sx={{
+            width: "80%",
+            margin: "0px auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-        />
-        <div className="grid grid-rows-5 grid-cols-3">
-          {AllProducts.filter((product) =>
-            product.name.startsWith(searchQuery)
-          ).map((product) => (
-            <div key={product._id}>
-              <ProductCard productDetails={product} />
-            </div>
-          ))}
-        </div>
+        >
+          <Grid container spacing={4}>
+            {AllProducts.filter((product) =>
+              product.name.startsWith(searchQuery)
+            ).map((product) => (
+              <div key={product._id}>
+                <ProductCard productDetails={product} />
+              </div>
+            ))}
+          </Grid>
+        </Box>
+
         <ToastContainer />
       </div>
     </>

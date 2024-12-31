@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import SearchBar from "./SearchBar";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
-function Navbar() {
+function Navbar({ searchQuery, setsearchQuery }) {
   return (
     <div className="z-50 fixed">
       <Box sx={{ display: "flex" }}>
@@ -36,7 +36,10 @@ function Navbar() {
                 AUCTION ARC
               </Typography>
               {/* Search Bar component */}
-              <SearchBar />
+              <SearchBar
+                searchQuery={searchQuery}
+                setsearchQuery={setsearchQuery}
+              />
             </Box>
 
             {/* Right Section: Buttons */}
