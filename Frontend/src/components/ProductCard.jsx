@@ -27,7 +27,6 @@ function ProductCard({ productDetails }) {
                 }}
                 onMouseEnter={() => setIsHovered(true)} // Set hover state to true
                 onMouseLeave={() => setIsHovered(false)} // Set hover state to false
-                key={productDetails._id}
             >
                 <div
                     style={{
@@ -80,3 +79,5 @@ function ProductCard({ productDetails }) {
 }
 
 export default ProductCard;
+
+

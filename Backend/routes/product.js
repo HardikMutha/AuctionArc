@@ -3,7 +3,7 @@ const productRoutes = express.Router();
 const productModel = require("../models/product");
 const userModel = require("../models/user");
 const { productSchemaValidation } = require("../controllers/validate_form");
-const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose")
 const bidModel = require("../models/bids");
 const {
   authenticateUser,
@@ -37,7 +37,7 @@ productRoutes
       productSeller: userid,
       bidHistory: [],
       soldTo: userid,
-    };  
+    };
     const finalProduct = new productModel(newProduct);
     try {
       const savedProduct = await finalProduct.save();
@@ -184,24 +184,34 @@ productRoutes
   .route("/get-similar-products/:id")
   .get(authenticateUser, async (req, res) => {
     const productID = req.params?.id;
-    const product = await productModel.findOne({ _id: productID });
-    if (!product)
-      return res.status(404).json({ message: "Invalid Product Id" });
 
-    const productCategory = product.category.toLowerCase();
-    if (!productCategory)
-      return res.status(404).json({ message: "Invalid Product Id" });
-    // console.log(productCategory);
-    if (!product)
-      return res.status(404).json({ message: "Invalid Product Id" });
+    // Check if the productId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(productID)) {
+      return res.status(400).json({ message: "Invalid Product ID format" });
+    }
 
-    const similarProducts = await productModel.find({
-      category: productCategory,
-      _id: { $ne: productID },
-    });
-    console.log(similarProducts);
+    try {
+      const product = await productModel.findOne({ _id: productID });
+      if (!product)
+        return res.status(404).json({ message: "Invalid Product Id" });
+      const productCategory = product.category ? product.category.toLowerCase() : null;
+      if (!productCategory) {
+        return res.status(404).json({ message: "Product does not have a valid category" });
+      }
 
-    return res.status(200).json(similarProducts);
+
+
+      // Find similar products based on category
+      const similarProducts = await productModel.find({
+        category: productCategory,
+        _id: { $ne: productID }, // Exclude the current product from the similar products
+      });
+
+      return res.status(200).json(similarProducts);
+    } catch {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
+    }
   });
 
 productRoutes.route("/all-products").get(async (req, res) => {
@@ -218,15 +228,19 @@ productRoutes.route("/all-products").get(async (req, res) => {
 });
 productRoutes.route("/products/:id").get(async (req, res) => {
   const productId = req.params.id;
-  if (!productId) {
-    res.status(404).json({ message: "Invalid Product ID" });
+  if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+    return res.status(404).json({ message: "Invalid Product ID" });
   }
   try {
     const foundProduct = await productModel.findById(productId);
-    res.status(200).json(foundProduct);
+    // Check if the product was found
+    if (!foundProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    return res.status(200).json(foundProduct);
   } catch (err) {
     console.log(err);
-    res.status(404).send("Product Not Found ");
+    return res.status(500).send("Server Error ");
   }
 });
 

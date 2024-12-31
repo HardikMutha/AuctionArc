@@ -12,15 +12,18 @@ import {
   Grid2,
   useTheme,
   useMediaQuery,
+  IconButton,
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import GavelIcon from "@mui/icons-material/Gavel";
 import TimerIcon from "@mui/icons-material/Timer";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
-
-// Click handler function
+import { toast, ToastContainer } from "react-toastify";
+import CssBaseline from "@mui/material/CssBaseline";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -29,18 +32,38 @@ export default function ProductPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = () => {
+    if (product?.images) {
+      setCurrentImageIndex((prev) =>
+        prev === product.images.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (product?.images) {
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? product.images.length - 1 : prev - 1
+      );
+    }
+  };
+
   // Adds the product to current user's wishlist
   const handleWishListClick = async () => {
     try {
       const response = await axios.post(
         `http://localhost:3000/wish-list/add-to-wishlist/${id}`,
         { id: id },
-        // required for token validat
+        // required for token validation
         { withCredentials: true }
       );
       console.log("Item added to wishlist:", response.data);
+      toast.success("Item Added to Wishlist");
     } catch (error) {
       console.error("Error adding item to wishlist:", error);
+      toast.error("Error Adding Item to Wishlist");
     }
   };
 
@@ -51,9 +74,11 @@ export default function ProductPage() {
         const data = await response.json();
         setProduct(data);
       } catch (error) {
+        toast.error("Error Fetching Product")
         console.error("Error Fetching Product : ", error);
       }
     };
+
     const getSimilarProducts = async () => {
       try {
         const response = await axios.get(
@@ -71,6 +96,19 @@ export default function ProductPage() {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <CssBaseline enableColorScheme />
       <Navbar />
       <Container
         maxWidth="lg"
@@ -87,7 +125,8 @@ export default function ProductPage() {
           justifyContent="center"
         >
           {/* Product Image */}
-          <Grid2 item xs={12} md={6}>
+          {/* Product Image Carousel */}
+          <Grid2 item="true" xs={12} md={6}>
             <Paper
               elevation={3}
               sx={{
@@ -97,26 +136,89 @@ export default function ProductPage() {
                 width: "100%",
                 maxWidth: { xs: "100%", md: 500 },
                 mx: "auto",
+                position: "relative",
               }}
             >
               <Box
                 component="img"
                 src={
-                  product?.images[0] ||
+                  product?.images?.[currentImageIndex] ||
                   "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="product"
                 sx={{
-                  width: "100%",
-                  height: "100%",
+                  width: { md: "450px", xs: "300px" },
+                  height: { md: "450px", xs: "300px" },
                   objectFit: "cover",
+                  transition: "all 0.3s ease-in-out",
                 }}
               />
+              {product?.images?.length > 1 && (
+                <>
+                  <IconButton
+                    onClick={prevImage}
+                    sx={{
+                      position: "absolute",
+                      left: 8,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      bgcolor: "rgba(255, 255, 255, 0.8)",
+                      "&:hover": {
+                        bgcolor: "rgba(255, 255, 255, 0.9)",
+                      },
+                    }}
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={nextImage}
+                    sx={{
+                      position: "absolute",
+                      right: 8,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      bgcolor: "rgba(255, 255, 255, 0.8)",
+                      "&:hover": {
+                        bgcolor: "rgba(255, 255, 255, 0.9)",
+                      },
+                    }}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: 16,
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      display: "flex",
+                      gap: 1,
+                    }}
+                  >
+                    {product.images.map((_, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          bgcolor:
+                            index === currentImageIndex
+                              ? "primary.main"
+                              : "rgba(255, 255, 255, 0.8)",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => setCurrentImageIndex(index)}
+                      />
+                    ))}
+                  </Box>
+                </>
+              )}
             </Paper>
           </Grid2>
 
           {/* Product Details */}
-          <Grid2 item xs={12} md={6}>
+          <Grid2 item="true" xs={12} md={6}>
             <Box
               sx={{
                 borderRadius: 4,
@@ -220,7 +322,7 @@ export default function ProductPage() {
                 >
                   <TimerIcon />
                   <Typography>
-                    Auction live till: {product?.duration.slice(0, 10) || "N/A"}
+                    Auction live till: {product?.duration?.slice(0, 10) || "N/A"}
                   </Typography>
                 </Box>
               </Stack>
@@ -257,35 +359,42 @@ export default function ProductPage() {
             width: "100%",
           }}
         ></hr>
+
         {/* Check if similarProducts is available */}
-        {similarProducts && similarProducts.length > 0 ? (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "repeat(1, 1fr)", // 1 column for extra small screens
-                sm: "repeat(2, 1fr)", // 2 columns for small screens
-                md: "repeat(3, 1fr)", // 3 columns for medium screens
-                lg: "repeat(3, 1fr)", // 4 columns for large screens
-              },
-              gap: 8,
-            }}
-          >
-            {similarProducts.map((similarProduct) => (
-              <ProductCard productDetails={similarProduct} />
-            ))}
-          </Box>
-        ) : (
-          <Box sx={{ textAlign: "left", width: "100%" }}>
-            <Typography
-              variant={isMobile ? "h5" : "h4"}
-              fontWeight="500"
-              gutterBottom
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(1, 1fr)", // 1 column for extra small screens
+              sm: "repeat(2, 1fr)", // 2 columns for small screens
+              md: "repeat(3, 1fr)", // 3 columns for medium screens
+              lg: "repeat(3, 1fr)", // 3 columns for large screens
+            },
+            gap: 8,
+          }}
+        >
+          {similarProducts && similarProducts.length > 0 ? (
+            similarProducts.map((similarProduct) => (
+              <ProductCard
+                key={similarProduct._id} // Ensure the key is set on ProductCard
+                productDetails={similarProduct}
+              />
+            ))
+          ) : (
+            <Box
+              key="no-product-found"
+              sx={{ textAlign: "left", width: "100%" }}
             >
-              No similar product found
-            </Typography>
-          </Box>
-        )}
+              <Typography
+                variant={isMobile ? "h5" : "h4"}
+                fontWeight="500"
+                gutterBottom
+              >
+                No similar product found
+              </Typography>
+            </Box>
+          )}
+        </Box>
       </Box>
     </>
   );
