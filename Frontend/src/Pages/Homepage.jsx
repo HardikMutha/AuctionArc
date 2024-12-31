@@ -63,7 +63,7 @@ const Homepage = () => {
   return (
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="mt-[7vw]">
+      <div className="md:mt-[7vw] mt-[10vw]">
         {login.isLoggedIn ? <h1>You are logged in</h1> : null}
         <h1 className="text-5xl font-semibold text-center m-10 font-[]">
           All Products
