@@ -120,3 +120,5 @@ function ProductCard({ productDetails }) {
 }
 
 export default ProductCard;
+
+
