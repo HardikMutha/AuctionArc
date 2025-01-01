@@ -7,6 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 import Userdashboard from "./Pages/Userdashboard";
+import SellAProduct from "./Pages/SellAProduct";
+import ProductPage from "./Pages/ProductPage";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
@@ -20,6 +22,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Userdashboard />} />
+            <Route path="/sell-new-product" element={<SellAProduct />} />
+            <Route path="/products/:id" element={<ProductPage/>} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

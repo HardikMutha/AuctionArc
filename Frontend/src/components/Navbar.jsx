@@ -70,12 +70,4 @@ function Navbar({ searchQuery, setsearchQuery }) {
   );
 }
 
-Navbar.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window: PropTypes.func,
-};
-
 export default Navbar;

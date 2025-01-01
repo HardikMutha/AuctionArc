@@ -87,7 +87,6 @@ const Homepage = () => {
             ))}
           </Grid>
         </Box>
-
         <ToastContainer />
       </div>
     </>

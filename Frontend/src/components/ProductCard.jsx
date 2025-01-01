@@ -1,4 +1,6 @@
+
 /* eslint-disable react/prop-types */
+import { Link } from "react-router-dom"; // Import Link from React Router
 import { Container, Typography } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
