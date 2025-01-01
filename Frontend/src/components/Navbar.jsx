@@ -10,7 +10,7 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 function Navbar({ searchQuery, setsearchQuery }) {
   return (
-    <div className="z-50 fixed">
+    <div className="z-[100000] fixed">
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar component="nav">

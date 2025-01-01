@@ -57,6 +57,7 @@ productRoutes
       console.log(err);
       res.status(400).send(err);
     }
+  }
   );
 // .post(authenticateUser, validateProduct, async (req, res) => {
 
