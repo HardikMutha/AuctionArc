@@ -113,19 +113,17 @@ productRoutes
     return res.status(200).json({ message: "The value has been removed" });
   });
 
-productRoutes
-  .route("/show-my-products")
-  .get(authenticateUser, async (req, res) => {
-    try {
-      const userid = req.user?.id;
-      const foundUser = await userModel.findById(userid).populate("products");
-      const products = foundUser.products;
-      res.status(200).json(products);
-    } catch (err) {
-      console.log(err);
-      res.status(404).send("User Not Found");
-    }
-  });
+productRoutes.route("/my-products").get(authenticateUser, async (req, res) => {
+  try {
+    const userid = req.user?.id;
+    const foundUser = await userModel.findById(userid).populate("products");
+    const products = foundUser.products;
+    res.status(200).json(products);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send("User Not Found");
+  }
+});
 
 // Placing a Bid
 
@@ -235,7 +233,9 @@ productRoutes.route("/products/:id").get(async (req, res) => {
     res.status(404).json({ message: "Invalid Product ID" });
   }
   try {
-    const foundProduct = await productModel.findById(productId);
+    const foundProduct = await productModel
+      .findById(productId)
+      .populate("bidHistory");
     res.status(200).json(foundProduct);
   } catch (err) {
     console.log(err);

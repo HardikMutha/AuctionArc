@@ -1,4 +1,3 @@
-import * as React from "react";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -7,45 +6,46 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import SearchBar from "./SearchBar";
-import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
-
-function Navbar(props) {
+function Navbar({ searchQuery, setsearchQuery }) {
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar component="nav">
-        <Toolbar
-          sx={{
-            backgroundColor: "white",
-            color: "black",
-            display: "flex",
-            justifyContent: "space-between",
-            py : "15px"
-          }}
-        >
-
-          <Box sx={{ width : "100%", display: "flex", alignItems: "center" }}>
-
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{
-                color: "#FF5A5F",
-                mr: 5, // Add margin between title and SearchBar
-                textAlign : "center"
-              }}
-            >
-              AUCTION ARC
-            </Typography>
-            {/* Search Bar component */}
-            <SearchBar />
-          </Box>
-
-          {/* Right Section: Buttons */}
-          <Box
-            sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
+    <div className="z-50 fixed">
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar component="nav">
+          <Toolbar
+            sx={{
+              backgroundColor: "white",
+              color: "black",
+              display: "flex",
+              justifyContent: "space-between",
+              py: "15px",
+            }}
           >
+            <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{
+                  color: "#FF5A5F",
+                  mr: 5, // Add margin between title and SearchBar
+                  textAlign: "center",
+                }}
+              >
+                AUCTION ARC
+              </Typography>
+              {/* Search Bar component */}
+              <SearchBar
+                searchQuery={searchQuery}
+                setsearchQuery={setsearchQuery}
+              />
+            </Box>
+
+            {/* Right Section: Buttons */}
+            <Box
+              sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
+            >
               <Button
                 sx={{
                   color: "black",
@@ -60,12 +60,13 @@ function Navbar(props) {
                   ml: 2, // Add margin between buttons
                 }}
               >
-                <AccountCircleRoundedIcon fontSize = "large"/>
+                <AccountCircleRoundedIcon fontSize="large" />
               </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      </Box>
+    </div>
   );
 }
 
