@@ -24,7 +24,7 @@ import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import { toast, ToastContainer } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
-import PlaceBidPopup from "./PlaceBidPopup";
+import PlaceBidPopup from "../components/PlaceBidPopup";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -102,7 +102,7 @@ export default function ProductPage() {
   }, [id]);
 
   return (
-    <>
+    <div>
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -116,9 +116,9 @@ export default function ProductPage() {
         theme="light"
       />
       <CssBaseline enableColorScheme />
+      
       <Navbar />
-
-      <PlaceBidPopup trigger = {bidPopup} setBidPopup = {setBidPopup}/>
+      <PlaceBidPopup startingPrice = {product?.listingPrice} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
       <Container
         maxWidth="lg"
         sx={{
@@ -406,6 +406,6 @@ export default function ProductPage() {
           )}
         </Box>
       </Box>
-    </>
+    </div>
   );
 }
