@@ -24,13 +24,16 @@ import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import { toast, ToastContainer } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
+import PlaceBidPopup from "./PlaceBidPopup";
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState(null);
+  const [bidPopup, setBidPopup] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -66,6 +69,10 @@ export default function ProductPage() {
       toast.error("Error Adding Item to Wishlist");
     }
   };
+
+  const renderBidPopup = () => {
+    setBidPopup(true);
+  }
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -110,6 +117,8 @@ export default function ProductPage() {
       />
       <CssBaseline enableColorScheme />
       <Navbar />
+
+      <PlaceBidPopup trigger = {bidPopup} setBidPopup = {setBidPopup}/>
       <Container
         maxWidth="lg"
         sx={{
@@ -306,6 +315,7 @@ export default function ProductPage() {
                         transition: "all 0.3s",
                       },
                     }}
+                    onClick ={ renderBidPopup }
                   >
                     Place Bid!
                   </Button>
