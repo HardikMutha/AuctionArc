@@ -72,6 +72,7 @@ const Homepage = () => {
           sx={{
             width: "80%",
             margin: "0px auto",
+            marginBottom: "50px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",

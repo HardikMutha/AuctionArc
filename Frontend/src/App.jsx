@@ -23,7 +23,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Userdashboard />} />
             <Route path="/sell-new-product" element={<SellAProduct />} />
-            <Route path="/products/:id" element={<ProductPage/>} />
+            <Route path="/products/:id" element={<ProductPage />} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

@@ -3,7 +3,7 @@ const productRoutes = express.Router();
 const productModel = require("../models/product");
 const userModel = require("../models/user");
 const { productSchemaValidation } = require("../controllers/validate_form");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const bidModel = require("../models/bids");
 const {
   authenticateUser,
@@ -57,8 +57,7 @@ productRoutes
       console.log(err);
       res.status(400).send(err);
     }
-  }
-  );
+  });
 // .post(authenticateUser, validateProduct, async (req, res) => {
 
 // Update Route for Products
@@ -202,12 +201,14 @@ productRoutes
       const product = await productModel.findOne({ _id: productID });
       if (!product)
         return res.status(404).json({ message: "Invalid Product Id" });
-      const productCategory = product.category ? product.category.toLowerCase() : null;
+      const productCategory = product.category
+        ? product.category.toLowerCase()
+        : null;
       if (!productCategory) {
-        return res.status(404).json({ message: "Product does not have a valid category" });
+        return res
+          .status(404)
+          .json({ message: "Product does not have a valid category" });
       }
-
-
 
       // Find similar products based on category
       const similarProducts = await productModel.find({

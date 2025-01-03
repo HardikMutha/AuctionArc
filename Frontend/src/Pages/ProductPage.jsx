@@ -74,7 +74,7 @@ export default function ProductPage() {
         const data = await response.json();
         setProduct(data);
       } catch (error) {
-        toast.error("Error Fetching Product")
+        toast.error("Error Fetching Product");
         console.error("Error Fetching Product : ", error);
       }
     };
@@ -322,7 +322,8 @@ export default function ProductPage() {
                 >
                   <TimerIcon />
                   <Typography>
-                    Auction live till: {product?.duration?.slice(0, 10) || "N/A"}
+                    Auction live till:{" "}
+                    {product?.duration?.slice(0, 10) || "N/A"}
                   </Typography>
                 </Box>
               </Stack>
@@ -348,7 +349,7 @@ export default function ProductPage() {
           color="text.secondary"
           sx={{ px: "20px" }}
         >
-          Products similar to "{product?.name}" ...
+          Products similar to &quot;{product?.name}&quot; ...
         </Typography>
         <hr
           style={{
