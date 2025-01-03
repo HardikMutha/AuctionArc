@@ -97,7 +97,7 @@ export default function ProductPage() {
         console.log("Error getting similar products : ", error);
       }
     };
-    fetchProduct();
+    fetchProduct(); 
     getSimilarProducts();
   }, [id]);
 
@@ -118,7 +118,7 @@ export default function ProductPage() {
       <CssBaseline enableColorScheme />
       
       <Navbar />
-      <PlaceBidPopup startingPrice = {product?.listingPrice} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
+      <PlaceBidPopup product = {product} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
       <Container
         maxWidth="lg"
         sx={{
