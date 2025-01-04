@@ -35,29 +35,40 @@ productRoutes
   .get(authenticateUser, async (req, res) => {
     res.send("Welcome Back");
   })
-  .post(authenticateUser, validateProduct, async (req, res) => {
-    const userid = req.user?.id;
-    console.log(userid);
-    req.body.category = req.body.category.toLowerCase();
-    const inputData = req.body;
-    const newProduct = {
-      ...inputData,
-      productSeller: userid,
-      bidHistory: [],
-      soldTo: userid,
-    };
-    const finalProduct = new productModel(newProduct);
-    try {
-      const savedProduct = await finalProduct.save();
-      const currentUser = await userModel.findById(userid);
-      currentUser.products.push(savedProduct._id);
-      await currentUser.save();
-      res.status(200).send("Added to database successfully");
-    } catch (err) {
-      console.log(err);
-      res.status(400).send(err);
+  .post(
+    authenticateUser,
+    upload.array("images", 12),
+    validateProduct,
+    async (req, res) => {
+      const userid = req.user?.id;
+      const inputFiles = req.files;
+      const inputData = req.body;
+      const images = inputFiles.map((f) => f.path);
+      const newProduct = {
+        ...inputData,
+        images: images,
+        productSeller: userid,
+        bidHistory: [],
+        soldTo: userid,
+      };
+      const finalProduct = new productModel(newProduct);
+      try {
+        const savedProduct = await finalProduct.save();
+        const currentUser = await userModel.findById(userid);
+        currentUser.products.push(savedProduct._id);
+        const savedUser = await currentUser.save();
+        res
+          .status(200)
+          .json({
+            msg: "Added to database successfully",
+            id: savedProduct._id,
+          });
+      } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+      }
     }
-  });
+  );
 // .post(authenticateUser, validateProduct, async (req, res) => {
 
 // Update Route for Products

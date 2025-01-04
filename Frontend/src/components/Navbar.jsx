@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import SearchBar from "./SearchBar";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { Link } from "react-router";
 
 function Navbar({ searchQuery, setsearchQuery }) {
   return (
@@ -24,17 +25,19 @@ function Navbar({ searchQuery, setsearchQuery }) {
             }}
           >
             <Box sx={{ width: "100%", display: "flex", alignItems: "center" }}>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  color: "#FF5A5F",
-                  mr: 5, // Add margin between title and SearchBar
-                  textAlign: "center",
-                }}
-              >
-                AUCTION ARC
-              </Typography>
+              <Link to={"/"}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    color: "#FF5A5F",
+                    mr: 5, // Add margin between title and SearchBar
+                    textAlign: "center",
+                  }}
+                >
+                  AUCTION ARC
+                </Typography>
+              </Link>
               {/* Search Bar component */}
               <SearchBar
                 searchQuery={searchQuery}
