@@ -5,10 +5,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import React from "react";
 
 function ProductCard({ productDetails }) {
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = localStorage.getItem("user");
+  user = user ? JSON.parse(user) : null;
   const userWishList = user.wishList;
   const iscontainedInWishList = userWishList.includes(productDetails._id);
   const [isHovered, setIsHovered] = useState(false);
@@ -16,6 +17,13 @@ function ProductCard({ productDetails }) {
 
   function updateWishList() {
     wishlist ? removeFromWishlist() : addToWishList();
+  }
+  function getImageURL(url) {
+    if (!url) return null;
+    const tempURL = url.split("upload/");
+    const newURL = tempURL[0].concat("upload/w_300,h_300/").concat(tempURL[1]);
+    // console.log(newURL);
+    return newURL;
   }
 
   async function addToWishList() {
@@ -49,22 +57,21 @@ function ProductCard({ productDetails }) {
 
   return (
     <div>
-       <FavoriteIcon
-          sx={{
-            position: "relative",
-            top: "30px",
-            left: "90%",
-            color: wishlist ? "red" : "white",
-            backgroundColor: "transparent",
-            transition: "all 0.3s ease",
-            scale: isHovered ? "1.05" : "1.00",
-            transform: isHovered ? "rotate(-10deg)" : "rotate(0deg)", // Rotate on hover
-            zIndex: "100",
-          }}
-          onClick={updateWishList}
-        />
+      <FavoriteIcon
+        sx={{
+          position: "relative",
+          top: "30px",
+          left: "90%",
+          color: wishlist ? "red" : "white",
+          backgroundColor: "transparent",
+          transition: "all 0.3s ease",
+          scale: isHovered ? "1.05" : "1.00",
+          transform: isHovered ? "rotate(-10deg)" : "rotate(0deg)", // Rotate on hover
+          zIndex: "100",
+        }}
+        onClick={updateWishList}
+      />
       <Link to={`/products/${productDetails._id}`}>
-       
         <div
           style={{
             borderRadius: "20px",
@@ -84,20 +91,6 @@ function ProductCard({ productDetails }) {
           onMouseLeave={() => setIsHovered(false)} // Set hover state to false
           key={productDetails._id}
         >
-          {/* <FavoriteIcon
-        sx={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          color: wishlist ? "red" : "white",
-          backgroundColor: "black",
-          transition: "all 0.3s ease",
-          scale: isHovered ? "1.05" : "1.00",
-          transform: isHovered ? "rotate(-10deg)" : "rotate(0deg)", // Rotate on hover
-          zIndex: "10000",
-        }}
-        onClick={updateWishList}
-      /> */}
           <div
             style={{
               width: "100%",
@@ -116,8 +109,11 @@ function ProductCard({ productDetails }) {
                 borderBottomRightRadius: "20px", // Ensure image respects rounded corners
               }}
               src={
-                productDetails.images[0] ||
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
+                // productDetails.images[0] ||
+                // "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
+                productDetails.images.length
+                  ? `${getImageURL(productDetails.images[0])}`
+                  : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
               }
               alt="Product"
             />

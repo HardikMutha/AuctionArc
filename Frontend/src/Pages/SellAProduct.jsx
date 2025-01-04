@@ -57,6 +57,7 @@ const SellProductContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SellAProduct() {
+  // State management for Form Validation
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState("");
 
@@ -77,6 +78,10 @@ export default function SellAProduct() {
   const [durationErrorMessage, setDurationErrorMessage] = React.useState("");
 
   const [loading, setLoading] = React.useState(false);
+
+  //State management for image uploads
+  const [files, setFiles] = React.useState([]);
+
   const navigate = useNavigate();
   const login = React.useContext(LoginContext);
 
@@ -97,6 +102,17 @@ export default function SellAProduct() {
     } else {
       setNameError(false);
       setNameErrorMessage("");
+    }
+
+    if (!description.value) {
+      setDescriptionError(true);
+      setDescriptionErrorMessage(
+        "Please Provide a short description about your product"
+      );
+      isValid = false;
+    } else {
+      setDescriptionError(false);
+      setDescriptionErrorMessage("");
     }
 
     if (!images.value) {
@@ -124,35 +140,38 @@ export default function SellAProduct() {
       setListingError(false);
       setListingErrorMessage("");
     }
-
+    if (!duration.value) {
+      setDurationError(true);
+      setDurationErrorMessage("Please Provide a duration for auction");
+      isValid = false;
+    } else {
+      setDurationError(false);
+      setDurationErrorMessage("");
+    }
     return isValid;
+  };
+
+  const handleFileChange = (event) => {
+    setFiles([...event.target.files]);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     const data = new FormData(event.currentTarget);
-    const productData = {
-      name: data.get("name"),
-      description: data.get("description"),
-      category: data.get("category"),
-      images: data.get("images"),
-      listingPrice: parseFloat(data.get("listingPrice")),
-      duration: data.get("duration"),
-    };
-
     try {
       const response = await axios.post(
         "http://localhost:3000/add-newproduct",
-        productData,
+        data,
         {
           withCredentials: true,
         },
         {headers: { "Content-Type": "multipart/form-data" },}
       );
-      console.log(response);
       setLoading(false);
-      // navigate("/");
+      toast.success(response.data.msg);
+      setTimeout(() => {}, 1000);
+      navigate(`/products/${response.data.id}`);
     } catch (err) {
       console.log(err);
       console.log(err.response);
@@ -167,7 +186,7 @@ export default function SellAProduct() {
     <>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={4000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -228,19 +247,12 @@ export default function SellAProduct() {
               <input
                 required
                 type="file"
-                fullWidth
                 id="images"
                 name="images"
                 multiple
                 accept="image/*"
-                style={{
-                  display: "block",
-                  width: "100%",
-                  marginTop: "10px",
-                  padding: "8px",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                }}
+                className="block w-[100%] mt-[10px] p-3 border-2 border-[#aaa] rounded-md border-solid"
+                onChange={handleFileChange}
               />
             </FormControl>
             <FormControl>
