@@ -147,8 +147,8 @@ export default function SellAProduct() {
         productData,
         {
           withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
+        {headers: { "Content-Type": "multipart/form-data" },}
       );
       console.log(response);
       setLoading(false);
