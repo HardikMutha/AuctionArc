@@ -31,12 +31,14 @@ export default function LogoutModal() {
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/auth/logout");
+      const response = await axios.get("http://localhost:3000/auth/logout", {
+        withCredentials: true,
+      });
       if (response.status == 200) {
         toast.success(response.data.message);
         localStorage.removeItem("user");
         handleClose();
-        navigate("/");
+        navigate("/") || location.reload();
       }
     } catch (err) {
       toast.error("An Error Occurred !! Please Try Again");

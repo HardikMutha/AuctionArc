@@ -6,6 +6,7 @@ const cors = require("cors");
 app.use(cors({ credentials: true, origin: true }));
 const { authenticateUser } = require("./controllers/jwt_token_generation");
 const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 const authRoutes = require("./routes/auth");
 const wishListRoutes = require("./routes/wishlist");
 const productRoutes = require("./routes/product");
@@ -15,7 +16,6 @@ app.use(bodyParser.json({ extended: true }));
 app.use("/auth", authRoutes);
 app.use("/wish-list", wishListRoutes);
 app.use(express.json());
-app.use(cookieParser());
 
 app.listen(process.env.PORT, () => {
   console.log("Listening on PORT 3000");

@@ -87,7 +87,7 @@ const loginUser = async (req, res) => {
     const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
-      httpOnly: true, // Prevent client-side access
+      httpOnly: false, // Prevent client-side access
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
       expires: new Date(Date.now() + 28800000), // Cookie will be removed after 8 hours
