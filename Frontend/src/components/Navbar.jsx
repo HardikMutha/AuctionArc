@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import { useContext } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -6,10 +6,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import SearchBar from "./SearchBar";
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { Link } from "react-router";
+import BasicMenu from "./ui/BasicMenu";
+import { CiHeart } from "react-icons/ci";
+import LoginContext from "../contexts/LoginContext";
 
 function Navbar({ searchQuery, setsearchQuery }) {
+  const login = useContext(LoginContext);
   return (
     <div className="z-[1000] fixed">
       <Box sx={{ display: "flex" }}>
@@ -46,26 +49,66 @@ function Navbar({ searchQuery, setsearchQuery }) {
             </Box>
 
             {/* Right Section: Buttons */}
-            <Box
-              sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center" }}
-            >
-              <Button
+            {login.isLoggedIn ? (
+              <Box
                 sx={{
-                  color: "black",
-                  ml: 2, // Add margin between buttons
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
                 }}
               >
-                Sell a product
-              </Button>
-              <Button
+                <Link to={"/wishlist"}>
+                  <Button
+                    sx={{
+                      color: "black",
+                      ml: 2, // Add margin between buttons
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <CiHeart size={"1.5em"} />
+                    WishList
+                  </Button>
+                </Link>
+              </Box>
+            ) : null}
+            {login.isLoggedIn ? (
+              <Box
                 sx={{
-                  color: "black",
-                  ml: 2, // Add margin between buttons
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
                 }}
               >
-                <AccountCircleRoundedIcon fontSize="large" />
-              </Button>
-            </Box>
+                <Link to={"/sell-new-product"}>
+                  <Button
+                    sx={{
+                      color: "black",
+                      ml: 2, // Add margin between buttons
+                    }}
+                  >
+                    Sell a product
+                  </Button>
+                </Link>
+                <BasicMenu />
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "flex" },
+                  alignItems: "center",
+                }}
+              >
+                <Link to={"/login"}>
+                  <Button
+                    sx={{
+                      color: "black",
+                      ml: 2, // Add margin between buttons
+                    }}
+                  >
+                    Login <br />
+                  </Button>
+                </Link>
+              </Box>
+            )}
           </Toolbar>
         </AppBar>
       </Box>

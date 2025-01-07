@@ -5,13 +5,12 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import React from "react";
 
 function ProductCard({ productDetails }) {
   let user = localStorage.getItem("user");
   user = user ? JSON.parse(user) : null;
-  const userWishList = user.wishList;
-  const iscontainedInWishList = userWishList.includes(productDetails._id);
+  const userWishList = user?.wishList;
+  const iscontainedInWishList = userWishList?.includes(productDetails._id);
   const [isHovered, setIsHovered] = useState(false);
   const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
 
@@ -27,17 +26,18 @@ function ProductCard({ productDetails }) {
   }
 
   async function addToWishList() {
-    console.log("added");
-    const response = await axios.post(
-      `http://localhost:3000/wish-list/add-to-wishlist/${productDetails._id}`,
-      null,
-      { withCredentials: true }
-    );
-    if (response.status == 200) {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/wish-list/add-to-wishlist/${productDetails._id}`,
+        null,
+        { withCredentials: true }
+      );
       toast.success(response.data.msg);
       setaddtoWishlist(true);
-    } else {
-      toast.error(response.data.msg);
+    } catch (err) {
+      console.log(err);
+      if (err.status == 401) toast.warn("Please Login to use Wishlist");
+      else toast.warn(err.response.data);
     }
   }
   async function removeFromWishlist() {

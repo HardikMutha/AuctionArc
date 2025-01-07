@@ -57,6 +57,7 @@ const createUser = async (req, res) => {
       httpOnly: false, // Prevent client-side access
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
+      expire: new Date(Date.now() + 28800000),
     });
     return res.status(200).json({ savedUser, token });
   } catch (err) {
@@ -89,6 +90,7 @@ const loginUser = async (req, res) => {
       httpOnly: true, // Prevent client-side access
       secure: false, // Use `true` only for HTTPS
       sameSite: "Lax", // Allow basic cross-origin
+      expires: new Date(Date.now() + 28800000), // Cookie will be removed after 8 hours
     });
     console.log("Logged IN!");
     res.json(existingUser);

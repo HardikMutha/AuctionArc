@@ -7,8 +7,14 @@ const { authenticateUser } = require("../controllers/jwt_token_generation");
 router.post("/signup", createUser);
 router.post("/login", loginUser);
 router.get("/logout", (req, res) => {
-  res.clearCookie("token");
-  res.json({ message: "Logged Out" });
+  res.cookie("token", "logoutToken", {
+    path: "/",
+    httpOnly: false,
+    secure: false,
+    sameSite: "Lax",
+    expires: new Date(Date.now() + 5000),
+  });
+  res.status(200).json({ message: "Logged Out" });
 });
 router.post("/authenticate-user", authenticateUser, async (req, res) => {
   console.log(req.user.id);

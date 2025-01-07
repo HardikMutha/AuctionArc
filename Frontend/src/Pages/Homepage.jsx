@@ -39,7 +39,11 @@ const Homepage = () => {
         }
       } catch (err) {
         console.log(err);
-        toast.error("An Error Occured, Please Login Again");
+        toast.info("Please Login to use all the features", {
+          autoClose: 2000,
+          position: "top-center",
+          theme: "colored",
+        });
       }
     }
     checkLogin();
@@ -64,7 +68,6 @@ const Homepage = () => {
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
       <div className="md:mt-[7vw] mt-[10vw]">
-        {login.isLoggedIn ? <h1>You are logged in</h1> : null}
         <h1 className="text-5xl font-semibold text-center m-10 font-[]">
           All Products
         </h1>

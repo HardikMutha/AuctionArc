@@ -33,6 +33,13 @@ export default function ProductPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  function getImageURL(url) {
+    if (!url) return null;
+    const tempURL = url.split("upload/");
+    const newURL = tempURL[0].concat("upload/w_350,h_350/").concat(tempURL[1]);
+    // console.log(newURL);
+    return newURL;
+  }
 
   const nextImage = () => {
     if (product?.images) {
@@ -142,8 +149,9 @@ export default function ProductPage() {
               <Box
                 component="img"
                 src={
-                  product?.images?.[currentImageIndex] ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  product?.images?.[currentImageIndex]
+                    ? `${getImageURL(product?.images?.[currentImageIndex])}`
+                    : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="product"
                 sx={{
