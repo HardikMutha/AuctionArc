@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import Spinner from "../components/Spinner";
@@ -120,7 +120,7 @@ export default function Login() {
 
   return (
     <>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -131,7 +131,7 @@ export default function Login() {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
       <CssBaseline enableColorScheme />
 
       <SignUpContainer direction="column" justifyContent="space-between">

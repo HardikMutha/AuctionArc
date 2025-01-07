@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import LoginContext from "../contexts/LoginContext";
@@ -184,7 +184,7 @@ export default function SellAProduct() {
 
   return (
     <>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={4000}
         hideProgressBar={false}
@@ -195,7 +195,7 @@ export default function SellAProduct() {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
       <CssBaseline enableColorScheme />
 
       <SellProductContainer direction="column" justifyContent="space-between">

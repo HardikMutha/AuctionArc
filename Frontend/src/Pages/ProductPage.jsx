@@ -22,7 +22,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
 
 export default function ProductPage() {
@@ -103,7 +103,7 @@ export default function ProductPage() {
 
   return (
     <>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -114,7 +114,7 @@ export default function ProductPage() {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
       <CssBaseline enableColorScheme />
       <Navbar />
       <Container

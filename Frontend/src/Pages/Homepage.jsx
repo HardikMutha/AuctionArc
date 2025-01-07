@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import LoginContext from "../contexts/LoginContext";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 // import { styled } from "@mui/material/styles";
@@ -23,6 +23,7 @@ import "../styles/Homepage.css";
 
 const Homepage = () => {
   const login = useContext(LoginContext);
+  const { isFirstTime, setIsFirstTime } = useContext(LoginContext);
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");
   useEffect(() => {
@@ -39,11 +40,14 @@ const Homepage = () => {
         }
       } catch (err) {
         console.log(err);
-        toast.info("Please Login to use all the features", {
-          autoClose: 2000,
-          position: "top-center",
-          theme: "colored",
-        });
+        if (isFirstTime) {
+          toast.info("Please Login to use all the features", {
+            autoClose: 2000,
+            position: "top-center",
+            theme: "colored",
+          });
+          setIsFirstTime(false);
+        }
       }
     }
     checkLogin();
@@ -91,7 +95,7 @@ const Homepage = () => {
             ))}
           </Grid>
         </Box>
-        <ToastContainer />
+        {/* <ToastContainer /> */}
       </div>
     </>
   );
