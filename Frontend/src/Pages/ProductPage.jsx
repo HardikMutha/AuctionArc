@@ -22,7 +22,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
 import PlaceBidPopup from "../components/PlaceBidPopup";
 
@@ -36,6 +36,13 @@ export default function ProductPage() {
 
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  function getImageURL(url) {
+    if (!url) return null;
+    const tempURL = url.split("upload/");
+    const newURL = tempURL[0].concat("upload/w_350,h_350/").concat(tempURL[1]);
+    // console.log(newURL);
+    return newURL;
+  }
 
   const nextImage = () => {
     if (product?.images) {
@@ -102,21 +109,8 @@ export default function ProductPage() {
   }, [id]);
 
   return (
-    <div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+    <>
       <CssBaseline enableColorScheme />
-      
       <Navbar />
       <PlaceBidPopup product = {product} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
       <Container
@@ -151,8 +145,9 @@ export default function ProductPage() {
               <Box
                 component="img"
                 src={
-                  product?.images?.[currentImageIndex] ||
-                  "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  product?.images?.[currentImageIndex]
+                    ? `${getImageURL(product?.images?.[currentImageIndex])}`
+                    : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 }
                 alt="product"
                 sx={{

@@ -57,12 +57,10 @@ productRoutes
         const currentUser = await userModel.findById(userid);
         currentUser.products.push(savedProduct._id);
         const savedUser = await currentUser.save();
-        res
-          .status(200)
-          .json({
-            msg: "Added to database successfully",
-            id: savedProduct._id,
-          });
+        res.status(200).json({
+          msg: "Added to database successfully",
+          id: savedProduct._id,
+        });
       } catch (err) {
         console.log(err);
         res.status(400).send(err);
@@ -80,6 +78,7 @@ productRoutes
       const userId = req.user?.id;
       const productId = req.params.id;
       const updatedContent = req.body;
+      console.log(productId);
       if (!productId)
         return res.status(400).json({ message: "Invalid Request" });
       const product = await productModel.findByIdAndUpdate(
@@ -103,7 +102,6 @@ productRoutes
     const foundUser = await userModel.findById(userid);
     foundUser.products.pull({ _id: productId });
     await foundUser.save();
-    console.log(foundUser);
     const allUsers = await userModel.find();
     for (let i = 0; i < allUsers.length; i++) {
       const newArr = allUsers[i].ongoingBids.filter(
@@ -111,8 +109,14 @@ productRoutes
       );
       allUsers[i].updateOne({ ongoingBids: newArr });
     }
-    await productModel.findByIdAndDelete(productId);
-    return res.status(200).json({ message: "The value has been removed" });
+    try {
+      await productModel.findByIdAndDelete(productId);
+      return res.status(200).json({ message: "The value has been removed" });
+    } catch (err) {
+      return res
+        .status(404)
+        .json({ message: "An Error Occurred Please Try Again" });
+    }
   });
 
 productRoutes.route("/my-products").get(authenticateUser, async (req, res) => {

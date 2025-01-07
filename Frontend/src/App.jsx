@@ -12,9 +12,12 @@ import ProductPage from "./Pages/ProductPage";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
+  const [isFirstTime, setIsFirstTime] = useState(true);
   return (
     <>
-      <LoginContext.Provider value={{ isLoggedIn, setisLoggedIn }}>
+      <LoginContext.Provider
+        value={{ isLoggedIn, setisLoggedIn, isFirstTime, setIsFirstTime }}
+      >
         <ToastContainer />
         <BrowserRouter>
           <Routes>

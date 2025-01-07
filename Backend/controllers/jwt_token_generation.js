@@ -22,24 +22,22 @@ const authenticateUser = (req, res, next) => {
   try {
     // Extract the token from the cookie string
     const token = req.headers.cookie
-      .split('; ')
-      .find((item) => item.startsWith('token='))
-      ?.split('=')[1]; // Safely split and retrieve the token value
+      .split("; ")
+      .find((item) => item.startsWith("token="))
+      ?.split("=")[1]; // Safely split and retrieve the token value
 
     if (!token) {
       return res.status(401).json({ message: "Access Denied: Token Missing" });
     }
 
-  
     // Verify the token
     const verifiedUser = jwt.verify(token, process.env.SECRET_HASH_STRING);
     req.user = verifiedUser;
-  
+
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid Token" });
   }
-  
 };
 
 // MiddleWare to check if the user is the product owner for DELETE request.
@@ -49,9 +47,11 @@ const checkProductOwner = async (req, res, next) => {
     const productId = req.params.id;
     const foundUser = await userModel.findById(userId);
     const products = foundUser.products;
-    if (!products.includes(productId))
-      return res.status(401).json({ message: "Product Not Found Nigga" });
-    next();
+    const newId = new mongoose.Types.ObjectId(productId);
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].equals(newId)) return next();
+    }
+    return res.status(401).json({ message: "Product Not Found Nigga" });
   } catch (err) {
     console.log(err);
     return res.status(404).json({ message: "Invalid User Id" });
