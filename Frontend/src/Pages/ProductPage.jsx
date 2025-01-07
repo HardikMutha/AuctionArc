@@ -24,13 +24,16 @@ import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import { toast } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
+import PlaceBidPopup from "../components/PlaceBidPopup";
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState(null);
+  const [bidPopup, setBidPopup] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   function getImageURL(url) {
@@ -74,6 +77,10 @@ export default function ProductPage() {
     }
   };
 
+  const renderBidPopup = () => {
+    setBidPopup(true);
+  }
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -97,26 +104,15 @@ export default function ProductPage() {
         console.log("Error getting similar products : ", error);
       }
     };
-    fetchProduct();
+    fetchProduct(); 
     getSimilarProducts();
   }, [id]);
 
   return (
     <>
-      {/* <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      /> */}
       <CssBaseline enableColorScheme />
       <Navbar />
+      <PlaceBidPopup product = {product} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
       <Container
         maxWidth="lg"
         sx={{
@@ -314,6 +310,7 @@ export default function ProductPage() {
                         transition: "all 0.3s",
                       },
                     }}
+                    onClick ={ renderBidPopup }
                   >
                     Place Bid!
                   </Button>
@@ -405,6 +402,6 @@ export default function ProductPage() {
           )}
         </Box>
       </Box>
-    </>
+    </div>
   );
 }

@@ -165,8 +165,8 @@ export default function SellAProduct() {
         data,
         {
           withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
+        {headers: { "Content-Type": "multipart/form-data" },}
       );
       setLoading(false);
       toast.success(response.data.msg);
