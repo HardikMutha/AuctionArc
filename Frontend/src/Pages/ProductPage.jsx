@@ -34,7 +34,6 @@ export default function ProductPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   function getImageURL(url) {
     if (!url) return null;
@@ -79,7 +78,7 @@ export default function ProductPage() {
 
   const renderBidPopup = () => {
     setBidPopup(true);
-  }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -104,7 +103,7 @@ export default function ProductPage() {
         console.log("Error getting similar products : ", error);
       }
     };
-    fetchProduct(); 
+    fetchProduct();
     getSimilarProducts();
   }, [id]);
 
@@ -112,7 +111,11 @@ export default function ProductPage() {
     <>
       <CssBaseline enableColorScheme />
       <Navbar />
-      <PlaceBidPopup product = {product} trigger = {bidPopup} setBidPopup = {setBidPopup}/>
+      <PlaceBidPopup
+        product={product}
+        trigger={bidPopup}
+        setBidPopup={setBidPopup}
+      />
       <Container
         maxWidth="lg"
         sx={{
@@ -310,7 +313,7 @@ export default function ProductPage() {
                         transition: "all 0.3s",
                       },
                     }}
-                    onClick ={ renderBidPopup }
+                    onClick={renderBidPopup}
                   >
                     Place Bid!
                   </Button>
@@ -402,6 +405,6 @@ export default function ProductPage() {
           )}
         </Box>
       </Box>
-    </div>
+    </>
   );
 }

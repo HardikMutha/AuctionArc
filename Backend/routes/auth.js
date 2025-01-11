@@ -17,6 +17,7 @@ router.get("/logout", (req, res) => {
 
   res.status(200).json({ message: "Logged Out" });
 });
+
 router.post("/authenticate-user", authenticateUser, async (req, res) => {
   console.log(req.user.id);
   const foundUser = await userModel.findById(req.user.id);

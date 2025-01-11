@@ -9,6 +9,17 @@ const {
   authenticateUser,
   checkProductOwner,
 } = require("../controllers/jwt_token_generation");
+const {
+  uploadProduct,
+  deleteProduct,
+  updateProduct,
+  getAllProducts,
+  getSimilarProducts,
+  getUserProducts,
+  getSingleProduct,
+  checkProduct,
+  getProductPrice,
+} = require("../controllers/product.js");
 const multer = require("multer");
 const { storage } = require("../Cloudinary.js");
 const upload = multer({
@@ -39,33 +50,7 @@ productRoutes
     authenticateUser,
     upload.array("images", 12),
     validateProduct,
-    async (req, res) => {
-      const userid = req.user?.id;
-      const inputFiles = req.files;
-      const inputData = req.body;
-      const images = inputFiles.map((f) => f.path);
-      const newProduct = {
-        ...inputData,
-        images: images,
-        productSeller: userid,
-        bidHistory: [],
-        soldTo: userid,
-      };
-      const finalProduct = new productModel(newProduct);
-      try {
-        const savedProduct = await finalProduct.save();
-        const currentUser = await userModel.findById(userid);
-        currentUser.products.push(savedProduct._id);
-        const savedUser = await currentUser.save();
-        res.status(200).json({
-          msg: "Added to database successfully",
-          id: savedProduct._id,
-        });
-      } catch (err) {
-        console.log(err);
-        res.status(400).send(err);
-      }
-    }
+    uploadProduct
   );
 // .post(authenticateUser, validateProduct, async (req, res) => {
 
@@ -73,63 +58,25 @@ productRoutes
 // Image Updation not Included
 productRoutes
   .route("/update-product/:id")
-  .put(authenticateUser, checkProductOwner, async (req, res) => {
-    try {
-      const userId = req.user?.id;
-      const productId = req.params.id;
-      const updatedContent = req.body;
-      console.log(productId);
-      if (!productId)
-        return res.status(400).json({ message: "Invalid Request" });
-      const product = await productModel.findByIdAndUpdate(
-        productId,
-        updatedContent
-      );
-      return res.status(200).json({ message: "Product Updated Successfully" });
-    } catch (err) {
-      console.log(err);
-      res.status(403).json({ message: "Invalid Product Id" });
-    }
-  });
+  .put(authenticateUser, checkProductOwner, updateProduct);
 
 // Delete Route For Products
 
 productRoutes
   .route("/delete-product/:id")
-  .post(authenticateUser, checkProductOwner, async (req, res) => {
-    const userid = req.user?.id;
-    const productId = req.params.id;
-    const foundUser = await userModel.findById(userid);
-    foundUser.products.pull({ _id: productId });
-    await foundUser.save();
-    const allUsers = await userModel.find();
-    for (let i = 0; i < allUsers.length; i++) {
-      const newArr = allUsers[i].ongoingBids.filter(
-        (bid) => !bid.Bid._id.equals(productId)
-      );
-      allUsers[i].updateOne({ ongoingBids: newArr });
-    }
-    try {
-      await productModel.findByIdAndDelete(productId);
-      return res.status(200).json({ message: "The value has been removed" });
-    } catch (err) {
-      return res
-        .status(404)
-        .json({ message: "An Error Occurred Please Try Again" });
-    }
-  });
+  .post(authenticateUser, checkProductOwner, deleteProduct);
 
-productRoutes.route("/my-products").get(authenticateUser, async (req, res) => {
-  try {
-    const userid = req.user?.id;
-    const foundUser = await userModel.findById(userid).populate("products");
-    const products = foundUser.products;
-    res.status(200).json(products);
-  } catch (err) {
-    console.log(err);
-    res.status(404).send("User Not Found");
-  }
-});
+productRoutes.route("/my-products").get(authenticateUser, getUserProducts);
+
+productRoutes
+  .route("/get-similar-products/:id")
+  .get(authenticateUser, getSimilarProducts);
+
+productRoutes.route("/all-products").get(getAllProducts);
+
+productRoutes.route("/products/:id").get(getSingleProduct);
+
+productRoutes.route("/get-price/:id").get(checkProduct, getProductPrice);
 
 // Placing a Bid
 
@@ -160,7 +107,8 @@ productRoutes
         return res.status(200).json({ message: "Bid Placed Successfully" });
       } else {
         if (
-          req.body.bidAmount < product.bidHistory[product.bidHistory.length - 1]
+          req.body.bidAmount <
+          product.bidHistory[product.bidHistory.length - 1].bidAmount
         ) {
           return res.status(400).json({ message: "Invalid Bid Amount" });
         } else {
@@ -201,68 +149,6 @@ productRoutes
       res.status(400).json({ message: "Invalid Request Nigga" });
     }
   });
-
-productRoutes
-  .route("/get-similar-products/:id")
-  .get(authenticateUser, async (req, res) => {
-    const productID = req.params?.id;
-
-    // Check if the productId is a valid MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-      return res.status(400).json({ message: "Invalid Product ID format" });
-    }
-
-    try {
-      const product = await productModel.findOne({ _id: productID });
-      if (!product)
-        return res.status(404).json({ message: "Invalid Product Id" });
-      const productCategory = product.category
-        ? product.category.toLowerCase()
-        : null;
-      if (!productCategory) {
-        return res
-          .status(404)
-          .json({ message: "Product does not have a valid category" });
-      }
-
-      // Find similar products based on category
-      const similarProducts = await productModel.find({
-        category: productCategory,
-        _id: { $ne: productID }, // Exclude the current product from the similar products
-      });
-
-      return res.status(200).json(similarProducts);
-    } catch {
-      console.error(err);
-      return res.status(500).json({ message: "Server error" });
-    }
-  });
-
-productRoutes.route("/all-products").get(async (req, res) => {
-  try {
-    const allProducts = await productModel.find();
-    res.status(200).json(allProducts);
-  } catch (err) {
-    res.status(404).json({ message: "Please Try again later" });
-  }
-});
-productRoutes.route("/products/:id").get(async (req, res) => {
-  const productId = req.params.id;
-  if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(404).json({ message: "Invalid Product ID" });
-  }
-  try {
-    const foundProduct = await productModel.findById(productId);
-    // Check if the product was found
-    if (!foundProduct) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-    return res.status(200).json(foundProduct);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send("Server Error ");
-  }
-});
 
 // Todo -  Figure out the update Model for Bid.
 

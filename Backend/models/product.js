@@ -29,4 +29,20 @@ const productSchema = new mongoose.Schema({
   },
 });
 
+productSchema.statics.getProductPrice = async function (productId) {
+  // try {
+  //   const foundProduct = await this.findById(productId).populate("bidHistory");
+  //   return foundProduct.bidHistory[foundProduct.bidHistory.length - 1]
+  //     .bidAmount;
+  // } catch (err) {
+  //   console.log(err);
+  //   return err;
+  // }
+  const foundProduct = await this.findById(productId).populate("bidHistory");
+  if (!foundProduct) {
+    return new Error("Product Not Found");
+  }
+  return foundProduct.bidHistory[foundProduct.bidHistory.length - 1].bidAmount;
+};
+
 module.exports = mongoose.model("ProductModel", productSchema);
