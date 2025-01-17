@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  currentPrice: { type: Number, default: 0.0 },
   productSeller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -30,19 +31,17 @@ const productSchema = new mongoose.Schema({
 });
 
 productSchema.statics.getProductPrice = async function (productId) {
-  // try {
-  //   const foundProduct = await this.findById(productId).populate("bidHistory");
-  //   return foundProduct.bidHistory[foundProduct.bidHistory.length - 1]
-  //     .bidAmount;
-  // } catch (err) {
-  //   console.log(err);
-  //   return err;
-  // }
   const foundProduct = await this.findById(productId).populate("bidHistory");
   if (!foundProduct) {
     return new Error("Product Not Found");
   }
-  return foundProduct.bidHistory[foundProduct.bidHistory.length - 1].bidAmount;
+  try {
+    const bidAmt =
+      foundProduct.bidHistory[foundProduct.bidHistory.length - 1].bidAmount;
+    return bidAmt;
+  } catch (err) {
+    return null;
+  }
 };
 
 module.exports = mongoose.model("ProductModel", productSchema);

@@ -19,6 +19,7 @@ const {
   getSingleProduct,
   checkProduct,
   getProductPrice,
+  placeBid,
 } = require("../controllers/product.js");
 const multer = require("multer");
 const { storage } = require("../Cloudinary.js");
@@ -50,9 +51,8 @@ productRoutes
     authenticateUser,
     upload.array("images", 12),
     validateProduct,
-    uploadProduct
+    uploadProduct,
   );
-// .post(authenticateUser, validateProduct, async (req, res) => {
 
 // Update Route for Products
 // Image Updation not Included
@@ -76,55 +76,15 @@ productRoutes.route("/all-products").get(getAllProducts);
 
 productRoutes.route("/products/:id").get(getSingleProduct);
 
-productRoutes.route("/get-price/:id").get(checkProduct, getProductPrice);
+productRoutes
+  .route("/get-current-price/:id")
+  .get(checkProduct, getProductPrice);
 
 // Placing a Bid
 
 productRoutes
   .route("/place-bid/:id")
-  .post(authenticateUser, async (req, res) => {
-    const productId = req.params?.id;
-    if (!req.body.bidAmount)
-      return res.status(400).json({ message: "No Bid Amount Specified" });
-    try {
-      const product = await productModel.findById(productId);
-      if (!product)
-        return res.status(404).json({ message: "Product Not Found" });
-      const userid = req.user?.id;
-      const foundUser = await userModel.findById(userid);
-      const newBid = new bidModel({
-        bidder: userid,
-        bidAmount: req.body.bidAmount,
-        bidDate: Date.now(),
-      });
-      const bidId = newBid._id;
-      if (product.bidHistory.length == 0) {
-        await newBid.save();
-        product.bidHistory.push(bidId);
-        foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-        await foundUser.save();
-        await product.save();
-        return res.status(200).json({ message: "Bid Placed Successfully" });
-      } else {
-        if (
-          req.body.bidAmount <
-          product.bidHistory[product.bidHistory.length - 1].bidAmount
-        ) {
-          return res.status(400).json({ message: "Invalid Bid Amount" });
-        } else {
-          await newBid.save();
-          product.bidHistory.push(newBid);
-          foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-          await foundUser.save();
-          await product.save();
-          return res.status(200).json({ message: "Bid Placed Successfully" });
-        }
-      }
-    } catch (err) {
-      console.log(err);
-      return res.status(404).send("Invalid Product Id");
-    }
-  })
+  .post(authenticateUser, placeBid)
   .delete(authenticateUser, async (req, res) => {
     const productId = req.params?.id;
     if (!productId)
@@ -138,7 +98,7 @@ productRoutes
       foundProduct.bidHistory.pull({ _id: bidId });
       await foundProduct.save();
       const newArr = foundUser.ongoingBids.filter(
-        (bid) => !bid.Bid.equals(bidId)
+        (bid) => !bid.Bid.equals(bidId),
       );
       const updatedUser = await userModel.findByIdAndUpdate(userid, {
         ongoingBids: newArr,

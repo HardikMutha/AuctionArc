@@ -1,5 +1,6 @@
 const productModel = require("../models/product");
 const userModel = require("../models/user");
+const bidModel = require("../models/bids");
 const mongoose = require("mongoose");
 
 const checkProduct = async (req, res, next) => {
@@ -46,7 +47,7 @@ const deleteProduct = async (req, res) => {
   const allUsers = await userModel.find();
   for (let i = 0; i < allUsers.length; i++) {
     const newArr = allUsers[i].ongoingBids.filter(
-      (bid) => !bid.Bid._id.equals(productId)
+      (bid) => !bid.Bid._id.equals(productId),
     );
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
@@ -69,7 +70,7 @@ const updateProduct = async (req, res) => {
     if (!productId) return res.status(400).json({ message: "Invalid Request" });
     const product = await productModel.findByIdAndUpdate(
       productId,
-      updatedContent
+      updatedContent,
     );
     return res.status(200).json({ message: "Product Updated Successfully" });
   } catch (err) {
@@ -162,6 +163,49 @@ const getProductPrice = async (req, res) => {
   }
 };
 
+const placeBid = async (req, res) => {
+  const productId = req.params?.id;
+  if (!req.body.bidAmount)
+    return res.status(400).json({ message: "No Bid Amount Specified" });
+  try {
+    const product = await productModel.findById(productId);
+    if (!product) return res.status(404).json({ message: "Product Not Found" });
+    const userid = req.user?.id;
+    const foundUser = await userModel.findById(userid);
+    const newBid = new bidModel({
+      bidder: userid,
+      bidAmount: req.body.bidAmount,
+      bidDate: Date.now(),
+    });
+    const bidId = newBid._id;
+    if (product.bidHistory.length == 0) {
+      await newBid.save();
+      product.bidHistory.push(bidId);
+      foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
+      await foundUser.save();
+      await product.save();
+      return res.status(200).json({ message: "Bid Placed Successfully" });
+    } else {
+      if (
+        req.body.bidAmount <
+        product.bidHistory[product.bidHistory.length - 1].bidAmount
+      ) {
+        return res.status(400).json({ message: "Invalid Bid Amount" });
+      } else {
+        await newBid.save();
+        product.bidHistory.push(newBid);
+        foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
+        await foundUser.save();
+        await product.save();
+        return res.status(200).json({ message: "Bid Placed Successfully" });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(404).send("Invalid Product Id");
+  }
+};
+
 module.exports = {
   uploadProduct,
   deleteProduct,
@@ -172,4 +216,5 @@ module.exports = {
   getSingleProduct,
   checkProduct,
   getProductPrice,
+  placeBid,
 };
