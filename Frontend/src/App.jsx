@@ -5,14 +5,44 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Userdashboard from "./Pages/Userdashboard";
 import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
+import NavbarWrapper from "./components/ui/NavbarWrapper";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(true);
+  useEffect(() => {
+    async function checkLogin() {
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/auth/authenticate-user`,
+          {},
+          { withCredentials: true }
+        );
+        if (response.status == 200) {
+          setisLoggedIn(true);
+          localStorage.setItem("user", JSON.stringify(response.data));
+        }
+      } catch (err) {
+        console.log(err);
+        if (isFirstTime) {
+          toast.info("Please Login to use all the features", {
+            autoClose: 2000,
+            position: "top-center",
+            theme: "colored",
+          });
+          setIsFirstTime(false);
+        }
+      }
+    }
+    checkLogin();
+  }, []);
+
   return (
     <>
       <LoginContext.Provider
@@ -27,6 +57,7 @@ function App() {
             <Route path="/dashboard" element={<Userdashboard />} />
             <Route path="/sell-new-product" element={<SellAProduct />} />
             <Route path="/products/:id" element={<ProductPage />} />
+            <Route path="/navbar" element={<NavbarWrapper />} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

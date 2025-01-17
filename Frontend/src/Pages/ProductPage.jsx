@@ -32,6 +32,7 @@ export default function ProductPage() {
   const [similarProducts, setSimilarProducts] = useState(null);
   const [bidPopup, setBidPopup] = useState(false);
   const theme = useTheme();
+  const [currentPrice, setCurrentPrice] = useState(0.0);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -80,7 +81,7 @@ export default function ProductPage() {
     setBidPopup(true);
   };
 
-  useEffect(() => {
+  const fetchAllData = async () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`http://localhost:3000/products/${id}`);
@@ -103,8 +104,22 @@ export default function ProductPage() {
         console.log("Error getting similar products : ", error);
       }
     };
-    fetchProduct();
-    getSimilarProducts();
+
+    const fetchCurrentPrice = async () => {
+      const response = await axios.get(
+        `http://localhost:3000/get-current-price/${id}`
+      );
+      // console.log(response.data.price);
+      setCurrentPrice(response.data.price);
+    };
+
+    await fetchProduct();
+    await getSimilarProducts();
+    await fetchCurrentPrice();
+  };
+
+  useEffect(() => {
+    fetchAllData();
   }, [id]);
 
   return (
@@ -266,7 +281,10 @@ export default function ProductPage() {
                     fontWeight="500"
                     gutterBottom
                   >
-                    ${product?.listingPrice || "0.00"}
+                    Listing Price - ${product?.listingPrice || "0.00"}
+                    <br />
+                    Current Price - $
+                    {currentPrice || product?.listingPrice || "0.00"}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
                     {product?.description || "Product description"}

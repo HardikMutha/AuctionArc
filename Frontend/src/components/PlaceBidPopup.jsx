@@ -9,7 +9,9 @@ function PlaceBidPopup(props) {
   const product = props.product;
 
   // Ensure product exists, and provide default values if not
-  const listingPrice = product?.listingPrice ? parseInt(product.listingPrice) : 0;
+  const listingPrice = product?.listingPrice
+    ? parseInt(product.listingPrice)
+    : 0;
   const [price, setPrice] = useState(listingPrice);
   const maxPrice = listingPrice * 2;
 
@@ -26,37 +28,43 @@ function PlaceBidPopup(props) {
 
   const handleBidRequest = async (event) => {
     event.preventDefault(); // Prevent the default form submission
-  
+
     if (!product) {
       toast.error("Product details are missing.");
       return;
     }
-  
+
     try {
       // Make the POST request to the backend
-      console.log(product._id)
+      console.log(product._id);
       const response = await axios.post(
         `http://localhost:3000/place-bid/${product._id}`, // Use the product ID in the URL
         { bidAmount: price }, // Pass the bid amount in the request body
         { withCredentials: true } // Include credentials if needed for authentication
       );
-  
+
       if (response.status === 200) {
         toast.success("Bid Placed Successfully");
         props.setBidPopup(false); // Close the popup on success
+        // location.reload();
       } else {
         toast.error("Failed to place bid. Please try again.");
       }
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         toast.error(error.response.data.message); // Show specific error message from the server
       } else {
-        toast.error("Error placing bid. Please check your network and try again.");
+        toast.error(
+          "Error placing bid. Please check your network and try again."
+        );
       }
       console.error("Error placing bid:", error);
     }
   };
-  
 
   if (!product) {
     return null; // Don't render the component if the product prop is missing

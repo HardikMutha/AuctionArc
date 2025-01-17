@@ -11,6 +11,7 @@ import BasicMenu from "./ui/BasicMenu";
 import { CiHeart } from "react-icons/ci";
 import LoginContext from "../contexts/LoginContext";
 
+// eslint-disable-next-line react/prop-types
 function Navbar({ searchQuery, setsearchQuery }) {
   const login = useContext(LoginContext);
   return (
