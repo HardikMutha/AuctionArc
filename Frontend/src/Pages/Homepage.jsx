@@ -4,22 +4,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
-// import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-// import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 import "../styles/Homepage.css";
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: "#fff",
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   color: theme.palette.text.secondary,
-//   ...theme.applyStyles("dark", {
-//     backgroundColor: "#1A2027",
-//   }),
-// }));
 
 const Homepage = () => {
   const login = useContext(LoginContext);
@@ -45,7 +32,7 @@ const Homepage = () => {
   return (
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="md:mt-[7vw] mt-[10vw]">
+      <div className="mt-[3vw]">
         <h1 className="text-5xl font-semibold text-center m-10 font-[]">
           All Products
         </h1>

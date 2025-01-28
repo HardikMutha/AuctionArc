@@ -1,21 +1,3 @@
-// import { useContext } from "react";
-// import SearchBar from "./SearchBar";
-// import BasicMenu from "./ui/BasicMenu";
-// import { CiHeart } from "react-icons/ci";
-// import LoginContext from "../contexts/LoginContext";
-//
-// // eslint-disable-next-line react/prop-types
-// function Navbar({ searchQuery, setsearchQuery }) {
-//   const login = useContext(LoginContext);
-//   return (
-//     <div>
-//
-//     </div>
-//       );
-// }
-//
-// export default Navbar;
-//
 import { useState } from "react";
 import { Link } from "react-router";
 import {
@@ -50,7 +32,7 @@ import LoginContext from "../contexts/LoginContext";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  backgroundColor: alpha(theme.palette.common.white, 0.2),
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -81,13 +63,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "20ch",
+      width: "40ch",
     },
   },
 }));
 
-const Navbar = () => {
+// eslint-disable-next-line react/prop-types
+const Navbar = ({ setsearchQuery }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
   const theme = useTheme();
   const loginContext = useContext(LoginContext);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -97,9 +82,12 @@ const Navbar = () => {
   };
 
   const menuItems = [
-    // { text: 'Home', icon: <HomeIcon /> },
-    { text: "Sell a Product", icon: <ProductIcon /> },
-    { text: "Wishlist", icon: <CiHeart /> },
+    {
+      text: "Sell a Product",
+      icon: <ProductIcon />,
+      link: "/sell-new-product",
+    },
+    { text: "Wishlist", icon: <CiHeart />, link: "/wishlist" },
   ];
 
   const login = (
@@ -159,17 +147,28 @@ const Navbar = () => {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setsearchQuery(e.target.value);
+              }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {menuItems.map((item) => (
-              <Button key={item.text} color="inherit" startIcon={item.icon}>
-                {item.text}
-              </Button>
-            ))}
-            <BasicMenu />
-          </Box>
+
+          {!isMobile && loginContext.isLoggedIn ? (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {menuItems.map((item) => (
+                <Link key={item.text} to={item.link}>
+                  <Button color="inherit" startIcon={item.icon}>
+                    {item.text}
+                  </Button>
+                </Link>
+              ))}
+            </Box>
+          ) : null}
+
+          {loginContext.isLoggedIn ? <BasicMenu /> : login}
         </Toolbar>
       </AppBar>
 
@@ -179,7 +178,7 @@ const Navbar = () => {
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Better mobile performance
+          keepMounted: true,
         }}
       >
         {drawer}

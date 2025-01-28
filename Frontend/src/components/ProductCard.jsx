@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 function ProductCard({ productDetails }) {
   let user = localStorage.getItem("user");
+  console.log(user);
   user = user ? JSON.parse(user) : null;
   const userWishList = user?.wishList;
   const iscontainedInWishList = userWishList?.includes(productDetails._id);
@@ -21,7 +22,6 @@ function ProductCard({ productDetails }) {
     if (!url) return null;
     const tempURL = url.split("upload/");
     const newURL = tempURL[0].concat("upload/w_300,h_300/").concat(tempURL[1]);
-    // console.log(newURL);
     return newURL;
   }
 
