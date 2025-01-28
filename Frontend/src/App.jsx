@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import Userdashboard from "./Pages/Userdashboard";
 import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
-import NavbarWrapper from "./components/ui/NavbarWrapper";
+// import NavbarWrapper from "./components/ui/NavbarWrapper";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -57,7 +57,7 @@ function App() {
             <Route path="/dashboard" element={<Userdashboard />} />
             <Route path="/sell-new-product" element={<SellAProduct />} />
             <Route path="/products/:id" element={<ProductPage />} />
-            <Route path="/navbar" element={<NavbarWrapper />} />
+
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

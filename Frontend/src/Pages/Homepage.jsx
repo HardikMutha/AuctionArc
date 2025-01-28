@@ -26,32 +26,6 @@ const Homepage = () => {
   const { isFirstTime, setIsFirstTime } = useContext(LoginContext);
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");
-  // useEffect(() => {
-  //   async function checkLogin() {
-  //     try {
-  //       const response = await axios.post(
-  //         `http://localhost:3000/auth/authenticate-user`,
-  //         {},
-  //         { withCredentials: true }
-  //       );
-  //       if (response.status == 200) {
-  //         login.setisLoggedIn(true);
-  //         localStorage.setItem("user", JSON.stringify(response.data));
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //       if (isFirstTime) {
-  //         toast.info("Please Login to use all the features", {
-  //           autoClose: 2000,
-  //           position: "top-center",
-  //           theme: "colored",
-  //         });
-  //         setIsFirstTime(false);
-  //       }
-  //     }
-  //   }
-  //   checkLogin();
-  // }, []);
   useEffect(() => {
     async function fetchAllProducts() {
       try {
@@ -95,7 +69,6 @@ const Homepage = () => {
             ))}
           </Grid>
         </Box>
-        {/* <ToastContainer /> */}
       </div>
     </>
   );
