@@ -4,54 +4,15 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
-// import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-// import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 import "../styles/Homepage.css";
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: "#fff",
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   color: theme.palette.text.secondary,
-//   ...theme.applyStyles("dark", {
-//     backgroundColor: "#1A2027",
-//   }),
-// }));
 
 const Homepage = () => {
   const login = useContext(LoginContext);
   const { isFirstTime, setIsFirstTime } = useContext(LoginContext);
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");
-  // useEffect(() => {
-  //   async function checkLogin() {
-  //     try {
-  //       const response = await axios.post(
-  //         `http://localhost:3000/auth/authenticate-user`,
-  //         {},
-  //         { withCredentials: true }
-  //       );
-  //       if (response.status == 200) {
-  //         login.setisLoggedIn(true);
-  //         localStorage.setItem("user", JSON.stringify(response.data));
-  //       }
-  //     } catch (err) {
-  //       console.log(err);
-  //       if (isFirstTime) {
-  //         toast.info("Please Login to use all the features", {
-  //           autoClose: 2000,
-  //           position: "top-center",
-  //           theme: "colored",
-  //         });
-  //         setIsFirstTime(false);
-  //       }
-  //     }
-  //   }
-  //   checkLogin();
-  // }, []);
   useEffect(() => {
     async function fetchAllProducts() {
       try {
@@ -71,7 +32,7 @@ const Homepage = () => {
   return (
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="md:mt-[7vw] mt-[10vw]">
+      <div className="mt-[3vw]">
         <h1 className="text-5xl font-semibold text-center m-10 font-[]">
           All Products
         </h1>
@@ -95,7 +56,6 @@ const Homepage = () => {
             ))}
           </Grid>
         </Box>
-        {/* <ToastContainer /> */}
       </div>
     </>
   );
