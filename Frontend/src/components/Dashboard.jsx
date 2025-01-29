@@ -5,7 +5,7 @@ import DisplayInfoToggle from "./ui/DisplayInfoToggle";
 
 const Dashboard = ({ data }) => {
   return (
-    <div className="p-4">
+    <div>
       <Navbar />
       <h1 className="mt-[8%] md:text-5xl font-bold text-center text-3xl mb-5">
         Welcome to {data.username}&apos;s Dashboard

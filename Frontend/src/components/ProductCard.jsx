@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 
 function ProductCard({ productDetails }) {
   let user = localStorage.getItem("user");
-  console.log(user);
   user = user ? JSON.parse(user) : null;
   const userWishList = user?.wishList;
   const iscontainedInWishList = userWishList?.includes(productDetails._id);
@@ -41,7 +40,6 @@ function ProductCard({ productDetails }) {
     }
   }
   async function removeFromWishlist() {
-    console.log("removed");
     const response = await axios.post(
       `http://localhost:3000/wish-list/remove-from-wishlist/${productDetails._id}`,
       null,

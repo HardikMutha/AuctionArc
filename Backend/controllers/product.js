@@ -47,7 +47,7 @@ const deleteProduct = async (req, res) => {
   const allUsers = await userModel.find();
   for (let i = 0; i < allUsers.length; i++) {
     const newArr = allUsers[i].ongoingBids.filter(
-      (bid) => !bid.Bid._id.equals(productId),
+      (bid) => !bid.Bid._id.equals(productId)
     );
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
@@ -70,7 +70,7 @@ const updateProduct = async (req, res) => {
     if (!productId) return res.status(400).json({ message: "Invalid Request" });
     const product = await productModel.findByIdAndUpdate(
       productId,
-      updatedContent,
+      updatedContent
     );
     return res.status(200).json({ message: "Product Updated Successfully" });
   } catch (err) {
@@ -82,9 +82,28 @@ const updateProduct = async (req, res) => {
 const getUserProducts = async (req, res) => {
   try {
     const userid = req.user?.id;
-    const foundUser = await userModel.findById(userid).populate("products");
-    const products = foundUser.products;
-    res.status(200).json(products);
+    const page = parseInt(req.params.page) || 1;
+    const limit = 4;
+    if (!userid) return res.status(404).json({ message: "User Not Found" });
+    const updatedId = new mongoose.Types.ObjectId(userid);
+    const foundUser = await userModel.findOne({ _id: updatedId });
+
+    if (!foundUser)
+      return res
+        .status(404)
+        .json({ message: "Invalid User Id, user not found" });
+
+    const numberofProducts = foundUser.products.length;
+
+    const products = await productModel
+      .find({ productSeller: updatedId })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    console.log(products);
+
+    res
+      .status(200)
+      .json({ products: products, totalProducts: numberofProducts });
   } catch (err) {
     console.log(err);
     res.status(404).send("User Not Found");

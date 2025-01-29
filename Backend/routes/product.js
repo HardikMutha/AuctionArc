@@ -51,7 +51,7 @@ productRoutes
     authenticateUser,
     upload.array("images", 12),
     validateProduct,
-    uploadProduct,
+    uploadProduct
   );
 
 // Update Route for Products
@@ -66,7 +66,9 @@ productRoutes
   .route("/delete-product/:id")
   .post(authenticateUser, checkProductOwner, deleteProduct);
 
-productRoutes.route("/my-products").get(authenticateUser, getUserProducts);
+productRoutes
+  .route("/my-products/:page")
+  .get(authenticateUser, getUserProducts);
 
 productRoutes
   .route("/get-similar-products/:id")
@@ -98,7 +100,7 @@ productRoutes
       foundProduct.bidHistory.pull({ _id: bidId });
       await foundProduct.save();
       const newArr = foundUser.ongoingBids.filter(
-        (bid) => !bid.Bid.equals(bidId),
+        (bid) => !bid.Bid.equals(bidId)
       );
       const updatedUser = await userModel.findByIdAndUpdate(userid, {
         ongoingBids: newArr,

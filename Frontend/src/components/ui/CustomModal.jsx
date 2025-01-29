@@ -7,6 +7,7 @@ import { IoMdAlert } from "react-icons/io";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Trash2 } from "lucide-react";
 
 const style = {
   position: "absolute",
@@ -45,10 +46,10 @@ export default function CustomModal({ productid }) {
   return (
     <div className="inline">
       <button
+        className="p-2 rounded-lg hover:bg-white text-red-500 transition-colors duration-200"
         onClick={handleOpen}
-        className="mx-1 border-2 p-2 rounded-lg border-[#f70202] bg-[#f70202] font-semibold transition ease-out  hover:-translate-y-1 inline"
       >
-        Delete
+        <Trash2 className="h-5 w-5" />
       </button>
       <Modal
         aria-labelledby="transition-modal-title"
