@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
@@ -18,7 +19,7 @@ export default function BasicMenu(props) {
   };
 
   return (
-    <div>
+    <div className="mt-1">
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -27,15 +28,12 @@ export default function BasicMenu(props) {
         onClick={handleClick}
         sx={{ marginLeft: "7px", textTransform: "none" }}
       >
-        <MdAccountCircle
-          size={"2em"}
-          color={props.nice === "true" ? "gray" : "white"}
-        />
+        <MdAccountCircle size={"2em"} color={"black"} />
         <span
           className={
             props.nice === "true"
-              ? "text-gray-600 ml-7 text-lg"
-              : "text-white ml-2 "
+              ? "text-black ml-7 text-lg"
+              : "text-black ml-2 "
           }
         >
           Profile
