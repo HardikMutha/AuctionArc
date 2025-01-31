@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid2";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "../styles/Homepage.css";
 import Spinner from "../components/Spinner";
+import Temp from "../components/ui/Temp";
 
 const Homepage = () => {
   const limit = 3;
@@ -75,10 +76,11 @@ const Homepage = () => {
               <p className="m-20 font-extrabold">No more Products Found</p>
             }
           >
-            <Box container spacing={4}>
+            <Box spacing={4} sx={{ width: "80vw" }}>
               {filteredProducts.map((product) => (
                 <Box item key={product._id}>
                   <ProductCard productDetails={product} />
+                  <Temp productDetails={product} />
                 </Box>
               ))}
             </Box>

@@ -1,69 +1,106 @@
-import { Star } from "lucide-react";
+import { Star, Heart } from "lucide-react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Rating,
+  Stack,
+  IconButton,
+} from "@mui/material";
 
-const Temp = () => {
+const Temp = ({ productDetails }) => {
+  function getImageURL(url) {
+    if (!url) return null;
+    const tempURL = url.split("upload/");
+    const newURL = tempURL[0].concat("upload/w_300,h_300/").concat(tempURL[1]);
+    return newURL;
+  }
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-lg shadow-md mb-4 p-4">
-      <div className="flex flex-col md:flex-row gap-6">
+    <Card
+      sx={{
+        maxWidth: { lg: "1000px", md: "750px", sm: "450px", xs: "400px" },
+        mx: { sm: "auto", xs: "10px" },
+        my: 2,
+        p: 2,
+        boxShadow: 3,
+        borderRadius: 3,
+      }}
+    >
+      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
         {/* Product Image */}
-        <div className="w-full md:w-1/4 flex-shrink-0">
+        <Box
+          sx={{
+            position: "relative",
+            flexShrink: 0,
+            width: { xs: "100%", md: "25%" },
+          }}
+        >
           <img
-            src="/api/placeholder/300/300"
+            src={
+              productDetails.images.length
+                ? `${getImageURL(productDetails.images[0])}`
+                : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
+            }
             alt="Product"
-            className="w-full h-auto rounded-lg"
+            style={{ width: "100%", borderRadius: "8px" }}
           />
-        </div>
-
-        {/* Product Details */}
-        <div className="flex-grow">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                Product Title
-              </h2>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5"
-                      fill={i < 4 ? "#FFB800" : "none"}
-                      stroke={i < 4 ? "#FFB800" : "#CBD5E0"}
-                    />
-                  ))}
-                </div>
-                <span className="text-gray-600">837 reviews</span>
-                <span className="text-gray-500">
+          <IconButton
+            color="secondary"
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              backgroundColor: "white",
+              boxShadow: 1,
+            }}
+          >
+            <Heart />
+          </IconButton>
+        </Box>
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="start"
+          >
+            <Box>
+              <Typography variant="h6" component="h2" gutterBottom>
+                {productDetails.name}
+              </Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Rating value={4} precision={0.5} readOnly size="small" />
+                <Typography variant="body2" color="textSecondary">
+                  837 reviews
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
                   • 1K+ bought in past month
-                </span>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-gray-900">$320.94</p>
-              <p className="text-sm text-gray-500">(22 used & new offers)</p>
-            </div>
-          </div>
-
-          {/* Product Specifications */}
-          <div className="mt-4">
-            <p className="text-gray-700 leading-relaxed">
-              15.6" HD Touchscreen Anti-Glare Laptop, 16GB RAM, 1TB SSD Storage,
-              Intel Core Processor up to 4.1GHz, Up to 11 Hours Long Battery
-              Life, Type-C, HDMI, Windows 11 Home, Silver
-            </p>
-          </div>
+                </Typography>
+              </Stack>
+            </Box>
+            <Box textAlign="right">
+              <Typography variant="h5" fontWeight={600}>
+                $ {productDetails.listingPrice}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                (22 used & new offers)
+              </Typography>
+            </Box>
+          </Stack>
 
           {/* Actions */}
-          <div className="mt-6">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <Box sx={{ mt: 3 }}>
+            <Button variant="contained" color="primary" size="large">
               See options
-            </button>
-            <p className="mt-2 text-sm text-gray-500">
+            </Button>
+            <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
               No featured offers available
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Typography>
+          </Box>
+        </CardContent>
+      </Stack>
+    </Card>
   );
 };
 
