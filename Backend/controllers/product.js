@@ -225,6 +225,21 @@ const placeBid = async (req, res) => {
   }
 };
 
+const getProductsInfiniteScroll = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 2;
+    const skip = (page - 1) * limit;
+
+    const totalProductCount = await productModel.countDocuments();
+
+    const products = await productModel.find().skip(skip).limit(limit);
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(404).json({ message: "Please Try again later" });
+  }
+};
+
 module.exports = {
   uploadProduct,
   deleteProduct,
@@ -236,4 +251,5 @@ module.exports = {
   checkProduct,
   getProductPrice,
   placeBid,
+  getProductsInfiniteScroll,
 };
