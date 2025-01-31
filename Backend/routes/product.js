@@ -20,6 +20,7 @@ const {
   checkProduct,
   getProductPrice,
   placeBid,
+  getProductsInfiniteScroll,
 } = require("../controllers/product.js");
 const multer = require("multer");
 const { storage } = require("../Cloudinary.js");
@@ -82,6 +83,7 @@ productRoutes
   .route("/get-current-price/:id")
   .get(checkProduct, getProductPrice);
 
+productRoutes.route("/all-products-infinite-scroll").get(getProductsInfiniteScroll);
 // Placing a Bid
 
 productRoutes
