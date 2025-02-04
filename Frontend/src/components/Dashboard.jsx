@@ -11,6 +11,7 @@ const Dashboard = ({ data }) => {
         Welcome to {data.username}&apos;s Dashboard
       </h1>
       <DisplayInfoToggle type={"My Listed Products"} state={true} />
+      <DisplayInfoToggle type={"My Bids"} />
     </div>
   );
 };

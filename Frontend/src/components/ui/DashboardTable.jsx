@@ -2,7 +2,7 @@ import * as React from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight, Edit2, TrendingUp } from "lucide-react";
-import CustomModal from "./CustomModal";
+import CustomModal from "./DeleteModal";
 
 export default function DashboardTable() {
   const [page, setPage] = React.useState(1);

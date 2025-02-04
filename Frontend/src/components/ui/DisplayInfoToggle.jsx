@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import DashboardTable from "./DashboardTable";
+import UserBidsComponent from "./UserBidsComponent";
 
 const DisplayInfoToggle = (props) => {
   const [isExpanded, setIsExpanded] = useState(props.state);
@@ -45,7 +46,11 @@ const DisplayInfoToggle = (props) => {
             backgroundColor: "#f9f9f9",
           }}
         >
-          <DashboardTable />
+          {!(props.type === "My Bids") ? (
+            <DashboardTable />
+          ) : (
+            <UserBidsComponent />
+          )}
         </div>
       )}
     </div>
