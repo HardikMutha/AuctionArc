@@ -96,7 +96,7 @@ export default function DashboardTable() {
           {/* Pagination */}
           <div className="mt-8 flex justify-between items-center">
             <span className="text-sm text-gray-500">
-              Showing 4 of {totalProducts} products
+              Showing {productData.length} of {totalProducts} products
             </span>
             <div className="flex items-center gap-2">
               {page == 1 ? (

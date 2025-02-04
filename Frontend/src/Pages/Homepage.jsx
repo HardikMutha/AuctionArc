@@ -5,11 +5,9 @@ import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid2";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "../styles/Homepage.css";
 import Spinner from "../components/Spinner";
-import Temp from "../components/ui/Temp";
 
 const Homepage = () => {
   const limit = 3;
@@ -29,7 +27,7 @@ const Homepage = () => {
 
       console.log(response.data);
 
-      if (response.data.length === 0) {
+      if (response.data.length == 0) {
         setHasMore(false);
       } else {
         setAllProducts((prevProducts) => [...prevProducts, ...response.data]);
@@ -54,7 +52,7 @@ const Homepage = () => {
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
       <div className="mt-[3vw]">
-        <h1 className="text-5xl font-semibold text-center m-2 font-[] pt-[6vh]">
+        <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">
           All Products
         </h1>
         <Box
@@ -73,14 +71,15 @@ const Homepage = () => {
             hasMore={hasMore}
             loader={<Spinner />}
             endMessage={
-              <p className="m-20 font-extrabold">No more Products Found</p>
+              <p className="m-20 font-bold text-lg text-center">
+                You have Reached the End !!
+              </p>
             }
           >
             <Box spacing={4} sx={{ width: "80vw" }}>
               {filteredProducts.map((product) => (
-                <Box item key={product._id}>
+                <Box item key={product._id} marginX={"auto"}>
                   <ProductCard productDetails={product} />
-                  <Temp productDetails={product} />
                 </Box>
               ))}
             </Box>

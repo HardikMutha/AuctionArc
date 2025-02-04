@@ -1,27 +1,38 @@
 /* eslint-disable react/prop-types */
-import { Link } from "react-router-dom"; // Import Link from React Router
-import { Container, Typography } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useState } from "react";
-import axios from "axios";
+import { Heart } from "lucide-react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Stack,
+  IconButton,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router";
 
-function ProductCard({ productDetails }) {
+const ProductCard = ({ productDetails }) => {
+  const navigate = useNavigate();
+  const [productSeller, setProductSeller] = useState("");
+
   let user = localStorage.getItem("user");
   user = user ? JSON.parse(user) : null;
   const userWishList = user?.wishList;
   const iscontainedInWishList = userWishList?.includes(productDetails._id);
-  const [isHovered, setIsHovered] = useState(false);
   const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
 
-  function updateWishList() {
-    wishlist ? removeFromWishlist() : addToWishList();
-  }
   function getImageURL(url) {
     if (!url) return null;
     const tempURL = url.split("upload/");
     const newURL = tempURL[0].concat("upload/w_300,h_300/").concat(tempURL[1]);
     return newURL;
+  }
+
+  function updateWishList() {
+    wishlist ? removeFromWishlist() : addToWishList();
   }
 
   async function addToWishList() {
@@ -39,6 +50,7 @@ function ProductCard({ productDetails }) {
       else toast.warn(err.response.data);
     }
   }
+
   async function removeFromWishlist() {
     const response = await axios.post(
       `http://localhost:3000/wish-list/remove-from-wishlist/${productDetails._id}`,
@@ -53,83 +65,130 @@ function ProductCard({ productDetails }) {
     }
   }
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/user-details/${productDetails.productSeller}`
+        );
+        if (response.status == 200) {
+          console.log(response.data.foundUser.username);
+          setProductSeller(response.data.foundUser.username);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
-    <div>
-      <FavoriteIcon
-        sx={{
-          position: "relative",
-          top: "30px",
-          left: "90%",
-          color: wishlist ? "red" : "white",
-          backgroundColor: "transparent",
-          transition: "all 0.3s ease",
-          scale: isHovered ? "1.05" : "1.00",
-          transform: isHovered ? "rotate(-10deg)" : "rotate(0deg)", // Rotate on hover
-          zIndex: "100",
-        }}
-        onClick={updateWishList}
-      />
-      <Link to={`/products/${productDetails._id}`}>
-        <div
-          style={{
-            borderRadius: "20px",
-            width: window.innerWidth >= 400 ? "350px" : "320px",
-            height: "400px",
-            border: "1px solid #ccc",
-            boxShadow: "10px 10px 5px #ccc",
+    <Card
+      sx={{
+        maxWidth: { lg: "70%", md: "100%", sm: "75%", xs: "68%" },
+        mx: { xs: "auto" },
+        my: 2,
+        p: 2,
+        boxShadow: 3,
+        borderRadius: 3,
+      }}
+    >
+      <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+        {/* Product Image */}
+        <Box
+          sx={{
+            position: "relative",
+            flexShrink: 0,
+            width: { xs: "100%", md: "25%" },
+          }}
+        >
+          <img
+            src={
+              productDetails.images.length
+                ? `${getImageURL(productDetails.images[0])}`
+                : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
+            }
+            alt="Product"
+            style={{ width: "100%", borderRadius: "8px" }}
+          />
+          <IconButton
+            color="secondary"
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              backgroundColor: "white",
+              boxShadow: 1,
+            }}
+            onClick={updateWishList}
+          >
+            <Heart color="purple" fill={wishlist ? "purple" : "white"} />
+          </IconButton>
+        </Box>
+        <CardContent
+          sx={{
+            flexGrow: 1,
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden", // Ensures the content respects the rounded corners
-            transition: "all 0.3s ease",
-            backgroundColor: isHovered ? "#f0f0f0" : "white", // Change background color on hover
-            transform: isHovered ? "scale(1.02)" : "scale(1)",
-            zIndex: "-1",
+            justifyContent: "space-between",
           }}
-          onMouseEnter={() => setIsHovered(true)} // Set hover state to true
-          onMouseLeave={() => setIsHovered(false)} // Set hover state to false
-          key={productDetails._id}
         >
-          <div
-            style={{
-              width: "100%",
-              height: "80%",
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-            }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="start"
           >
-            <img
-              style={{
-                objectFit: "cover",
-                width: "100%",
-                height: "100%",
-                borderBottomLeftRadius: "20px",
-                borderBottomRightRadius: "20px", // Ensure image respects rounded corners
-              }}
-              src={
-                // productDetails.images[0] ||
-                // "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
-                productDetails.images.length
-                  ? `${getImageURL(productDetails.images[0])}`
-                  : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
-              }
-              alt="Product"
-            />
-          </div>
-          {/* <Link to={`/products/${productDetails._id}`}> */}
-          <Container sx={{ padding: 2 }}>
-            <Typography variant="h5" sx={{ color: "black" }}>
-              {productDetails.name}
-            </Typography>
-            <Typography variant="h6" sx={{ color: "gray" }}>
-              {"$ " + productDetails.listingPrice}
-            </Typography>
-          </Container>
-          {/* </Link> */}
-        </div>
-      </Link>
-    </div>
+            <Box>
+              <Typography
+                variant="h5"
+                component="h2"
+                gutterBottom
+                fontWeight={600}
+              >
+                {productDetails.name}
+              </Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography
+                  variant="body"
+                  color="textSecondary"
+                  fontSize={{ md: "16px", sm: "20px", xs: "14px" }}
+                >
+                  About - {productDetails.description}
+                </Typography>
+              </Stack>
+            </Box>
+            <Box textAlign="right" display={{ md: "block", xs: "none" }}>
+              <Typography variant="h6" fontWeight={400}>
+                Current Price - $ {productDetails.listingPrice}
+              </Typography>
+              <Typography variant="h6" fontWeight={400}>
+                Listed At - $ {productDetails.listingPrice}
+              </Typography>
+            </Box>
+          </Stack>
+
+          {/* Actions */}
+          <Box
+            marginTop={{ xs: "70px", md: "auto" }}
+            sx={{ display: "flex", justifyContent: "space-between" }}
+            flexDirection={{ sm: "row", xs: "column" }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => navigate(`/products/${productDetails._id}`)}
+            >
+              View More
+            </Button>
+            <span className="mt-2 text-center">
+              Listed By - {productSeller}
+            </span>
+          </Box>
+        </CardContent>
+      </Stack>
+    </Card>
   );
-}
+};
 
 export default ProductCard;

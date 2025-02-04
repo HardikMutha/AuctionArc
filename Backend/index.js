@@ -10,6 +10,7 @@ app.use(cookieParser());
 const authRoutes = require("./routes/auth");
 const wishListRoutes = require("./routes/wishlist");
 const productRoutes = require("./routes/product");
+const { userRoutes } = require("./routes/user");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ extended: true }));
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
   res.send("nice");
 });
 app.use("/", productRoutes);
+app.use("/", userRoutes);
 
 app.get("/dashboard", authenticateUser, (req, res, next) => {
   res.send(`Welcome, Nigga! This is your dashboard.`);
