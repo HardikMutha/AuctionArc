@@ -7,7 +7,7 @@ const Dashboard = ({ data }) => {
   return (
     <div>
       <Navbar />
-      <h1 className="mt-[8%] md:text-5xl font-bold text-center text-3xl mb-5">
+      <h1 className="pt-20 md:text-5xl font-bold text-center text-3xl mb-10">
         Welcome to {data.username}&apos;s Dashboard
       </h1>
       <DisplayInfoToggle type={"My Listed Products"} state={true} />

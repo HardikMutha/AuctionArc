@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { CiHeart } from "react-icons/ci";
 import { useContext } from "react";
-import BasicMenu from "./ui/BasicMenu";
+import BasicMenu from "./ui/NavbarMenu";
 import LoginContext from "../contexts/LoginContext";
 
 // Styled search component
@@ -84,10 +84,14 @@ const Navbar = ({ setsearchQuery }) => {
   const menuItems = [
     {
       text: "Sell a Product",
-      icon: <ProductIcon />,
+      icon: <ProductIcon sx={{ color: "rgb(212 212 216)" }} />,
       link: "/sell-new-product",
     },
-    { text: "Wishlist", icon: <CiHeart />, link: "/wishlist" },
+    {
+      text: "Wishlist",
+      icon: <CiHeart color="rgb(212 212 216)" size={"1.3em"} />,
+      link: "/wishlist",
+    },
   ];
 
   const login = (
@@ -119,7 +123,11 @@ const Navbar = ({ setsearchQuery }) => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        // sx={{ bgcolor: "#FCFAF9", maxHeight: "60px" }}
+        sx={{ bgcolor: "rgb(24 24 27)", maxHeight: "60px" }}
+      >
         <Toolbar>
           {isMobile && (
             <IconButton
@@ -129,20 +137,29 @@ const Navbar = ({ setsearchQuery }) => {
               onClick={handleDrawerToggle}
               sx={{ mr: 2 }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ color: "#D7431D" }} />
             </IconButton>
           )}
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{ display: { xs: "none", sm: "block" }, color: "#D7431D" }}
           >
-            AUCTION ARC
+            <Link to={"/"} className="text-blue-300">
+              AUCTION ARC
+            </Link>
           </Typography>
-          <Search>
+          <Search
+            sx={{
+              borderRadius: "20px",
+              color: "#D7431D",
+              // boxShadow:
+              // "rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;",
+            }}
+          >
             <SearchIconWrapper>
-              <SearchIcon />
+              <SearchIcon sx={{ color: "lightblue" }} />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
@@ -152,16 +169,17 @@ const Navbar = ({ setsearchQuery }) => {
                 setQuery(e.target.value);
                 setsearchQuery(e.target.value);
               }}
+              sx={{ color: " rgb(228 228 231)" }}
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
 
           {!isMobile && loginContext.isLoggedIn ? (
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 2, color: "white" }}>
               {menuItems.map((item) => (
                 <Link key={item.text} to={item.link}>
                   <Button color="inherit" startIcon={item.icon}>
-                    {item.text}
+                    <span className="mt-1">{item.text}</span>
                   </Button>
                 </Link>
               ))}

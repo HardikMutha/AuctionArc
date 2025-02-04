@@ -1,105 +1,29 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import LoginContext from "../contexts/LoginContext";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  [theme.breakpoints.up("sm")]: {
-    width: "450px",
-  },
-}));
+import { useContext, useState } from "react";
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
-  backgroundColor: "rgba(249,136,102,0.7)",
-  backgroundRepeat: "no-repeat",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-  },
-}));
-
-export default function Login() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+const SplitLoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const login = React.useContext(LoginContext);
 
-  const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
+  const login = useContext(LoginContext);
 
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    return isValid;
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const data = new FormData(event.currentTarget);
-    const userdata = {
-      email: data.get("email"),
-      password: data.get("password"),
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userData = {
+      email: email,
+      password: password,
     };
     try {
       const response = await axios.post(
         "http://localhost:3000/auth/login",
-        userdata,
+        userData,
         { withCredentials: true }
       );
       localStorage.setItem("user", JSON.stringify(response.data));
@@ -112,99 +36,134 @@ export default function Login() {
         toast.error("Invalid Credentials Please Try Again");
       else if (err.status == 404) toast.error("User Not Found Please Sign Up");
       else toast.error("An Error Occured Please Try Again Later");
-      document.getElementById("email").value = "";
-      document.getElementById("password").value = "";
+      setEmail("");
+      setPassword("");
       setLoading(false);
     }
   };
 
   return (
-    <>
-      {/* <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      /> */}
-      <CssBaseline enableColorScheme />
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* Left Side - App Info */}
+      <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-8 lg:p-12">
+        <div className="h-full flex flex-col justify-center max-w-xl mx-auto text-white">
+          <h1 className="text-4xl lg:text-5xl font-bold mb-8">
+            Welcome to Auction Arc
+          </h1>
 
-      <SignUpContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-            className="text-center"
-          >
-            <p className="font-semibold">Login to Auction-Arc</p>
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="Password"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-              style={{ marginTop: "25px" }}
-            >
-              Log in
-            </Button>
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography sx={{ textAlign: "center" }}>
-              Dont have an account?{" "}
-              <Link
-                href="../signup"
-                variant="body2"
-                sx={{ alignSelf: "center" }}
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-2xl font-semibold mb-4 text-center">
+                A Streamlined Platform for a Seamless Auction Experience
+              </h2>
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="p-2 bg-blue-500 rounded-lg mr-4">🎯</div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Live Bidding</h3>
+                    <p className="text-blue-100">
+                      Experience real-time auctions with instant updates
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="p-2 bg-blue-500 rounded-lg mr-4">🔒</div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Secure Platform</h3>
+                    <p className="text-blue-100">
+                      Bank-level security for all your personal data.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="p-2 bg-blue-500 rounded-lg mr-4">💎</div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Verified Sellers</h3>
+                    <p className="text-blue-100">
+                      All sellers are verified to ensure authentic items and
+                      safe trading.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 bg-gray-50">
+        <div className="h-full flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
+              <p className="mt-2 text-gray-600">
+                Access your Auction-Arc account
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="Password..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
-                Signup
-              </Link>
-            </Typography>
-            {loading ? <Spinner /> : null}
-          </Box>
-        </Card>
-      </SignUpContainer>
-    </>
+                Sign In
+              </button>
+
+              <p className="text-center text-gray-600">
+                Don&apos;t have an account?{" "}
+                <Link
+                  to={"/signup"}
+                  className="text-blue-600 hover:text-blue-500 font-medium"
+                >
+                  Sign up now
+                </Link>
+              </p>
+              {loading && <Spinner />}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default SplitLoginPage;

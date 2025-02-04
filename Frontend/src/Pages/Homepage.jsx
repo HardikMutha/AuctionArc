@@ -5,10 +5,9 @@ import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid2";
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from "react-infinite-scroll-component";
 import "../styles/Homepage.css";
-import Spinner from "../components/Spinner"
+import Spinner from "../components/Spinner";
 
 const Homepage = () => {
   const limit = 3;
@@ -25,23 +24,24 @@ const Homepage = () => {
         `http://localhost:3000/all-products-infinite-scroll?page=${page}&limit=${limit}`,
         { withCredentials: true }
       );
-      
+
       console.log(response.data);
-      
-      if (response.data.length === 0) {
+
+      if (response.data.length == 0) {
         setHasMore(false);
       } else {
-        setAllProducts(prevProducts => [...prevProducts, ...response.data]);
-        setPage(prevPage => prevPage + 1);
+        setAllProducts((prevProducts) => [...prevProducts, ...response.data]);
+        setPage((prevPage) => prevPage + 1);
       }
     } catch (err) {
       console.log(err);
       toast.error("Error Fetching the Products, Please Try again Later");
     }
   };
-  
+
   useEffect(() => {
     fetchProducts();
+    setHasMore(false);
   }, []); // Empty dependency array to run only on initial mount
 
   // Filter products based on search query
@@ -52,8 +52,8 @@ const Homepage = () => {
   return (
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="mt-[3vw]">
-        <h1 className="text-5xl font-semibold text-center m-10 font-[]">
+      <div className="pt-[3vw] bg-zinc-600">
+        <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">
           All Products
         </h1>
         <Box
@@ -70,12 +70,16 @@ const Homepage = () => {
             dataLength={filteredProducts.length}
             next={fetchProducts}
             hasMore={hasMore}
-            loader={<Spinner/>}
-            endMessage={<p className = "m-20 font-extrabold">No more Products Found</p>}
+            loader={<Spinner />}
+            endMessage={
+              <p className="m-20 font-bold text-lg text-center">
+                You have Reached the End !!
+              </p>
+            }
           >
-            <Box container spacing={4}>
+            <Box spacing={4} sx={{ width: "80vw" }}>
               {filteredProducts.map((product) => (
-                <Box item key={product._id}>
+                <Box item key={product._id} marginX={"auto"}>
                   <ProductCard productDetails={product} />
                 </Box>
               ))}

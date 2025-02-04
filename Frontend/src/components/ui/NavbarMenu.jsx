@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-// import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { Link } from "react-router-dom";
 import LogoutModal from "../LogoutModal";
 import { MdAccountCircle } from "react-icons/md";
@@ -18,7 +18,7 @@ export default function BasicMenu(props) {
   };
 
   return (
-    <div>
+    <div className="mt-1">
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -27,15 +27,12 @@ export default function BasicMenu(props) {
         onClick={handleClick}
         sx={{ marginLeft: "7px", textTransform: "none" }}
       >
-        <MdAccountCircle
-          size={"2em"}
-          color={props.nice === "true" ? "gray" : "white"}
-        />
+        <MdAccountCircle size={"2em"} color={"rgb(212 212 216)"} />
         <span
           className={
             props.nice === "true"
-              ? "text-gray-600 ml-7 text-lg"
-              : "text-white ml-2 "
+              ? "text-zinc-200 ml-7 text-lg"
+              : "text-zinc-200 ml-2 "
           }
         >
           Profile

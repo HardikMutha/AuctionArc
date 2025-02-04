@@ -1,127 +1,35 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormLabel from "@mui/material/FormLabel";
-import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router";
+import LoginContext from "../contexts/LoginContext";
 import axios from "axios";
 import Spinner from "../components/Spinner";
-import LoginContext from "../contexts/LoginContext";
+import { toast } from "react-toastify";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  [theme.breakpoints.up("sm")]: {
-    width: "450px",
-  },
-}));
-
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
-  backgroundColor: "rgba(249,136,102,0.7)",
-  // backgroundImage:
-  //   "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-  backgroundRepeat: "no-repeat",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-  },
-}));
-
-export default function Signup() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState("");
-  const [usernameError, setUsernameError] = React.useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+const SplitSignupPage = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const login = React.useContext(LoginContext);
+  const login = useContext(LoginContext);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    username: "",
+    email: "",
+    password: "",
+  });
 
-  const validateInputs = () => {
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const name = document.getElementById("name");
-    const username = document.getElementById("username");
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage("Please enter a valid email address.");
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage("");
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage("Password must be at least 6 characters long.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
-    }
-
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage("Name is required.");
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage("");
-    }
-    if (!username.value || username.value.length < 1) {
-      setUsernameError(true);
-      setUsernameErrorMessage("Username is required.");
-      isValid = false;
-    } else {
-      setUsernameError(false);
-      setUsernameErrorMessage("");
-    }
-
-    return isValid;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const data = new FormData(event.currentTarget);
     const userdata = {
-      name: data.get("name"),
-      username: data.get("username"),
-      email: data.get("email"),
-      password: data.get("password"),
+      name: formData.fullName,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
     };
     try {
       const response = await axios.post(
@@ -139,129 +47,170 @@ export default function Signup() {
       if (err.response?.status == 409) {
         toast.error(err.response.data.message);
       } else toast.error("An Error Occured Please try again");
-      document.getElementById("email").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("name").value = "";
-      document.getElementById("username").value = "";
+      setFormData({ fullName: "", username: "", email: "", password: "" });
       setLoading(false);
     }
   };
 
   return (
-    <>
-      {/* <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      /> */}
-      <CssBaseline enableColorScheme />
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* Left Side - App Info */}
+      <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-8 lg:p-12">
+        <div className="h-full flex flex-col justify-center max-w-xl mx-auto text-white">
+          <h1 className="text-4xl lg:text-4xl font-bold mb-8 text-center">
+            Join Auction-Arc Today
+          </h1>
 
-      <SignUpContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-            className="text-center"
-          >
-            <p className="font-semibold">Sign up</p>
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
-              <TextField
-                autoComplete="name"
-                name="name"
-                required
-                fullWidth
-                id="name"
-                placeholder="Jon Snow"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <TextField
-                autoComplete="username"
-                name="username"
-                required
-                fullWidth
-                id="username"
-                placeholder="jonsnow123"
-                error={usernameError}
-                helperText={usernameErrorMessage}
-                color={usernameError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="Password"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-              style={{ marginTop: "25px" }}
-            >
-              Sign up
-            </Button>
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography sx={{ textAlign: "center" }}>
-              Already have an account?{" "}
-              <Link
-                href="../login"
-                variant="body2"
-                sx={{ alignSelf: "center" }}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <div className="bg-blue-500/20 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">
+                  🌟 Start Bidding Instantly
+                </h3>
+                <p className="text-blue-100">
+                  Create your account and dive into a world of exclusive
+                  auctions. Start bidding on unique items from verified sellers
+                  worldwide.
+                </p>
+              </div>
+
+              <div className="bg-blue-500/20 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">
+                  📱 Cross-Platform Access
+                </h3>
+                <p className="text-blue-100">
+                  Access your account from any device. Set up your Account and
+                  Start Bidding from Anywhere.
+                </p>
+              </div>
+
+              <div className="bg-blue-500/20 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">
+                  🏆 Exclusive Benefits
+                </h3>
+                <p className="text-blue-100">
+                  Get access to special auctions, early notifications, and
+                  premium features available only to Rada Boyz.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Signup Form */}
+      <div className="w-full lg:w-1/2 bg-gray-50">
+        <div className="h-full flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">
+                Create Account
+              </h2>
+              <p className="mt-2 text-gray-600">
+                Join our community of auction enthusiasts
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  required
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="johndoe123"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="john@example.com"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
               >
-                Login
-              </Link>
-            </Typography>
-            {loading ? <Spinner /> : null}
-          </Box>
-        </Card>
-      </SignUpContainer>
-    </>
+                Create Account
+              </button>
+
+              <p className="text-center text-gray-600">
+                Already have an account?{" "}
+                <Link
+                  to={"/login"}
+                  className="text-blue-600 hover:text-blue-500 font-medium"
+                >
+                  Sign in
+                </Link>
+              </p>
+              {loading && <Spinner />}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default SplitSignupPage;

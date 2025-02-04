@@ -22,6 +22,7 @@ const style = {
   p: 4,
 };
 
+// eslint-disable-next-line react/prop-types
 export default function CustomModal({ productid }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
