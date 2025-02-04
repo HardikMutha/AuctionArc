@@ -3,7 +3,6 @@ import * as React from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-// import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { Link } from "react-router-dom";
 import LogoutModal from "../LogoutModal";
 import { MdAccountCircle } from "react-icons/md";
@@ -28,12 +27,12 @@ export default function BasicMenu(props) {
         onClick={handleClick}
         sx={{ marginLeft: "7px", textTransform: "none" }}
       >
-        <MdAccountCircle size={"2em"} color={"black"} />
+        <MdAccountCircle size={"2em"} color={"rgb(212 212 216)"} />
         <span
           className={
             props.nice === "true"
-              ? "text-black ml-7 text-lg"
-              : "text-black ml-2 "
+              ? "text-zinc-200 ml-7 text-lg"
+              : "text-zinc-200 ml-2 "
           }
         >
           Profile

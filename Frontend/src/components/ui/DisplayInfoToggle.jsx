@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
-import DashboardTable from "./Table";
+import DashboardTable from "./DashboardTable";
 
 const DisplayInfoToggle = (props) => {
   const [isExpanded, setIsExpanded] = useState(props.state);

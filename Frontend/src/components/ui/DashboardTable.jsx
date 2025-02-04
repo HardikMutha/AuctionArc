@@ -25,6 +25,14 @@ export default function DashboardTable() {
     fetchData();
   }, [page]);
 
+  function getImageURL(url) {
+    if (!url) return null;
+    const tempURL = url.split("upload/");
+    const newURL = tempURL[0]
+      .concat("upload/c_thumb,h_150,w_150/r_max/")
+      .concat(tempURL[1]);
+    return newURL;
+  }
   return (
     <>
       <div className="w-full p-6 bg-gray-50 min-h-[50vh]">
@@ -39,9 +47,18 @@ export default function DashboardTable() {
             {productData.map((product, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden border border-gray-100"
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-100"
               >
                 <div className="p-6">
+                  <img
+                    src={getImageURL(
+                      product.images && product.images.length
+                        ? product.images[0]
+                        : null
+                    )}
+                    alt="none"
+                    className="m-auto mb-5"
+                  />
                   <div className="flex justify-between items-start mb-4">
                     <h2 className="text-xl font-semibold text-gray-800">
                       {product.name}

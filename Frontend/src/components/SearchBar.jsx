@@ -45,11 +45,7 @@ export default function SearchBar({ setsearchQuery }) {
               endAdornment: (
                 <InputAdornment position="start">
                   <button type="submit">
-                    <SearchIcon
-                      sx={{
-                        color: "#FF5A5F",
-                      }}
-                    />
+                    <SearchIcon />
                   </button>
                 </InputAdornment>
               ),

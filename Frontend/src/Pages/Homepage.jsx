@@ -41,6 +41,7 @@ const Homepage = () => {
 
   useEffect(() => {
     fetchProducts();
+    setHasMore(false);
   }, []); // Empty dependency array to run only on initial mount
 
   // Filter products based on search query
@@ -51,7 +52,7 @@ const Homepage = () => {
   return (
     <>
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="mt-[3vw]">
+      <div className="pt-[3vw] bg-zinc-600">
         <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">
           All Products
         </h1>
