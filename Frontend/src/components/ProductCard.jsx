@@ -23,6 +23,7 @@ const ProductCard = ({ productDetails }) => {
   const userWishList = user?.wishList;
   const iscontainedInWishList = userWishList?.includes(productDetails._id);
   const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
+  const [currentPrice, setCurrentPrice] = useState(0);
 
   function getImageURL(url) {
     if (!url) return null;
@@ -65,6 +66,14 @@ const ProductCard = ({ productDetails }) => {
     }
   }
 
+  const fetchCurrentPrice = async () => {
+    const response = await axios.get(
+      `http://localhost:3000/get-current-price/${productDetails._id}`
+    );
+    // console.log(response.data.price);
+    setCurrentPrice(response.data.price);
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -80,6 +89,7 @@ const ProductCard = ({ productDetails }) => {
       }
     };
     fetchUser();
+    fetchCurrentPrice();
   }, []);
 
   return (
@@ -159,7 +169,7 @@ const ProductCard = ({ productDetails }) => {
             </Box>
             <Box textAlign="right" display={{ md: "block", xs: "none" }}>
               <Typography variant="h6" fontWeight={400}>
-                Current Price - $ {productDetails.listingPrice}
+                Current Price - $ {currentPrice}
               </Typography>
               <Typography variant="h6" fontWeight={400}>
                 Listed At - $ {productDetails.listingPrice}

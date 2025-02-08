@@ -11,6 +11,7 @@ import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
 import { toast } from "react-toastify";
 import axios from "axios";
+import UserWishlist from "../src/Pages/UserWishlist"
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
@@ -56,6 +57,7 @@ function App() {
             <Route path="/dashboard" element={<Userdashboard />} />
             <Route path="/sell-new-product" element={<SellAProduct />} />
             <Route path="/products/:id" element={<ProductPage />} />
+            <Route path="/wishlist/" element={<UserWishlist />} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

@@ -45,6 +45,6 @@ const connectDB = async () => {
 
 connectDB();
 
-app.get("/*", async (req, res) => {
-  res.status(404).send("Invalid URL");
-});
+// app.get("/*", async (req, res) => {
+//   return res.status(404).send("Invalid URL");
+// });
