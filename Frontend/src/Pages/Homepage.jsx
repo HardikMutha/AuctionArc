@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import LoginContext from "../contexts/LoginContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -17,42 +17,60 @@ const Homepage = () => {
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
 
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/all-products-infinite-scroll?page=${page}&limit=${limit}`,
-        { withCredentials: true }
-      );
-
-      console.log(response.data);
-
-      if (response.data.length == 0) {
-        setHasMore(false);
-      } else {
-        setAllProducts((prevProducts) => [...prevProducts, ...response.data]);
-        setPage((prevPage) => prevPage + 1);
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Error Fetching the Products, Please Try again Later");
+  const debouncedFetchProducts = useCallback(() => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
     }
-  };
+
+    const newTimeoutId = setTimeout(async () => {
+      if (isLoading) return;
+
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/all-products-infinite-scroll?page=${page}&limit=${limit}`,
+          { withCredentials: true }
+        );
+
+        if (response.data.length === 0) {
+          setHasMore(false);
+        } else {
+          setAllProducts((prevProducts) => [...prevProducts, ...response.data]);
+          setPage((prevPage) => prevPage + 1);
+        }
+      } catch (err) {
+        console.log(err);
+        toast.error("Error Fetching the Products, Please Try again Later");
+      } finally {
+        setIsLoading(false);
+      }
+    }, 1000);
+
+    setTimeoutId(newTimeoutId);
+  }, [page, isLoading, timeoutId]);
 
   useEffect(() => {
-    fetchProducts();
-    setHasMore(false);
-  }, []); // Empty dependency array to run only on initial mount
+    debouncedFetchProducts();
+    setHasMore(true);
 
-  // Filter products based on search query
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
+
   const filteredProducts = AllProducts.filter((product) =>
     product.name.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
 
   return (
-    <>
+    <div className="min-h-screen bg-zinc-600">
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="pt-[3vw] bg-zinc-600">
+      <div className="pt-[3vw]">
         <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">
           All Products
         </h1>
@@ -64,11 +82,12 @@ const Homepage = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            overflow: "hidden",
           }}
         >
           <InfiniteScroll
             dataLength={filteredProducts.length}
-            next={fetchProducts}
+            next={debouncedFetchProducts}
             hasMore={hasMore}
             loader={<Spinner />}
             endMessage={
@@ -76,6 +95,8 @@ const Homepage = () => {
                 You have Reached the End !!
               </p>
             }
+            scrollThreshold={0.8}
+            style={{ overflow: "hidden" }}
           >
             <Box spacing={4} sx={{ width: "80vw" }}>
               {filteredProducts.map((product) => (
@@ -87,7 +108,7 @@ const Homepage = () => {
           </InfiniteScroll>
         </Box>
       </div>
-    </>
+    </div>
   );
 };
 
