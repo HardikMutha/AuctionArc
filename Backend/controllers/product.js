@@ -182,46 +182,89 @@ const getProductPrice = async (req, res) => {
   }
 };
 
+// const placeBid = async (req, res) => {
+//   const productId = req.params?.id;
+//   if (!req.body.bidAmount)
+//     return res.status(400).json({ message: "No Bid Amount Specified" });
+//   try {
+//     const product = await productModel.findById(productId);
+//     if (!product) return res.status(404).json({ message: "Product Not Found" });
+//     const userid = req.user?.id;
+//     const foundUser = await userModel.findById(userid);
+//     const newBid = new bidModel({
+//       bidder: userid,
+//       bidAmount: req.body.bidAmount,
+//       bidDate: Date.now(),
+//     });
+//     const bidId = newBid._id;
+//     if (product.bidHistory.length == 0) {
+//       await newBid.save();
+//       product.bidHistory.push(bidId);
+//       foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
+//       await foundUser.save();
+//       await product.save();
+//       return res.status(200).json({ message: "Bid Placed Successfully" });
+//     } else {
+//       if (
+//         req.body.bidAmount <
+//         product.bidHistory[product.bidHistory.length - 1].bidAmount
+//       ) {
+//         return res.status(400).json({ message: "Invalid Bid Amount" });
+//       } else {
+//         await newBid.save();
+//         product.bidHistory.push(newBid);
+//         foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
+//         await foundUser.save();
+//         await product.save();
+//         return res.status(200).json({ message: "Bid Placed Successfully" });
+//       }
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(404).send("Invalid Product Id");
+//   }
+// };
+
 const placeBid = async (req, res) => {
-  const productId = req.params?.id;
-  if (!req.body.bidAmount)
+  const productId = req.params.id;
+  const { bidAmount } = req.body;
+
+  if (!bidAmount) {
     return res.status(400).json({ message: "No Bid Amount Specified" });
+  }
+
   try {
-    const product = await productModel.findById(productId);
+    const product = await productModel.findById(productId).populate("bidHistory");
     if (!product) return res.status(404).json({ message: "Product Not Found" });
+
     const userid = req.user?.id;
     const foundUser = await userModel.findById(userid);
+
     const newBid = new bidModel({
       bidder: userid,
-      bidAmount: req.body.bidAmount,
+      bidAmount,
       bidDate: Date.now(),
     });
-    const bidId = newBid._id;
-    if (product.bidHistory.length == 0) {
-      await newBid.save();
-      product.bidHistory.push(bidId);
-      foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-      await foundUser.save();
-      await product.save();
-      return res.status(200).json({ message: "Bid Placed Successfully" });
-    } else {
-      if (
-        req.body.bidAmount <
-        product.bidHistory[product.bidHistory.length - 1].bidAmount
-      ) {
-        return res.status(400).json({ message: "Invalid Bid Amount" });
-      } else {
-        await newBid.save();
-        product.bidHistory.push(newBid);
-        foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-        await foundUser.save();
-        await product.save();
-        return res.status(200).json({ message: "Bid Placed Successfully" });
-      }
+
+    const lastBid = product.bidHistory.length
+      ? await bidModel.findById(product.bidHistory[product.bidHistory.length - 1])
+      : null;
+
+    if (lastBid && bidAmount <= lastBid.bidAmount) {
+      return res.status(400).json({ message: "Bid must be higher than the current highest bid." });
     }
+
+    await newBid.save();
+    product.bidHistory.push(newBid._id);
+    foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
+
+    await foundUser.save();
+    await product.save();
+
+    return res.status(200).json({ message: "Bid Placed Successfully" });
   } catch (err) {
-    console.log(err);
-    return res.status(404).send("Invalid Product Id");
+    console.error(err);
+    return res.status(500).send("Server Error");
   }
 };
 

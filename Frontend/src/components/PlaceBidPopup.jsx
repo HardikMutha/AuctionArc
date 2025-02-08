@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 function PlaceBidPopup(props) {
   const product = props.product;
-
+  const currentPrice = props.currentPrice;
   // Ensure product exists, and provide default values if not
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
@@ -46,6 +46,7 @@ function PlaceBidPopup(props) {
       if (response.status === 200) {
         toast.success("Bid Placed Successfully");
         props.setBidPopup(false); // Close the popup on success
+        window.location.reload();
         // location.reload();
       } else {
         toast.error("Failed to place bid. Please try again.");
@@ -141,7 +142,7 @@ function PlaceBidPopup(props) {
             value={typeof price === "number" ? price : 0}
             onChange={handleSliderChange}
             aria-labelledby="price-slider"
-            min={listingPrice}
+            min={currentPrice}
             max={maxPrice}
             step={10}
             sx={{
