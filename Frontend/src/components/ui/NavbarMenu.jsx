@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import LogoutModal from "../LogoutModal";
 import { MdAccountCircle } from "react-icons/md";
 
-export default function BasicMenu(props) {
+export default function NavbarMenu(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {

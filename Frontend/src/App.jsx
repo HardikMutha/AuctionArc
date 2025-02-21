@@ -11,7 +11,7 @@ import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
 import { toast } from "react-toastify";
 import axios from "axios";
-import UserWishlist from "../src/Pages/UserWishlist"
+import UserWishlist from "../src/Pages/UserWishlist";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);

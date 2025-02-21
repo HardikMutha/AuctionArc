@@ -68,9 +68,9 @@ const Homepage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-zinc-600">
+    <div className="bg-zinc-600 min-h-[100vh]">
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
-      <div className="pt-[3vw]">
+      <div className="pt-[5vw] min-h-[100vh]">
         <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">
           All Products
         </h1>
@@ -88,7 +88,7 @@ const Homepage = () => {
           <InfiniteScroll
             dataLength={filteredProducts.length}
             next={debouncedFetchProducts}
-            hasMore={hasMore}
+            hasMore={false}
             loader={<Spinner />}
             endMessage={
               <p className="m-20 font-bold text-lg text-center">

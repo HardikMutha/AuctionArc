@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
 import Navbar from "./Navbar";
-import DisplayInfoToggle from "./ui/DisplayInfoToggle";
 
 const Wishlist = ({ data }) => {
   return (

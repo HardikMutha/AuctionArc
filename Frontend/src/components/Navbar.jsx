@@ -22,11 +22,13 @@ import {
   Menu as MenuIcon,
   Search as SearchIcon,
   ShoppingBag as ProductIcon,
+  Dashboard as DashboardIcon,
 } from "@mui/icons-material";
 import { CiHeart } from "react-icons/ci";
 import { useContext } from "react";
-import BasicMenu from "./ui/NavbarMenu";
+import NavbarMenu from "./ui/NavbarMenu";
 import LoginContext from "../contexts/LoginContext";
+import LogoutModal from "./LogoutModal";
 
 // Styled search component
 const Search = styled("div")(({ theme }) => ({
@@ -93,12 +95,47 @@ const Navbar = ({ setsearchQuery }) => {
       link: "/wishlist",
     },
   ];
+  const menuItems2 = [
+    {
+      text: "Sell a Product",
+      icon: <ProductIcon sx={{ color: "black" }} />,
+      link: "/sell-new-product",
+    },
+    {
+      text: "Wishlist",
+      icon: <CiHeart color="black" size={"1.3em"} />,
+      link: "/wishlist",
+    },
+  ];
+
+  const profileItems = [
+    {
+      text: "Dashboard",
+      icon: <DashboardIcon color="black" size={"1.3rem"} />,
+      link: "/dashboard",
+    },
+  ];
+
+  const profileOptions = (
+    <Box>
+      <List>
+        {profileItems.map((item) => (
+          <Link key={item.text} to={item.link}>
+            <ListItem button key={item.text}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          </Link>
+        ))}
+      </List>
+    </Box>
+  );
 
   const login = (
     <Link to={"/login"}>
       <Button
         sx={{
-          color: "black",
+          color: "rgb(212 212 216)",
           ml: 2,
         }}
       >
@@ -108,16 +145,30 @@ const Navbar = ({ setsearchQuery }) => {
   );
 
   const drawer = (
-    <Box sx={{ width: 250 }} role="presentation">
+    <Box
+      sx={{
+        width: 250,
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
+      role="presentation"
+    >
       <List>
-        {menuItems.map((item) => (
-          <ListItem button key={item.text}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
+        {menuItems2.map((item) => (
+          <Link to={item.link} key={item.text}>
+            <ListItem button key={item.text}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          </Link>
         ))}
+        {loginContext.isLoggedIn ? profileOptions : login}
       </List>
-      {loginContext.isLoggedIn ? <BasicMenu nice={"true"} /> : login}
+      <List sx={{ marginBottom: "10px" }}>
+        <LogoutModal />
+      </List>
     </Box>
   );
 
@@ -186,7 +237,7 @@ const Navbar = ({ setsearchQuery }) => {
             </Box>
           ) : null}
 
-          {loginContext.isLoggedIn ? <BasicMenu /> : login}
+          {loginContext.isLoggedIn ? <NavbarMenu /> : login}
         </Toolbar>
       </AppBar>
 

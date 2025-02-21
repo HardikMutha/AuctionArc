@@ -95,7 +95,7 @@ const ProductCard = ({ productDetails }) => {
   return (
     <Card
       sx={{
-        maxWidth: { lg: "70%", md: "100%", sm: "75%", xs: "68%" },
+        maxWidth: { lg: "70%", md: "100%", sm: "90%", xs: "90%" },
         mx: { xs: "auto" },
         my: 2,
         p: 2,
