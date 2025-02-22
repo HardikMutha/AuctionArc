@@ -68,7 +68,9 @@ const Homepage = () => {
   );
 
   return (
-    <div className="bg-zinc-600 min-h-[100vh]">
+    // <div className="min-h-[100vh] bg-[radial-gradient(circle_at_top,_#1a1a2e,_#16213e)]">
+    // <div className="min-h-[100vh] bg-gradient-to-t from-[#ffffff] to-[#f8fae3]">
+    <div className="min-h-[100vh] bg-gradient-to-t from-[#f8f9fa] to-[#d9ecef]">
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
       <div className="pt-[5vw] min-h-[100vh]">
         <h1 className="text-5xl font-semibold text-center m-2 pt-[4vh] mb-10">

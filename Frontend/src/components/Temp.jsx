@@ -1,12 +1,15 @@
+// This is test component and can be used to test
+// different designs. the route is /temp;
+
 import { useState } from "react";
 import { Image as ImageIcon, X } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Spinner from "../components/Spinner";
+import Spinner from "./Spinner";
 import { useNavigate } from "react-router";
 import { IoArrowBack } from "react-icons/io5";
 
-export default function SellAProduct() {
+export default function ProductListingForm() {
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -39,6 +42,7 @@ export default function SellAProduct() {
       navigate(`/products/${response.data.id}`);
     } catch (err) {
       console.log(err);
+      console.log(err.response);
       if (err.response?.status == 409) {
         toast.error(err.response.data.message);
       } else toast.error("An Error Occured Please try again");
@@ -52,7 +56,6 @@ export default function SellAProduct() {
     "Home & Garden",
     "Books",
     "Sports",
-    "Car",
     "Other",
   ];
 
@@ -77,7 +80,7 @@ export default function SellAProduct() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-2 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-center text-4xl pb-3 font-semibold">Auction Arc</h1>
+      <h1 className="text-center text-4xl pb-5 font-semibold">Auction Arc</h1>
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg hover:shadow-cyan-200 p-6 space-y-6 border-[1px] border-cyan-500">
           <div className="text-center">
@@ -91,7 +94,7 @@ export default function SellAProduct() {
 
           <form
             onSubmit={handleSubmit}
-            className="space-y-4"
+            className="space-y-5"
             encType="multipart/form-data"
           >
             <div>
@@ -116,7 +119,7 @@ export default function SellAProduct() {
               </label>
               <textarea
                 required
-                rows={3}
+                rows={4}
                 className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Describe your product..."
                 name="description"
@@ -237,7 +240,7 @@ export default function SellAProduct() {
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-4">
               <button
                 type="submit"
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
@@ -245,18 +248,11 @@ export default function SellAProduct() {
                 Create Listing
               </button>
               <div className="flex justify-center">
-                <button
-                  className="border-2 p-2 mt-5 border-black rounded-lg font-semibold text-sm"
-                  onClick={() => {
-                    navigate("/");
-                  }}
-                  type="button"
-                >
+                <button className="border-2 p-2 mt-5 border-black rounded-lg font-semibold">
                   <IoArrowBack
-                    size={"1.2rem"}
+                    size={"1.3rem"}
                     style={{
                       display: "inline",
-                      marginRight: "2px",
                     }}
                   />
                   Go Back
