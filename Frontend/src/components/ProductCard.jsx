@@ -99,8 +99,12 @@ const ProductCard = ({ productDetails }) => {
         mx: { xs: "auto" },
         my: 2,
         p: 2,
-        boxShadow: 3,
-        borderRadius: 3,
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        backdropFilter: "blur(200px)",
+        boxShadow: "0 4px 10px rgba(0,0,0, 0.1)",
+        ":hover": { boxShadow: "2px 6px 15px rgba(6,172,212, 0.4)" },
+        border: "2px solid rgba(0, 217, 255, 0.4)",
+        borderRadius: "15px",
       }}
     >
       <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
@@ -169,10 +173,16 @@ const ProductCard = ({ productDetails }) => {
             </Box>
             <Box textAlign="right" display={{ md: "block", xs: "none" }}>
               <Typography variant="h6" fontWeight={400}>
-                Current Price - $ {currentPrice}
+                Current Price -{" "}
+                <span className="text-green-600 font-semibold">
+                  $ {currentPrice}
+                </span>
               </Typography>
               <Typography variant="h6" fontWeight={400}>
-                Listed At - $ {productDetails.listingPrice}
+                Listed At -{" "}
+                <span className="text-red-600 font-semibold">
+                  $ {productDetails.listingPrice}
+                </span>
               </Typography>
             </Box>
           </Stack>
@@ -188,6 +198,10 @@ const ProductCard = ({ productDetails }) => {
               color="primary"
               size="large"
               onClick={() => navigate(`/products/${productDetails._id}`)}
+              sx={{
+                bgcolor: "rgb(6 182 212)",
+                ":hover": { bgcolor: "rgb(8 145 178)" },
+              }}
             >
               View More
             </Button>
