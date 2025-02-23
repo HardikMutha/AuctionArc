@@ -40,7 +40,7 @@ productSchema.statics.getProductPrice = async function (productId) {
       foundProduct.bidHistory[foundProduct.bidHistory.length - 1].bidAmount;
     return bidAmt;
   } catch (err) {
-    return null;
+    return foundProduct.listingPrice;
   }
 };
 

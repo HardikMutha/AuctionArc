@@ -55,10 +55,19 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Userdashboard />} />
-            <Route path="/sell-new-product" element={<SellAProduct />} />
+            <Route
+              path="/dashboard"
+              element={isLoggedIn ? <Userdashboard /> : <Login />}
+            />
+            <Route
+              path="/sell-new-product"
+              element={isLoggedIn ? <SellAProduct /> : <Login />}
+            />
             <Route path="/products/:id" element={<ProductPage />} />
-            <Route path="/wishlist/" element={<UserWishlist />} />
+            <Route
+              path="/wishlist/"
+              element={isLoggedIn ? <UserWishlist /> : <Login />}
+            />
             <Route path="/temp/" element={<Temp />} />
           </Routes>
         </BrowserRouter>
