@@ -42,4 +42,15 @@ const userSchema = new Schema({
   ],
 });
 
+userSchema.statics.getUserBidsFromId = async function (userId) {
+  try {
+    const foundUser = await this.findById(userId).populate("ongoingBids");
+    const userBids = foundUser.ongoingBids;
+    return userBids;
+  } catch (err) {
+    console.err(err);
+    return null;
+  }
+};
+
 module.exports = mongoose.model("User", userSchema);

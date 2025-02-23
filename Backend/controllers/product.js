@@ -24,6 +24,7 @@ const uploadProduct = async (req, res) => {
   };
   const finalProduct = new productModel(newProduct);
   try {
+    finalProduct.currentPrice = finalProduct.listingPrice;
     const savedProduct = await finalProduct.save();
     const currentUser = await userModel.findById(userid);
     currentUser.products.push(savedProduct._id);

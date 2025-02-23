@@ -5,8 +5,10 @@ const {
   checkProductOwner,
 } = require("../controllers/jwt_token_generation");
 
-const { getUserFromId } = require("../controllers/user");
+const { getUserFromId, getUserBidsFromId } = require("../controllers/user");
 
 userRoutes.route("/user-details/:id").get(getUserFromId);
+
+userRoutes.route("/get-user-bids/:userid").get(getUserBidsFromId);
 
 module.exports = { userRoutes };

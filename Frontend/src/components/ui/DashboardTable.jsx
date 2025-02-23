@@ -92,7 +92,9 @@ export default function DashboardTable() {
                         <div className="flex items-center gap-2">
                           <TrendingUp className="h-4 w-4 text-green-500" />
                           <span className="font-medium text-gray-800 max-w-[200px] truncate">
-                            {product.currentPrice}
+                            {product.currentPrice === 0
+                              ? product.listingPrice
+                              : product.currentPrice}
                           </span>
                         </div>
                       </div>

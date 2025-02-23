@@ -1,4 +1,6 @@
 const userModel = require("../models/user");
+const productModel = require("../models/product");
+const bidModel = require("../models/bids");
 
 const getUserFromId = async (req, res) => {
   const { id } = req.params;
@@ -14,4 +16,41 @@ const getUserFromId = async (req, res) => {
   }
 };
 
-module.exports = { getUserFromId };
+// This backend route is quite complex and involves lot of error handling.
+// It returns ans array of objects, where each object contains
+// {productDetails, BidInfo}
+
+const getUserBidsFromId = async (req, res) => {
+  const { userid } = req.params;
+  if (!userid) return res.status(404).json({ message: "Invalid User Id" });
+  try {
+    const userBids = await userModel.getUserBidsFromId(userid);
+    if (!userBids) return res.status(404).json({ message: "Invalid User Id" });
+    var r1 = [];
+
+    for (let i = 0; i < userBids.length; i++) {
+      const foundProduct = await productModel.getProductbyId(
+        userBids[i]?.product
+      );
+      const foundBid = await bidModel.getBidById(userBids[i]?.Bid);
+      const resObject = { product: foundProduct, bid: foundBid };
+      r1.push(resObject);
+    }
+
+    // New Learning - forEach does not support asynchronous operations. therefore it always returns empty array
+
+    // await userBids.forEach(async (userBid) => {
+    //   const foundProduct = await productModel.getProductbyId(userBid?.product);
+    //   const foundBid = await bidModel.getBidById(userBid?.Bid);
+    //   const resObject = { product: foundProduct, bid: foundBid };
+    //   r1.push(resObject);
+    // });
+
+    return res.status(200).json({ data: r1 });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(404).json({ message: "Invalid User Id" });
+  }
+};
+
+module.exports = { getUserFromId, getUserBidsFromId };

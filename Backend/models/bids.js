@@ -17,4 +17,10 @@ const bidSchema = new Schema({
   },
 });
 
+bidSchema.statics.getBidById = async function (bidId) {
+  const foundBid = await this.findById(bidId);
+  if (!foundBid) throw new Error("Bid not found");
+  return foundBid;
+};
+
 module.exports = mongoose.model("bidModel", bidSchema);

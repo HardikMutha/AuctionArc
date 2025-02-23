@@ -44,4 +44,15 @@ productSchema.statics.getProductPrice = async function (productId) {
   }
 };
 
+productSchema.statics.getProductbyId = async function (productId) {
+  try {
+    const foundProduct = await this.findById(productId);
+    return foundProduct;
+  } catch (err) {
+    console.log(err);
+    throw new Error(err.message);
+  }
+  // if (!foundProduct) return new Error("Product Not Found");
+};
+
 module.exports = mongoose.model("ProductModel", productSchema);
