@@ -21,7 +21,7 @@ const getUserFromId = async (req, res) => {
 // {productDetails, BidInfo}
 
 const getUserBidsFromId = async (req, res) => {
-  const { userid } = req.params;
+  const userid = req.user.id;
   if (!userid) return res.status(404).json({ message: "Invalid User Id" });
   try {
     const userBids = await userModel.getUserBidsFromId(userid);

@@ -11,12 +11,7 @@ const DisplayInfoToggle = (props) => {
   };
 
   return (
-    <div
-      style={{
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-      }}
-      className="border-[#ddd] border-[1px] lg:w-[80%] rounded-lg mx-auto my-[20px] w-[100%]"
-    >
+    <div className="border-[#ddd] border-[1px] lg:w-[80%] rounded-lg mx-auto my-[20px] w-[100%] shadow-lg shadow-cyan-400/20 hover:shadow-xl hover:shadow-cyan-500/20 px-4">
       <div
         onClick={toggleExpand}
         style={{
@@ -49,7 +44,7 @@ const DisplayInfoToggle = (props) => {
           {!(props.type === "My Bids") ? (
             <DashboardTable />
           ) : (
-            <UserBidsComponent />
+            <UserBidsComponent userBids={props.userBids} />
           )}
         </div>
       )}

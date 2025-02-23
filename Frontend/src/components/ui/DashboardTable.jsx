@@ -35,7 +35,7 @@ export default function DashboardTable() {
   }
   return (
     <>
-      <div className="w-full p-6 bg-gray-50 min-h-[50vh]">
+      <div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
         {/* Header Section */}
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">

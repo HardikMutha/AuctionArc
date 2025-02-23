@@ -9,6 +9,6 @@ const { getUserFromId, getUserBidsFromId } = require("../controllers/user");
 
 userRoutes.route("/user-details/:id").get(getUserFromId);
 
-userRoutes.route("/get-user-bids/:userid").get(getUserBidsFromId);
+userRoutes.route("/get-user-bids/").get(authenticateUser, getUserBidsFromId);
 
 module.exports = { userRoutes };

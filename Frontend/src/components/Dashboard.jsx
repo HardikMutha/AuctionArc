@@ -2,8 +2,28 @@
 
 import Navbar from "./Navbar";
 import DisplayInfoToggle from "./ui/DisplayInfoToggle";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Dashboard = ({ data }) => {
+  const [userBids, setUserBids] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/get-user-bids/`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(response.data.data);
+        setUserBids([...response.data.data]);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  }, []);
   return (
     <div>
       <Navbar />
@@ -11,7 +31,7 @@ const Dashboard = ({ data }) => {
         Welcome to {data.username}&apos;s Dashboard
       </h1>
       <DisplayInfoToggle type={"My Listed Products"} state={true} />
-      <DisplayInfoToggle type={"My Bids"} />
+      <DisplayInfoToggle type={"My Bids"} userBids={userBids} />
     </div>
   );
 };
