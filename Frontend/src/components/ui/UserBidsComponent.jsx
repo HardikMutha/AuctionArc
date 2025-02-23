@@ -1,11 +1,6 @@
+import { useNavigate } from "react-router-dom";
 const UserBidsComponent = ({ userBids }) => {
-  const item = {
-    name: "Vintage Watch",
-    bidAmount: 120.5,
-    status: "Winning",
-    auctionEnd: "Feb 10, 2025",
-    totalBids: 15,
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-wrap gap-5">
@@ -49,7 +44,10 @@ const UserBidsComponent = ({ userBids }) => {
               {userBid.product.bidHistory.length}
             </p>
             <p className="flex justify-center">
-              <button className="border-[3px] rounded-md p-2 border-green-600 font-semibold">
+              <button
+                className="border-[3px] rounded-md p-2 border-green-600 font-semibold "
+                onClick={() => navigate(`/products/${userBid.product._id}`)}
+              >
                 Increase Bid
               </button>
             </p>
