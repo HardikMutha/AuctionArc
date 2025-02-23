@@ -70,7 +70,7 @@ const ProductCard = ({ productDetails }) => {
     const response = await axios.get(
       `http://localhost:3000/get-current-price/${productDetails._id}`
     );
-    // console.log(response.data.price);
+    console.log(response.data.price);
     setCurrentPrice(response.data.price);
   };
 
@@ -97,7 +97,7 @@ const ProductCard = ({ productDetails }) => {
       sx={{
         maxWidth: { lg: "70%", md: "100%", sm: "90%", xs: "90%" },
         mx: { xs: "auto" },
-        my: 2,
+        my: 4,
         p: 2,
         backgroundColor: "rgba(255, 255, 255, 0.6)",
         backdropFilter: "blur(200px)",

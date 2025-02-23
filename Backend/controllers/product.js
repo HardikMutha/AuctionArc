@@ -24,6 +24,7 @@ const uploadProduct = async (req, res) => {
   };
   const finalProduct = new productModel(newProduct);
   try {
+    finalProduct.currentPrice = finalProduct.listingPrice;
     const savedProduct = await finalProduct.save();
     const currentUser = await userModel.findById(userid);
     currentUser.products.push(savedProduct._id);
@@ -234,7 +235,9 @@ const placeBid = async (req, res) => {
   }
 
   try {
-    const product = await productModel.findById(productId).populate("bidHistory");
+    const product = await productModel
+      .findById(productId)
+      .populate("bidHistory");
     if (!product) return res.status(404).json({ message: "Product Not Found" });
 
     const userid = req.user?.id;
@@ -247,11 +250,15 @@ const placeBid = async (req, res) => {
     });
 
     const lastBid = product.bidHistory.length
-      ? await bidModel.findById(product.bidHistory[product.bidHistory.length - 1])
+      ? await bidModel.findById(
+          product.bidHistory[product.bidHistory.length - 1]
+        )
       : null;
 
     if (lastBid && bidAmount <= lastBid.bidAmount) {
-      return res.status(400).json({ message: "Bid must be higher than the current highest bid." });
+      return res
+        .status(400)
+        .json({ message: "Bid must be higher than the current highest bid." });
     }
 
     await newBid.save();

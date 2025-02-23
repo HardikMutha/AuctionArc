@@ -35,7 +35,7 @@ export default function DashboardTable() {
   }
   return (
     <>
-      <div className="w-full p-6 bg-gray-50 min-h-[50vh]">
+      <div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
         {/* Header Section */}
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
@@ -92,7 +92,9 @@ export default function DashboardTable() {
                         <div className="flex items-center gap-2">
                           <TrendingUp className="h-4 w-4 text-green-500" />
                           <span className="font-medium text-gray-800 max-w-[200px] truncate">
-                            {product.currentPrice}
+                            {product.currentPrice === 0
+                              ? product.listingPrice
+                              : product.currentPrice}
                           </span>
                         </div>
                       </div>
