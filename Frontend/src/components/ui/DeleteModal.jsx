@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Trash2 } from "lucide-react";
+import Spinner from "../Spinner";
 
 const style = {
   position: "absolute",
@@ -25,15 +26,18 @@ const style = {
 // eslint-disable-next-line react/prop-types
 export default function CustomModal({ productid }) {
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleDelete = async (productid) => {
     try {
+      setLoading(true);
       const response = await axios.post(
         `http://localhost:3000/delete-product/${productid}`,
         null,
         { withCredentials: true }
       );
+      setLoading(false);
       if (response.status == 200) {
         toast.success(response.data.message);
         location.reload();
@@ -109,6 +113,11 @@ export default function CustomModal({ productid }) {
                   No, cancel
                 </button>
               </Typography>
+              {loading ? (
+                <div className="mt-2">
+                  <Spinner />
+                </div>
+              ) : null}
             </div>
           </Box>
         </Fade>

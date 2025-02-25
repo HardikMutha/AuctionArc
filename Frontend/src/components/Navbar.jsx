@@ -23,6 +23,7 @@ import {
   Search as SearchIcon,
   ShoppingBag as ProductIcon,
   Dashboard as DashboardIcon,
+  AccessTime as AccessIcon,
 } from "@mui/icons-material";
 import { CiHeart } from "react-icons/ci";
 import { useContext } from "react";
@@ -71,7 +72,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 // eslint-disable-next-line react/prop-types
-const Navbar = ({ setsearchQuery }) => {
+// const Navbar = ({ setsearchQuery, showSearch }) => {
+const Navbar = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -85,6 +87,12 @@ const Navbar = ({ setsearchQuery }) => {
 
   const menuItems = [
     {
+      text: "Past Auctions",
+      icon: <AccessIcon color="rgb(212 212 216)" size={"1.3em"} />,
+      link: "/temp",
+    },
+
+    {
       text: "Sell a Product",
       icon: <ProductIcon sx={{ color: "rgb(212 212 216)" }} />,
       link: "/sell-new-product",
@@ -96,6 +104,11 @@ const Navbar = ({ setsearchQuery }) => {
     },
   ];
   const menuItems2 = [
+    {
+      text: "Past Auctions",
+      icon: <AccessIcon color="rgb(212 212 216)" size={"1.3em"} />,
+      link: "/temp",
+    },
     {
       text: "Sell a Product",
       icon: <ProductIcon sx={{ color: "black" }} />,
@@ -176,7 +189,6 @@ const Navbar = ({ setsearchQuery }) => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="static"
-        // sx={{ bgcolor: "#FCFAF9", maxHeight: "60px" }}
         sx={{ bgcolor: "rgb(24 24 27)", maxHeight: "60px" }}
       >
         <Toolbar>
@@ -201,28 +213,28 @@ const Navbar = ({ setsearchQuery }) => {
               AUCTION ARC
             </Link>
           </Typography>
-          <Search
-            sx={{
-              borderRadius: "20px",
-              color: "#D7431D",
-              // boxShadow:
-              // "rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;",
-            }}
-          >
-            <SearchIconWrapper>
-              <SearchIcon sx={{ color: "lightblue" }} />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setsearchQuery(e.target.value);
+          {props.showSearch === undefined && (
+            <Search
+              sx={{
+                borderRadius: "20px",
+                color: "#D7431D",
               }}
-              sx={{ color: " rgb(228 228 231)" }}
-            />
-          </Search>
+            >
+              <SearchIconWrapper>
+                <SearchIcon sx={{ color: "lightblue" }} />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  props.setsearchQuery(e.target.value);
+                }}
+                sx={{ color: " rgb(228 228 231)" }}
+              />
+            </Search>
+          )}
           <Box sx={{ flexGrow: 1 }} />
 
           {!isMobile && loginContext.isLoggedIn ? (
