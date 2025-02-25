@@ -55,4 +55,16 @@ productSchema.statics.getProductbyId = async function (productId) {
   // if (!foundProduct) return new Error("Product Not Found");
 };
 
+productSchema.statics.getSoldProducts = async function () {
+  try {
+    const foundProducts = await this.find({ auctionStatus: false })
+      .populate("bidHistory")
+      .populate("soldTo");
+    return foundProducts;
+  } catch (err) {
+    console.log(err);
+    return new Error("An Error Occured Try again later");
+  }
+};
+
 module.exports = mongoose.model("ProductModel", productSchema);

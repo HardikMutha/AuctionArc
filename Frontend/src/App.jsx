@@ -12,7 +12,7 @@ import ProductPage from "./Pages/ProductPage";
 import { toast } from "react-toastify";
 import axios from "axios";
 import UserWishlist from "../src/Pages/UserWishlist";
-import Temp from "./components/Temp";
+import AuctionHistoryPage from "./Pages/AuctionHistory";
 
 function App() {
   const [isLoggedIn, setisLoggedIn] = useState(false);
@@ -68,7 +68,7 @@ function App() {
               path="/wishlist/"
               element={isLoggedIn ? <UserWishlist /> : <Login />}
             />
-            <Route path="/temp/" element={<Temp />} />
+            <Route path="/temp/" element={<AuctionHistoryPage />} />
           </Routes>
         </BrowserRouter>
       </LoginContext.Provider>

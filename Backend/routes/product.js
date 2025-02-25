@@ -21,6 +21,7 @@ const {
   getProductPrice,
   placeBid,
   getProductsInfiniteScroll,
+  getSoldProducts,
 } = require("../controllers/product.js");
 const multer = require("multer");
 const { storage } = require("../Cloudinary.js");
@@ -83,7 +84,11 @@ productRoutes
   .route("/get-current-price/:id")
   .get(checkProduct, getProductPrice);
 
-productRoutes.route("/all-products-infinite-scroll").get(getProductsInfiniteScroll);
+productRoutes
+  .route("/all-products-infinite-scroll")
+  .get(getProductsInfiniteScroll);
+
+productRoutes.route("/get-sold-products").get(getSoldProducts);
 // Placing a Bid
 
 productRoutes
@@ -110,7 +115,7 @@ productRoutes
       return res.status(200).json({ message: "Bid Removed Successfully" });
     } catch (err) {
       console.log(err);
-      res.status(400).json({ message: "Invalid Request Nigga" });
+      res.status(400).json({ message: "Invalid Request " });
     }
   });
 

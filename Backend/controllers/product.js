@@ -2,6 +2,7 @@ const productModel = require("../models/product");
 const userModel = require("../models/user");
 const bidModel = require("../models/bids");
 const mongoose = require("mongoose");
+const { cloudinary } = require("../Cloudinary");
 
 const checkProduct = async (req, res, next) => {
   const productId = req.params.id;
@@ -40,6 +41,12 @@ const uploadProduct = async (req, res) => {
 };
 
 const deleteProduct = async (req, res) => {
+  // function to get modified URL
+  const getURL = (url) => {
+    const temp = url.split("/AuctionArc/");
+    const finalURL = temp[1].split(".");
+    return finalURL[0];
+  };
   const userid = req.user?.id;
   const productId = req.params.id;
   const foundUser = await userModel.findById(userid);
@@ -53,8 +60,13 @@ const deleteProduct = async (req, res) => {
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
   try {
-    await productModel.findByIdAndDelete(productId);
-    return res.status(200).json({ message: "The value has been removed" });
+    const foundProduct = await productModel.findByIdAndDelete(productId);
+    console.log(foundProduct);
+    for (let i = 0; i < foundProduct.images.length; i++) {
+      const newURL = getURL(foundProduct.images[i]);
+      await cloudinary.uploader.destroy(newURL);
+    }
+    return res.status(200).json({ message: "The Product has been removed" });
   } catch (err) {
     return res
       .status(404)
@@ -290,6 +302,16 @@ const getProductsInfiniteScroll = async (req, res) => {
   }
 };
 
+const getSoldProducts = async (req, res) => {
+  try {
+    const foundProducts = await productModel.getSoldProducts();
+    return res.status(200).json({ data: foundProducts });
+  } catch (err) {
+    console.log(err);
+    return res.status(404).json({ message: "An Error Occurred" });
+  }
+};
+
 module.exports = {
   uploadProduct,
   deleteProduct,
@@ -302,4 +324,5 @@ module.exports = {
   getProductPrice,
   placeBid,
   getProductsInfiniteScroll,
+  getSoldProducts,
 };

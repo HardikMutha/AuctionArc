@@ -166,21 +166,30 @@ const ProductCard = ({ productDetails }) => {
                   variant="body"
                   color="textSecondary"
                   fontSize={{ md: "16px", sm: "20px", xs: "14px" }}
+                  sx={{ width: "80%" }}
                 >
                   About - {productDetails.description}
                 </Typography>
               </Stack>
             </Box>
             <Box textAlign="right" display={{ md: "block", xs: "none" }}>
-              <Typography variant="h6" fontWeight={400}>
+              <Typography
+                variant="h6"
+                fontWeight={400}
+                sx={{ width: "6.5em", textAlign: "center" }}
+              >
                 Current Price -{" "}
-                <span className="text-green-600 font-semibold">
+                <span className="text-green-600 font-semibold block">
                   $ {currentPrice}
                 </span>
               </Typography>
-              <Typography variant="h6" fontWeight={400}>
+              <Typography
+                variant="h6"
+                fontWeight={400}
+                sx={{ textAlign: "center" }}
+              >
                 Listed At -{" "}
-                <span className="text-red-600 font-semibold">
+                <span className="text-red-600 font-semibold block">
                   $ {productDetails.listingPrice}
                 </span>
               </Typography>
