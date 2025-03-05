@@ -98,8 +98,8 @@ const ProductCard = ({ productDetails }) => {
       onClick={() => navigate(`/products/${productDetails._id}`)}>
       <Card
         sx={{
-          // maxWidth: { lg: "80%", md: "100%", sm: "90%", xs: "90%" },
-          width: "98%",
+          maxWidth: "80vw",
+          width: "96%",
           mx: { xs: "auto" },
           my: 4,
           p: 2,

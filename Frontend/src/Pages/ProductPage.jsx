@@ -27,6 +27,8 @@ import CssBaseline from "@mui/material/CssBaseline";
 import PlaceBidPopup from "../components/PlaceBidPopup";
 
 export default function ProductPage() {
+  let user = localStorage.getItem("user");
+  user = user ? JSON.parse(user) : null;
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -34,6 +36,9 @@ export default function ProductPage() {
   const theme = useTheme();
   const [currentPrice, setCurrentPrice] = useState(0.0);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const userWishList = user?.wishList;
+  const iscontainedInWishList = userWishList?.includes(id);
+  const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   function getImageURL(url) {
@@ -61,21 +66,55 @@ export default function ProductPage() {
   };
 
   // Adds the product to current user's wishlist
-  const handleWishListClick = async () => {
+  // const handleWishListClick = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       `http://localhost:3000/wish-list/add-to-wishlist/${id}`,
+  //       { id: id },
+  //       // required for token validation
+  //       { withCredentials: true }
+  //     );
+  //     console.log("Item added to wishlist:", response.data);
+  //     toast.success("Item Added to Wishlist");
+  //   } catch (error) {
+  //     console.error("Error adding item to wishlist:", error);
+  //     toast.error("Error Adding Item to Wishlist");
+  //   }
+  // };
+
+  function updateWishList() {
+    wishlist ? removeFromWishlist() : addToWishList();
+  }
+
+  async function addToWishList() {
     try {
       const response = await axios.post(
         `http://localhost:3000/wish-list/add-to-wishlist/${id}`,
-        { id: id },
-        // required for token validation
+        null,
         { withCredentials: true }
       );
-      console.log("Item added to wishlist:", response.data);
-      toast.success("Item Added to Wishlist");
-    } catch (error) {
-      console.error("Error adding item to wishlist:", error);
-      toast.error("Error Adding Item to Wishlist");
+      toast.success(response.data.msg);
+      setaddtoWishlist(true);
+    } catch (err) {
+      console.log(err);
+      if (err.status == 401) toast.warn("Please Login to use Wishlist");
+      else toast.warn(err.response.data);
     }
-  };
+  }
+
+  async function removeFromWishlist() {
+    const response = await axios.post(
+      `http://localhost:3000/wish-list/remove-from-wishlist/${id}`,
+      null,
+      { withCredentials: true }
+    );
+    if (response.status == 200) {
+      toast.success(response.data.msg);
+      setaddtoWishlist(false);
+    } else {
+      toast.error(response.data.msg);
+    }
+  }
 
   const renderBidPopup = () => {
     setBidPopup(true);
@@ -277,18 +316,18 @@ export default function ProductPage() {
 
                 {/* Price and Description */}
                 <Box>
+                  <Typography variant="body1" color="text.secondary">
+                    {product?.description || "Product description"}
+                  </Typography>
                   <Typography
-                    variant={isMobile ? "h5" : "h4"}
+                    variant={isMobile ? "h7" : "h8"}
                     fontWeight="500"
                     gutterBottom
                   >
-                    Listing Price - ${product?.listingPrice || "0.00"}
+                    Listing Price: ${product?.listingPrice || "0.00"}
                     <br />
-                    Current Price - $
+                    Current Price: $
                     {currentPrice || product?.listingPrice || "0.00"}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {product?.description || "Product description"}
                   </Typography>
                 </Box>
 
@@ -312,9 +351,9 @@ export default function ProductPage() {
                         transition: "all 0.3s",
                       },
                     }}
-                    onClick={handleWishListClick} // Attach the click handler
+                    onClick={updateWishList} // Attach the click handler
                   >
-                    Add to Wishlist
+                    {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
                   </Button>
                   <Button
                     variant="contained"
