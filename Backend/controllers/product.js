@@ -136,7 +136,7 @@ const getSimilarProducts = async (req, res) => {
     if (!product)
       return res.status(404).json({ message: "Invalid Product Id" });
     const productCategory = product.category
-      ? product.category.toLowerCase()
+      ? product.category
       : null;
     if (!productCategory) {
       return res

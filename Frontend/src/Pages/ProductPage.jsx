@@ -29,7 +29,7 @@ import PlaceBidPopup from "../components/PlaceBidPopup";
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [similarProducts, setSimilarProducts] = useState(null);
+  const [similarProducts, setSimilarProducts] = useState([]);
   const [bidPopup, setBidPopup] = useState(false);
   const theme = useTheme();
   const [currentPrice, setCurrentPrice] = useState(0.0);
@@ -392,12 +392,13 @@ export default function ProductPage() {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: {
-              xs: "repeat(1, 1fr)", // 1 column for extra small screens
-              sm: "repeat(2, 1fr)", // 2 columns for small screens
-              md: "repeat(3, 1fr)", // 3 columns for medium screens
-              lg: "repeat(3, 1fr)", // 3 columns for large screens
-            },
+            gridTemplateColumns: "repeat(1, 1fr)",
+            // {
+            //   xs: "repeat(1, 1fr)", // 1 column for extra small screens
+            //   sm: "repeat(2, 1fr)", // 2 columns for small screens
+            //   md: "repeat(2, 1fr)", // 3 columns for medium screens
+            //   lg: "repeat(2, 1fr)", // 3 columns for large screens
+            // },
             gap: 8,
           }}
         >
