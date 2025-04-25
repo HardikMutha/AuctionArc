@@ -3,18 +3,12 @@ const jwt = require("jsonwebtoken");
 const productModel = require("../models/product");
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
-
-const createSecretToken = function (id) {
-  return jwt.sign({ id }, process.env.SECRET_HASH_STRING, {
-    expiresIn: 3 * 24 * 60 * 60,
-  });
-};
+const { createSecretToken } = require("../utils/token");
 
 const authenticateUser = (req, res, next) => {
   // console.log("Cookies received by server:", req.headers.cookie); // Log raw cookie header
   // console.log("Parsed Cookies:", req.cookies); // Log parsed cookies
   var token = req.headers?.cookie; // Safely access the token
-
   if (!token) {
     return res.status(401).send("Access Denied: No Token Provided");
   }
@@ -33,7 +27,7 @@ const authenticateUser = (req, res, next) => {
     // Verify the token
     const verifiedUser = jwt.verify(token, process.env.SECRET_HASH_STRING);
     req.user = verifiedUser;
-
+    req.token = token;
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid Token" });

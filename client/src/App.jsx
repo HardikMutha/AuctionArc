@@ -27,18 +27,11 @@ function App() {
         );
         if (response.status == 200) {
           setisLoggedIn(true);
+          console.log(response);
           localStorage.setItem("user", JSON.stringify(response.data));
         }
       } catch (err) {
         console.log(err);
-        if (isFirstTime) {
-          toast.info("Please Login to use all the features", {
-            autoClose: 2000,
-            position: "top-center",
-            theme: "colored",
-          });
-          setIsFirstTime(false);
-        }
       }
     }
     checkLogin();
