@@ -19,9 +19,8 @@ router.get("/logout", (req, res) => {
 });
 
 router.post("/authenticate-user", authenticateUser, async (req, res) => {
-  console.log(req.user.id);
   const foundUser = await userModel.findById(req.user.id);
-  return res.status(200).json(foundUser);
+  return res.status(200).json({ user: foundUser, token: req.token });
 });
 
 router.get("/delete-account", authenticateUser, deleteUser);

@@ -1,28 +1,9 @@
 const User = require("../models/user");
 const { createSecretToken } = require("./jwt_token_generation");
-const { signupSchema, loginSchema } = require("./validate_form");
+const { signupSchema, loginSchema } = require("./Schema");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
-const hashPassword = async (password) => {
-  try {
-    const hash = await bcrypt.hash(password, saltRounds);
-    if (!hash) return;
-    return hash;
-  } catch (err) {
-    console.log(err);
-    return;
-  }
-};
-const matchPassword = async (password, hashed_password) => {
-  try {
-    const result = await bcrypt.compare(password, hashed_password);
-    return result;
-  } catch (err) {
-    console.log("Invalid Password");
-    return false;
-  }
-};
+const { hashPassword, matchPassword } = require("../utils/password");
 
 const createUser = async (req, res) => {
   try {
