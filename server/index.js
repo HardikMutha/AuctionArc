@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 app.use(cors({ credentials: true, origin: true }));
-const { authenticateUser } = require("./controllers/jwt_token_generation");
+const { authenticateUser } = require("./middlewares/user");
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const authRoutes = require("./routes/auth");

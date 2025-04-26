@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState, useCallback } from "react";
-import LoginContext from "../contexts/LoginContext";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ProductCard from "../components/ProductCard";

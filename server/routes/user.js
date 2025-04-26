@@ -1,9 +1,6 @@
 const express = require("express");
 const userRoutes = express.Router();
-const {
-  authenticateUser,
-  checkProductOwner,
-} = require("../controllers/jwt_token_generation");
+const { authenticateUser } = require("../middlewares/user");
 
 const { getUserFromId, getUserBidsFromId } = require("../controllers/user");
 

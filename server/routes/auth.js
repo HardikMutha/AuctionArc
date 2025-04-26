@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
 const { createUser, loginUser, deleteUser } = require("../controllers/auth");
-const { authenticateUser } = require("../controllers/jwt_token_generation");
+const { authenticateUser } = require("../middlewares/user");
 router.post("/signup", createUser);
 router.post("/login", loginUser);
 router.get("/logout", (req, res) => {

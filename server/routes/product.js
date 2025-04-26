@@ -3,12 +3,9 @@ const productRoutes = express.Router();
 const productModel = require("../models/product");
 const userModel = require("../models/user");
 const { productSchemaValidation } = require("../controllers/Schema");
-const mongoose = require("mongoose");
-const bidModel = require("../models/bids");
-const {
-  authenticateUser,
-  checkProductOwner,
-} = require("../controllers/jwt_token_generation");
+const { authenticateUser } = require("../middlewares/user");
+const { checkProductOwner } = require("../middlewares/product");
+
 const {
   uploadProduct,
   deleteProduct,

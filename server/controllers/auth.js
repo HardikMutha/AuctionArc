@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const { createSecretToken } = require("./jwt_token_generation");
+const { createSecretToken } = require("../utils/token");
 const { signupSchema, loginSchema } = require("./Schema");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -30,8 +30,6 @@ const createUser = async (req, res) => {
     });
 
     const savedUser = await newUser.save();
-
-    // Cookie name == Token
     const token = createSecretToken(newUser._id);
     res.cookie("token", token, {
       path: "/", // Accessible across the app
