@@ -1,48 +1,23 @@
 import Homepage from "./Pages/Homepage";
 import { BrowserRouter, Routes, Route } from "react-router";
+import useAuthContext from "./hooks/useAuthContext";
 import LoginContext from "./contexts/LoginContext";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Userdashboard from "./Pages/Userdashboard";
 import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
-import { toast } from "react-toastify";
-import axios from "axios";
 import UserWishlist from "../src/Pages/UserWishlist";
 import AuctionHistoryPage from "./Pages/AuctionHistory";
 
 function App() {
-  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const { state, dispach } = useAuthContext();
   const [isFirstTime, setIsFirstTime] = useState(true);
-  useEffect(() => {
-    async function checkLogin() {
-      try {
-        const response = await axios.post(
-          `http://localhost:3000/auth/authenticate-user`,
-          {},
-          { withCredentials: true }
-        );
-        if (response.status == 200) {
-          setisLoggedIn(true);
-          console.log(response);
-          localStorage.setItem("user", JSON.stringify(response.data));
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-    checkLogin();
-  }, []);
-
   return (
     <>
-      <LoginContext.Provider
-        value={{ isLoggedIn, setisLoggedIn, isFirstTime, setIsFirstTime }}
-      >
-        <ToastContainer />
+      <LoginContext.Provider value={{ isFirstTime, setIsFirstTime }}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Homepage />} />
@@ -50,16 +25,16 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route
               path="/dashboard"
-              element={isLoggedIn ? <Userdashboard /> : <Login />}
+              element={state?.isAuthenticated ? <Userdashboard /> : <Login />}
             />
             <Route
               path="/sell-new-product"
-              element={isLoggedIn ? <SellAProduct /> : <Login />}
+              element={state?.isAuthenticated ? <SellAProduct /> : <Login />}
             />
             <Route path="/products/:id" element={<ProductPage />} />
             <Route
               path="/wishlist/"
-              element={isLoggedIn ? <UserWishlist /> : <Login />}
+              element={state?.isAuthenticated ? <UserWishlist /> : <Login />}
             />
             <Route path="/temp/" element={<AuctionHistoryPage />} />
           </Routes>

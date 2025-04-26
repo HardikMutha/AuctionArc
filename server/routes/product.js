@@ -2,7 +2,7 @@ const express = require("express");
 const productRoutes = express.Router();
 const productModel = require("../models/product");
 const userModel = require("../models/user");
-const { productSchemaValidation } = require("../controllers/validate_form");
+const { productSchemaValidation } = require("../controllers/Schema");
 const mongoose = require("mongoose");
 const bidModel = require("../models/bids");
 const {
@@ -23,6 +23,7 @@ const {
   getProductsInfiniteScroll,
   getSoldProducts,
 } = require("../controllers/product.js");
+
 const multer = require("multer");
 const { storage } = require("../Cloudinary.js");
 const upload = multer({

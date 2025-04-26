@@ -2,17 +2,15 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import Spinner from "../components/Spinner";
-import LoginContext from "../contexts/LoginContext";
-
-import { useContext, useState } from "react";
+import useAuthContext from "../hooks/useAuthContext";
+import { useState } from "react";
 
 const SplitLoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const login = useContext(LoginContext);
+  const { state, dispatch } = useAuthContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,9 +24,15 @@ const SplitLoginPage = () => {
         userData,
         { withCredentials: true }
       );
-      localStorage.setItem("user", JSON.stringify(response.data));
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setLoading(false);
-      login.setisLoggedIn(true);
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          user: response.data?.user,
+          token: response.data?.token,
+        },
+      });
       navigate("/");
     } catch (err) {
       console.log(err.status);

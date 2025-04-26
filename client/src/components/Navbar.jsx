@@ -26,10 +26,9 @@ import {
   AccessTime as AccessIcon,
 } from "@mui/icons-material";
 import { CiHeart } from "react-icons/ci";
-import { useContext } from "react";
 import NavbarMenu from "./ui/NavbarMenu";
-import LoginContext from "../contexts/LoginContext";
 import LogoutModal from "./LogoutModal";
+import useAuthContext from "../hooks/useAuthContext";
 
 // Styled search component
 const Search = styled("div")(({ theme }) => ({
@@ -71,14 +70,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-// eslint-disable-next-line react/prop-types
-// const Navbar = ({ setsearchQuery, showSearch }) => {
 const Navbar = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { state, dispatch } = useAuthContext();
 
   const theme = useTheme();
-  const loginContext = useContext(LoginContext);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDrawerToggle = () => {
@@ -177,7 +174,7 @@ const Navbar = (props) => {
             </ListItem>
           </Link>
         ))}
-        {loginContext.isLoggedIn ? profileOptions : login}
+        {state.isAuthenticated ? profileOptions : login}
       </List>
       <List sx={{ marginBottom: "10px" }}>
         <LogoutModal />
@@ -237,7 +234,7 @@ const Navbar = (props) => {
           )}
           <Box sx={{ flexGrow: 1 }} />
 
-          {!isMobile && loginContext.isLoggedIn ? (
+          {!isMobile && state.isAuthenticated ? (
             <Box sx={{ display: "flex", gap: 2, color: "white" }}>
               {menuItems.map((item) => (
                 <Link key={item.text} to={item.link}>
@@ -249,7 +246,7 @@ const Navbar = (props) => {
             </Box>
           ) : null}
 
-          {loginContext.isLoggedIn ? <NavbarMenu /> : login}
+          {state.isAuthenticated ? <NavbarMenu /> : login}
         </Toolbar>
       </AppBar>
 
