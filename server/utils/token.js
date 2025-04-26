@@ -10,4 +10,4 @@ const verifyToken = (token) => {
   return jwt.verify(token, process.env.SECRET_HASH_STRING);
 };
 
-module.exports = { createSecretToken };
+module.exports = { createSecretToken, verifyToken };

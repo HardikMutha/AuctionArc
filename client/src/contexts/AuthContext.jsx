@@ -1,4 +1,5 @@
-import { useReducer, createContext } from "react";
+import { useReducer, createContext, useEffect } from "react";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
@@ -14,8 +15,8 @@ const authReducer = (state, action) => {
     case "LOGIN":
       return {
         ...state,
-        user: action.payload.user,
-        token: action.payload.token,
+        user: action.payload?.user,
+        token: action.payload?.token,
         isAuthenticated: true,
         isLoading: false,
       };
@@ -38,11 +39,12 @@ const authReducer = (state, action) => {
         isLoading: false,
       };
     default:
-      state;
+      return state;
   }
 };
 
-const AuthProvider = (children) => {
+// eslint-disable-next-line react/prop-types
+const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   useEffect(() => {
     async function checkLogin() {
@@ -52,10 +54,14 @@ const AuthProvider = (children) => {
           {},
           { withCredentials: true }
         );
-        if (response.status == 200) {
-          dispatch({type:"LOADING"});
-          dispatch({type:"LOGIN",paylod:{user:response.data.user,token:response.data.token}});
-          dispatch({type:"SET_LOADING"});
+        if (response.status == 200 && response.data) {
+          dispatch({
+            type: "LOGIN",
+            payload: {
+              user: response?.data?.user,
+              token: response?.data?.token,
+            },
+          });
         }
       } catch (err) {
         console.log(err);
@@ -65,7 +71,7 @@ const AuthProvider = (children) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={(state, dispatch)}>
+    <AuthContext.Provider value={{ state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

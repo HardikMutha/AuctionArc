@@ -1,14 +1,14 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import LoginContext from "../contexts/LoginContext";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
+import useAuthContext from "../hooks/useAuthContext";
 
 const SplitSignupPage = () => {
   const [loading, setLoading] = useState(false);
+  const { state, dispatch } = useAuthContext();
   const navigate = useNavigate();
-  const login = useContext(LoginContext);
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -33,13 +33,16 @@ const SplitSignupPage = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/signup",
+        `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
         userdata,
         { withCredentials: true }
       );
-      localStorage.setItem("user", response.data);
+      localStorage.setItem("user", response.data.user);
       setLoading(false);
-      login.setisLoggedIn(true);
+      dispatch({
+        type: "LOGIN",
+        payload: { user: response?.data?.user, token: response?.data?.token },
+      });
       navigate("/");
     } catch (err) {
       console.log(err);

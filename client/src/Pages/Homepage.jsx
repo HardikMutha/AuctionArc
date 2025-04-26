@@ -11,8 +11,6 @@ import Spinner from "../components/Spinner";
 
 const Homepage = () => {
   const limit = 3;
-  const login = useContext(LoginContext);
-  const { isFirstTime, setIsFirstTime } = useContext(LoginContext);
   const [page, setPage] = useState(1);
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");

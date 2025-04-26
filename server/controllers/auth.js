@@ -40,7 +40,7 @@ const createUser = async (req, res) => {
       sameSite: "Lax", // Allow basic cross-origin
       expire: new Date(Date.now() + 28800000),
     });
-    return res.status(200).json({ savedUser, token });
+    return res.status(200).json({ user: savedUser, token });
   } catch (err) {
     res
       .status(400)
@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
       expires: new Date(Date.now() + 28800000), // Cookie will be removed after 8 hours
     });
     console.log("Logged IN!");
-    res.json(existingUser);
+    res.json({ user: existingUser, token: token });
   } catch (err) {
     console.log("Got an error", err);
   }
