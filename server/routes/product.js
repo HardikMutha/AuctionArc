@@ -2,9 +2,15 @@ const express = require("express");
 const productRoutes = express.Router();
 const productModel = require("../models/product");
 const userModel = require("../models/user");
-const { productSchemaValidation } = require("../controllers/Schema");
 const { authenticateUser } = require("../middlewares/user");
-const { checkProductOwner } = require("../middlewares/product");
+const {
+  checkProductOwner,
+  validateProduct,
+} = require("../middlewares/product");
+
+const upload = require("../middlewares/upload.js");
+
+const { validateBidAmount } = require("../middlewares/bids");
 
 const {
   uploadProduct,
@@ -21,46 +27,18 @@ const {
   getSoldProducts,
 } = require("../controllers/product.js");
 
-const multer = require("multer");
-const { storage } = require("../Cloudinary.js");
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
-
-// const upload = multer({ dest: "../uploads/" });
-
-const validateProduct = async (req, res, next) => {
-  try {
-    const isvalid = await productSchemaValidation.validateAsync(req.body);
-    if (!isvalid) return res.sendStatus(400);
-    next();
-  } catch (err) {
-    console.log(err);
-    return res.status(401).send("Validation of Data Failed");
-  }
-};
-
-// add new-product route
 productRoutes
   .route("/add-newproduct")
-  .get(authenticateUser, async (req, res) => {
-    res.send("Welcome Back");
-  })
   .post(
     authenticateUser,
-    upload.array("images", 12),
+    upload.array("images", 10),
     validateProduct,
     uploadProduct
   );
 
-// Update Route for Products
-// Image Updation not Included
 productRoutes
   .route("/update-product/:id")
   .put(authenticateUser, checkProductOwner, updateProduct);
-
-// Delete Route For Products
 
 productRoutes
   .route("/delete-product/:id")
@@ -91,7 +69,7 @@ productRoutes.route("/get-sold-products").get(getSoldProducts);
 
 productRoutes
   .route("/place-bid/:id")
-  .post(authenticateUser, placeBid)
+  .post(authenticateUser, validateBidAmount, placeBid)
   .delete(authenticateUser, async (req, res) => {
     const productId = req.params?.id;
     if (!productId)

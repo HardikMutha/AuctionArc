@@ -27,7 +27,7 @@ export default function ProductListingForm() {
     const data = new FormData(event.currentTarget);
     try {
       const response = await axios.post(
-        "http://localhost:3000/add-newproduct",
+        `${import.meta.env.VITE_BACKEND_URL}/add-newproduct`,
         data,
         {
           withCredentials: true,

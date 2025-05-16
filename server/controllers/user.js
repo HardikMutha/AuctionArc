@@ -37,7 +37,7 @@ const getUserBidsFromId = async (req, res) => {
       r1.push(resObject);
     }
 
-    // New Learning - forEach does not support asynchronous operations. therefore it always returns empty array
+    //forEach does not support asynchronous operations. therefore it always returns empty array
 
     // await userBids.forEach(async (userBid) => {
     //   const foundProduct = await productModel.getProductbyId(userBid?.product);

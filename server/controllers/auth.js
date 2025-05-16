@@ -71,7 +71,6 @@ const loginUser = async (req, res) => {
       sameSite: "Lax", // Allow basic cross-origin
       expires: new Date(Date.now() + 28800000), // Cookie will be removed after 8 hours
     });
-    console.log("Logged IN!");
     res.json({ user: existingUser, token: token });
   } catch (err) {
     console.log("Got an error", err);
@@ -81,7 +80,6 @@ const loginUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const userID = req.user.id;
-    console.log(userID);
     const doc = await User.findOne({ _id: userID });
 
     if (!userID || !doc) {

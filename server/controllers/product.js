@@ -1,7 +1,8 @@
 const productModel = require("../models/product");
 const userModel = require("../models/user");
-const bidModel = require("../models/bids");
+const fs = require("fs");
 const mongoose = require("mongoose");
+
 const { cloudinary } = require("../Cloudinary");
 
 const checkProduct = async (req, res, next) => {
@@ -11,11 +12,37 @@ const checkProduct = async (req, res, next) => {
   next();
 };
 
+const uploadImagesToCloudinary = async (req) => {
+  const inputFiles = req?.files;
+  const uploadResults = [];
+  for (const image of inputFiles) {
+    try {
+      const result = await cloudinary.uploader.upload(image.path, {
+        timeout: 120000,
+      });
+      uploadResults.push(result.url);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  return uploadResults;
+};
+
 const uploadProduct = async (req, res) => {
   const userid = req.user?.id;
-  const inputFiles = req.files;
   const inputData = req.body;
-  const images = inputFiles.map((f) => f.path);
+  const inputFiles = await uploadImagesToCloudinary(req);
+  if (inputFiles.length == 0) {
+    return res
+      .status(401)
+      .json({ message: "File Size too large, Upload Failed" });
+  }
+  if (inputFiles.length > 0) {
+    for (const file of req.files) {
+      fs.rmSync(file.path);
+    }
+  }
+  const images = inputFiles.map((f) => f);
   const newProduct = {
     ...inputData,
     images: images,
@@ -35,7 +62,7 @@ const uploadProduct = async (req, res) => {
       id: savedProduct._id,
     });
   } catch (err) {
-    console.log(err);
+    console.log("Error 3 ->", err);
     res.status(400).send(err);
   }
 };
@@ -61,7 +88,6 @@ const deleteProduct = async (req, res) => {
   }
   try {
     const foundProduct = await productModel.findByIdAndDelete(productId);
-    console.log(foundProduct);
     for (let i = 0; i < foundProduct.images.length; i++) {
       const newURL = getURL(foundProduct.images[i]);
       await cloudinary.uploader.destroy(newURL);
@@ -79,7 +105,6 @@ const updateProduct = async (req, res) => {
     const userId = req.user?.id;
     const productId = req.params.id;
     const updatedContent = req.body;
-    console.log(productId);
     if (!productId) return res.status(400).json({ message: "Invalid Request" });
     const product = await productModel.findByIdAndUpdate(
       productId,
@@ -112,8 +137,6 @@ const getUserProducts = async (req, res) => {
       .find({ productSeller: updatedId })
       .skip((page - 1) * limit)
       .limit(limit);
-    console.log(products);
-
     res
       .status(200)
       .json({ products: products, totalProducts: numberofProducts });
@@ -135,9 +158,7 @@ const getSimilarProducts = async (req, res) => {
     const product = await productModel.findOne({ _id: productID });
     if (!product)
       return res.status(404).json({ message: "Invalid Product Id" });
-    const productCategory = product.category
-      ? product.category
-      : null;
+    const productCategory = product.category ? product.category : null;
     if (!productCategory) {
       return res
         .status(404)
@@ -239,52 +260,15 @@ const getProductPrice = async (req, res) => {
 // };
 
 const placeBid = async (req, res) => {
-  const productId = req.params.id;
+  const user = req?.user;
+  const product = req?.product;
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
   const { bidAmount } = req.body;
-
-  if (!bidAmount) {
-    return res.status(400).json({ message: "No Bid Amount Specified" });
-  }
-
-  try {
-    const product = await productModel
-      .findById(productId)
-      .populate("bidHistory");
-    if (!product) return res.status(404).json({ message: "Product Not Found" });
-
-    const userid = req.user?.id;
-    const foundUser = await userModel.findById(userid);
-
-    const newBid = new bidModel({
-      bidder: userid,
-      bidAmount,
-      bidDate: Date.now(),
-    });
-
-    const lastBid = product.bidHistory.length
-      ? await bidModel.findById(
-          product.bidHistory[product.bidHistory.length - 1]
-        )
-      : null;
-
-    if (lastBid && bidAmount <= lastBid.bidAmount) {
-      return res
-        .status(400)
-        .json({ message: "Bid must be higher than the current highest bid." });
-    }
-
-    await newBid.save();
-    product.bidHistory.push(newBid._id);
-    foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-
-    await foundUser.save();
-    await product.save();
-
-    return res.status(200).json({ message: "Bid Placed Successfully" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send("Server Error");
-  }
+  product.currentPrice = bidAmount;
+  await product.save();
+  res.status(200).json({ message: "Bid Placed Successfully" });
 };
 
 const getProductsInfiniteScroll = async (req, res) => {

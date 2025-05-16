@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const userModel = require("../models/user");
+const { productSchemaValidation } = require("../controllers/Schema");
 
 const checkProductOwner = async (req, res, next) => {
   try {
@@ -18,4 +19,37 @@ const checkProductOwner = async (req, res, next) => {
   }
 };
 
-module.exports = { checkProductOwner };
+const validateProduct = async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const isvalid = await productSchemaValidation.validateAsync(req.body);
+    if (!isvalid)
+      return res
+        .status(400)
+        .json({ message: "Product Schema Validation Failed" });
+    next();
+  } catch (err) {
+    return res.status(401).send("Validation of Data Failed");
+  }
+};
+
+// const uploadImages = async (req, res, next) => {
+//   try {
+//     upload.array("images", 12);
+//     return next();
+//   } catch (err) {
+//     console.log(err);
+//     return res.status(400).json(err);
+//   }
+// };
+
+// const uploadImages = (req, res, next) => {
+//   const uploadMiddleware = multer({ storage: storage }).array("images");
+//   const dUri = new Datauri();
+//   const dataUri = dUri.format(
+//     path.extname(req.file.originalname).toString(),
+//     req.file.buffer
+//   );
+// };
+
+module.exports = { checkProductOwner, validateProduct };

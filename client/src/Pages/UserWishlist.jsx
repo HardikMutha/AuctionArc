@@ -3,10 +3,12 @@ import axios from "axios";
 import Spinner from "../components/Spinner";
 import ProductCard from "../components/ProductCard";
 import Wishlist from "../components/Wishlist";
+import useAuthContext from "../hooks/useAuthContext";
 
 const UserWishlist = () => {
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
+  const { state, dispatch } = useAuthContext();
 
   useEffect(() => {
     async function getWishlist() {
@@ -23,7 +25,7 @@ const UserWishlist = () => {
 
           // Fetch all product details in parallel
           const productPromises = wishlistIds.map((id) =>
-            axios.get(`http://localhost:3000/products/${id}`, {
+            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, {
               withCredentials: true,
             })
           );
@@ -52,11 +54,7 @@ const UserWishlist = () => {
 
   return (
     <div>
-      {loading ? (
-        <Spinner />
-      ) : (
-        <Wishlist data={JSON.parse(localStorage.getItem("user"))} />
-      )}
+      {loading ? <Spinner /> : <Wishlist data={state.user} />}
 
       <div className="wishlist-items">
         {wishlist.length > 0 ? (

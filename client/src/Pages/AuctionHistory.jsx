@@ -11,7 +11,7 @@ const AuctionHistoryPage = () => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/get-sold-products"
+          `${import.meta.env.VITE_BACKEND_URL}/get-sold-products`
         );
         console.log(response.data.data);
         setMyAuctions([...response.data.data]);

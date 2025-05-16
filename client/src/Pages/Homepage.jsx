@@ -28,7 +28,7 @@ const Homepage = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:3000/all-products-infinite-scroll?page=${page}&limit=${limit}`,
+          `${import.meta.env.VITE_BACKEND_URL}/product/all-products`,
           { withCredentials: true }
         );
 

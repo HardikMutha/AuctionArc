@@ -25,10 +25,11 @@ import ProductCard from "../components/ProductCard";
 import { toast } from "react-toastify";
 import CssBaseline from "@mui/material/CssBaseline";
 import PlaceBidPopup from "../components/PlaceBidPopup";
+import useAuthContext from "../hooks/useAuthContext";
 
 export default function ProductPage() {
-  let user = localStorage.getItem("user");
-  user = user ? JSON.parse(user) : null;
+  const { state, dispatch } = useAuthContext();
+  const user = state.user;
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -69,7 +70,7 @@ export default function ProductPage() {
   // const handleWishListClick = async () => {
   //   try {
   //     const response = await axios.post(
-  //       `http://localhost:3000/wish-list/add-to-wishlist/${id}`,
+  //       `${import.meta.env.VITE_BACKEND_URL}/wish-list/add-to-wishlist/${id}`,
   //       { id: id },
   //       // required for token validation
   //       { withCredentials: true }
@@ -89,7 +90,7 @@ export default function ProductPage() {
   async function addToWishList() {
     try {
       const response = await axios.post(
-        `http://localhost:3000/wish-list/add-to-wishlist/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/wish-list/add-to-wishlist/${id}`,
         null,
         { withCredentials: true }
       );
@@ -104,7 +105,9 @@ export default function ProductPage() {
 
   async function removeFromWishlist() {
     const response = await axios.post(
-      `http://localhost:3000/wish-list/remove-from-wishlist/${id}`,
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/wish-list/remove-from-wishlist/${id}`,
       null,
       { withCredentials: true }
     );
@@ -123,7 +126,9 @@ export default function ProductPage() {
   const fetchAllData = async () => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/products/${id}`);
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/products/${id}`
+        );
         const data = await response.json();
         setProduct(data);
       } catch (error) {
@@ -135,7 +140,7 @@ export default function ProductPage() {
     const getSimilarProducts = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/get-similar-products/${id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/get-similar-products/${id}`,
           { withCredentials: true }
         );
         setSimilarProducts(response.data);
@@ -146,7 +151,7 @@ export default function ProductPage() {
 
     const fetchCurrentPrice = async () => {
       const response = await axios.get(
-        `http://localhost:3000/get-current-price/${id}`
+        `${import.meta.env.VITE_BACKEND_URL}/get-current-price/${id}`
       );
       // console.log(response.data.price);
       setCurrentPrice(response.data.price);

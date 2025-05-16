@@ -27,7 +27,7 @@ import {
 } from "@mui/icons-material";
 import { CiHeart } from "react-icons/ci";
 import NavbarMenu from "./ui/NavbarMenu";
-import LogoutModal from "./LogoutModal";
+import LogoutModal from "./ui/LogoutModal";
 import useAuthContext from "../hooks/useAuthContext";
 
 // Styled search component

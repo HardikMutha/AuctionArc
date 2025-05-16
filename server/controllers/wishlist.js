@@ -8,15 +8,10 @@ const addToWishList = async (req, res, next) => {
   if (!req.params.id) {
     return res.status(404).json({ msg: "No product id given!" });
   }
-
   const productID = req.params.id;
-  // console.log("Product ID", productID);
   const userID = req.user.id;
-  // console.log("User ID", userID);
   try {
     const user = await User.findOne({ _id: userID });
-
-    // console.log(user)
     if (!user.wishList.includes(productID)) {
       user.wishList.push(productID);
       await user.save();
@@ -40,9 +35,7 @@ const removeFromWishlist = async (req, res, next) => {
   }
 
   const productID = req.params.id;
-  // console.log("Product ID", productID);
   const userID = req.user.id;
-  // console.log("User ID", userID);
   try {
     const user = await User.findOne({ _id: userID });
 
@@ -66,17 +59,13 @@ const displayWishList = async (req, res, next) => {
   if (!req.user) {
     return res.status(404).json({ msg: "Please Login!" });
   }
-
   const userID = req.user.id;
-  console.log(userID);
   try {
     // Query the database for the user document
     const user = await User.findOne({ _id: userID });
     if (!user) {
       return res.status(404).send("User not found");
     }
-
-    // console.log(user);
     res.json({ wishList: user.wishList }); // Assuming the wishlist is a field in your user schema
   } catch (err) {
     console.log(err);

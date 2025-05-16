@@ -20,7 +20,7 @@ const SplitLoginPage = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/login",
+        `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
         userData,
         { withCredentials: true }
       );

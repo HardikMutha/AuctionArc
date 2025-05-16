@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const style = {
   position: "absolute",
@@ -28,15 +29,20 @@ export default function LogoutModal() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { state, dispatch } = useAuthContext();
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/auth/logout", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
+        {
+          withCredentials: true,
+        }
+      );
       if (response.status == 200) {
         toast.success(response.data.message);
         localStorage.removeItem("user");
+        dispatch({ type: "LOGOUT" });
         handleClose();
         navigate("/") || location.reload();
       }

@@ -10,10 +10,8 @@ export default function DashboardTable() {
   const [productData, setProductData] = React.useState([{}]);
   useEffect(() => {
     const fetchData = async () => {
-      // eslint-disable-next-line no-unused-vars
-      const user = JSON.parse(localStorage.getItem("user"));
       const response = await axios.get(
-        `http://localhost:3000/my-products/${page}`,
+        `${import.meta.env.VITE_BACKEND_URL}/my-products/${page}`,
         {
           withCredentials: true,
         }

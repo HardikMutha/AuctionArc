@@ -1,22 +1,24 @@
-import React, { useState } from "react";
-import { Slider, TextField, Box, Typography, Button } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import GavelIcon from "@mui/icons-material/Gavel";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
+import { X, Gavel } from "lucide-react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
-function PlaceBidPopup(props) {
-  const product = props.product;
-  const currentPrice = props.currentPrice;
-  // Ensure product exists, and provide default values if not
+function PlaceBidPopup({
+  product,
+  currentPrice,
+  trigger,
+  setBidPopup,
+  children,
+}) {
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
   const [price, setPrice] = useState(listingPrice);
   const maxPrice = listingPrice * 2;
 
-  const handleSliderChange = (event, newValue) => {
-    setPrice(newValue);
+  const handleSliderChange = (event) => {
+    setPrice(Number(event.target.value));
   };
 
   const handleInputChange = (event) => {
@@ -27,37 +29,30 @@ function PlaceBidPopup(props) {
   };
 
   const handleBidRequest = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
-
+    event.preventDefault();
     if (!product) {
       toast.error("Product details are missing.");
       return;
     }
 
     try {
-      // Make the POST request to the backend
       console.log(product._id);
       const response = await axios.post(
-        `http://localhost:3000/place-bid/${product._id}`, // Use the product ID in the URL
-        { bidAmount: price }, // Pass the bid amount in the request body
-        { withCredentials: true } // Include credentials if needed for authentication
+        `${import.meta.env.VITE_BACKEND_URL}/place-bid/${product._id}`,
+        { bidAmount: price },
+        { withCredentials: true }
       );
 
       if (response.status === 200) {
         toast.success("Bid Placed Successfully");
-        props.setBidPopup(false); // Close the popup on success
+        setBidPopup(false);
         window.location.reload();
-        // location.reload();
       } else {
         toast.error("Failed to place bid. Please try again.");
       }
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        toast.error(error.response.data.message); // Show specific error message from the server
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
       } else {
         toast.error(
           "Error placing bid. Please check your network and try again."
@@ -67,134 +62,63 @@ function PlaceBidPopup(props) {
     }
   };
 
-  if (!product) {
-    return null; // Don't render the component if the product prop is missing
-  }
+  if (!product || !trigger) return null;
 
-  return props.trigger ? (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100vh",
-        zIndex: 2000,
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Box
-        sx={{
-          backgroundColor: "white",
-          width: { md: "60%", xs: "98%" },
-          height: "60%",
-          borderRadius: "10px",
-          padding: "20px",
-          position: "absolute",
-          display: "flex",
-          justifyContent: "space-around",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <div className="relative w-[95%] md:w-[600px] h-auto bg-white rounded-2xl p-8 shadow-2xl">
         <button
-          onClick={() => props.setBidPopup(false)}
-          style={{
-            position: "absolute",
-            top: "16px",
-            right: "16px",
-            background: "none",
-            border: "none",
-            fontSize: "16px",
-            cursor: "pointer",
-            color: "black",
-          }}
+          onClick={() => setBidPopup(false)}
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <CloseIcon />
+          <X className="h-6 w-6 text-gray-500" />
         </button>
 
-        <Typography
-          sx={{
-            mt: 4,
-            display: "flex",
-            justifyContent: "center",
-            fontWeight: "500",
-          }}
-          variant="h4"
-          gutterBottom
-        >
+        <h2 className="text-3xl font-bold text-center mt-4 mb-8">
           Place a Bid
-        </Typography>
+        </h2>
 
-        <Box sx={{ width: 300, margin: "auto", height: "50%" }}>
-          <Typography
-            id="price-slider"
-            sx={{ fontWeight: "500" }}
-            variant="h6"
-            gutterBottom
+        <div className="w-full max-w-md mx-auto space-y-8">
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">
+              Listing Price: ${listingPrice}
+            </h3>
+
+            <input
+              type="range"
+              value={price}
+              onChange={handleSliderChange}
+              min={currentPrice}
+              max={maxPrice}
+              step={10}
+              className="w-full h-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg appearance-none cursor-pointer"
+            />
+
+            <input
+              type="number"
+              value={price}
+              onChange={handleInputChange}
+              min={listingPrice}
+              max={maxPrice}
+              step={10}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter exact price"
+            />
+          </div>
+
+          <button
+            onClick={handleBidRequest}
+            className="w-full py-4 px-6 bg-yellow-400 hover:bg-black text-black hover:text-white rounded-full font-semibold transform transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
           >
-            Listing Price: $ {listingPrice}
-          </Typography>
-          <Slider
-            value={typeof price === "number" ? price : 0}
-            onChange={handleSliderChange}
-            aria-labelledby="price-slider"
-            min={currentPrice}
-            max={maxPrice}
-            step={10}
-            sx={{
-              width: "100%",
-              "& .MuiSlider-thumb": {
-                backgroundColor: "primary.main",
-              },
-              "& .MuiSlider-track": {
-                height: 10,
-                background: "linear-gradient(90deg, indigo, purple)",
-              },
-              mb: "15%",
-            }}
-          />
-          <TextField
-            label="Exact Price"
-            type="number"
-            value={price}
-            onChange={handleInputChange}
-            InputProps={{
-              inputProps: {
-                min: listingPrice,
-                max: maxPrice,
-                step: 10,
-              },
-            }}
-            sx={{ width: "100%" }}
-          />
-        </Box>
-        <Button
-          variant="contained"
-          startIcon={<GavelIcon />}
-          fullWidth
-          sx={{
-            borderRadius: 8,
-            bgcolor: "#FFD700",
-            color: "black",
-            "&:hover": {
-              bgcolor: "black",
-              color: "white",
-              transform: "scale(1.02)",
-              transition: "all 0.3s",
-            },
-          }}
-          onClick={handleBidRequest}
-        >
-          Place Bid!
-        </Button>
-        {props.children}
-      </Box>
+            <Gavel className="h-5 w-5" />
+            Place Bid!
+          </button>
+        </div>
+
+        {children}
+      </div>
     </div>
-  ) : null;
+  );
 }
 
 export default PlaceBidPopup;

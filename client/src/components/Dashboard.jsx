@@ -11,7 +11,7 @@ const Dashboard = ({ data }) => {
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:3000/get-user-bids/`,
+          `${import.meta.env.VITE_BACKEND_URL}/get-user-bids/`,
           {
             withCredentials: true,
           }

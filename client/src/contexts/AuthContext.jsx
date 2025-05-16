@@ -50,7 +50,7 @@ const AuthProvider = ({ children }) => {
     async function checkLogin() {
       try {
         const response = await axios.post(
-          `http://localhost:3000/auth/authenticate-user`,
+          `${import.meta.env.VITE_BACKEND_URL}/auth/authenticate-user`,
           {},
           { withCredentials: true }
         );

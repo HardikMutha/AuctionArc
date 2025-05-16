@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
-import LogoutModal from "../LogoutModal";
+import LogoutModal from "./LogoutModal";
 import { MdAccountCircle } from "react-icons/md";
 
 export default function NavbarMenu(props) {

@@ -23,9 +23,10 @@ export default function SellAProduct() {
     event.preventDefault();
     setLoading(true);
     const data = new FormData(event.currentTarget);
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/add-newproduct",
+        `${import.meta.env.VITE_BACKEND_URL}/product/add-newproduct`,
         data,
         {
           withCredentials: true,
@@ -36,10 +37,9 @@ export default function SellAProduct() {
       );
       toast.success(response.data.msg);
       setLoading(false);
-      setTimeout(() => {}, 1000);
       navigate(`/products/${response.data.id}`);
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data);
       if (err.response?.status == 409) {
         toast.error(err.response.data.message);
       } else toast.error("An Error Occured Please try again");

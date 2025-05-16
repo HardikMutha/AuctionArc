@@ -8,4 +8,4 @@ userRoutes.route("/user-details/:id").get(getUserFromId);
 
 userRoutes.route("/get-user-bids/").get(authenticateUser, getUserBidsFromId);
 
-module.exports = { userRoutes };
+module.exports = userRoutes;

@@ -1,28 +1,18 @@
-/* eslint-disable react/prop-types */
 import { Heart } from "lucide-react";
-import SellIcon from '@mui/icons-material/Sell';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Stack,
-  IconButton,
-} from "@mui/material";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import useAuthContext from "../hooks/useAuthContext";
 
 const ProductCard = ({ productDetails }) => {
   const navigate = useNavigate();
   const [productSeller, setProductSeller] = useState("");
+  const { state, dispatch } = useAuthContext();
+  const user = state.user;
 
-  let user = localStorage.getItem("user");
-  user = user ? JSON.parse(user) : null;
   const userWishList = user?.wishList;
-  const iscontainedInWishList = userWishList?.includes(productDetails._id);
+  const iscontainedInWishList = userWishList?.includes(productDetails?._id);
   const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
   const [currentPrice, setCurrentPrice] = useState(0);
 
@@ -33,14 +23,17 @@ const ProductCard = ({ productDetails }) => {
     return newURL;
   }
 
-  function updateWishList() {
+  function updateWishList(e) {
+    e.stopPropagation();
     wishlist ? removeFromWishlist() : addToWishList();
   }
 
   async function addToWishList() {
     try {
       const response = await axios.post(
-        `http://localhost:3000/wish-list/add-to-wishlist/${productDetails._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/wish-list/add-to-wishlist/${
+          productDetails?._id
+        }`,
         null,
         { withCredentials: true }
       );
@@ -55,7 +48,9 @@ const ProductCard = ({ productDetails }) => {
 
   async function removeFromWishlist() {
     const response = await axios.post(
-      `http://localhost:3000/wish-list/remove-from-wishlist/${productDetails._id}`,
+      `${import.meta.env.VITE_BACKEND_URL}/wish-list/remove-from-wishlist/${
+        productDetails._id
+      }`,
       null,
       { withCredentials: true }
     );
@@ -69,9 +64,10 @@ const ProductCard = ({ productDetails }) => {
 
   const fetchCurrentPrice = async () => {
     const response = await axios.get(
-      `http://localhost:3000/get-current-price/${productDetails._id}`
+      `${import.meta.env.VITE_BACKEND_URL}/get-current-price/${
+        productDetails._id
+      }`
     );
-    console.log(response.data.price);
     setCurrentPrice(response.data.price);
   };
 
@@ -79,10 +75,11 @@ const ProductCard = ({ productDetails }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/user-details/${productDetails.productSeller}`
+          `${import.meta.env.VITE_BACKEND_URL}/user-details/${
+            productDetails.productSeller
+          }`
         );
         if (response.status == 200) {
-          console.log(response.data.foundUser.username);
           setProductSeller(response.data.foundUser.username);
         }
       } catch (err) {
@@ -94,133 +91,83 @@ const ProductCard = ({ productDetails }) => {
   }, []);
 
   return (
-    <Box
-      onClick={() => navigate(`/products/${productDetails._id}`)}>
-      <Card
-        sx={{
-          maxWidth: "80vw",
-          width: "96%",
-          mx: { xs: "auto" },
-          my: 4,
-          p: 2,
-          backgroundColor: "rgba(255, 255, 255, 0.6)",
-          backdropFilter: "blur(200px)",
-          boxShadow: "0 4px 10px rgba(0,0,0, 0.1)",
-          ":hover": { boxShadow: "2px 6px 15px rgba(6,172,212, 0.4)" },
-          border: "2px solid rgba(0, 217, 255, 0.4)",
-          borderRadius: "15px",
-
-        }}
-      >
-        <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+    <div
+      className="cursor-pointer"
+      onClick={() => navigate(`/products/${productDetails?._id}`)}
+    >
+      <div className="max-w-5xl w-[96%] mx-auto my-16 p-8 bg-white/60 backdrop-blur-xl shadow-md hover:shadow-cyan-400/40 border-2 border-cyan-400/40 rounded-2xl">
+        <div className="flex flex-col md:flex-row gap-12">
           {/* Product Image */}
-          <Box
-            sx={{
-              position: "relative",
-              flexShrink: 0,
-            }}
-          >
+          <div className="relative flex-shrink-0">
             <img
               src={
-                productDetails.images.length
-                  ? `${getImageURL(productDetails.images[0])}`
+                productDetails?.images.length
+                  ? `${getImageURL(productDetails?.images[0])}`
                   : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
               }
               alt="Product"
-              style={{ width: "100%", borderRadius: "8px" }}
+              className="w-full rounded-lg"
             />
-            <IconButton
-              color="secondary"
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                backgroundColor: "white",
-                boxShadow: 1,
-              }}
+            <button
+              className="absolute top-2 right-2 bg-white p-2 rounded-full shadow"
               onClick={updateWishList}
             >
               <Heart color="purple" fill={wishlist ? "purple" : "white"} />
-            </IconButton>
-          </Box>
-          <CardContent
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space",
-            }}
-          >
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="start"
-            >
-              <Box sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: 'left'
-              }}>
-                <Typography
-                  variant="h5"
-                  component="h2"
-                  gutterBottom
-                  fontWeight={600}
-                >
+            </button>
+          </div>
+
+          <div className="flex-grow flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <div className="flex flex-col justify-start">
+                <h2 className="text-xl md:text-2xl font-semibold mb-2">
                   {productDetails.name}
-                </Typography>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography
-                    variant="body"
-                    color="textSecondary"
-                    fontSize={{ md: "16px", sm: "20px", xs: "14px" }}
-                    sx={{ width: "80%" }}
-                  >
+                </h2>
+                <div className="flex items-center gap-4">
+                  <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5">
                     About - {productDetails.description}
-                  </Typography>
+                  </p>
+                </div>
+              </div>
 
-                </Stack>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <SellIcon sx={{ marginRight: 1 }} />
-                <Typography
-                  variant="h6"
-                  fontWeight={400}
-                  sx={{ textAlign: "center" }}
-                >                <span className="text-red-500 font-semibold block">
-
+              <div className="flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 mr-1"
+                  fill="gray"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
+                </svg>
+                <div className="text-center">
+                  <span className="text-red-500 font-bold block text-xl">
                     ${currentPrice}
                   </span>
-                </Typography>
-              </Box>
-            </Stack>
+                </div>
+              </div>
+            </div>
 
             {/* Actions */}
-            <Box
-              marginTop={{ xs: "70px", md: "auto" }}
-              sx={{ display: "flex", justifyContent: "space-between" }}
-              flexDirection={{ sm: "row", xs: "column" }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
+            <div className="mt-16 md:mt-auto flex flex-col sm:flex-row justify-between">
+              <button
+                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md"
                 onClick={() => navigate(`/products/${productDetails._id}`)}
-                sx={{
-                  bgcolor: "rgb(6 182 212)",
-                  ":hover": { bgcolor: "rgb(8 145 178)" },
-                }}
               >
                 View More
-              </Button>
+              </button>
               <span className="mt-2 text-center">
                 Listed By - {productSeller}
               </span>
-            </Box>
-          </CardContent>
-        </Stack>
-      </Card>
-    </Box>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
