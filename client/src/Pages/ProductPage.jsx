@@ -127,7 +127,7 @@ export default function ProductPage() {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/products/${id}`
+          `${import.meta.env.VITE_BACKEND_URL}/product/products/${id}`
         );
         const data = await response.json();
         setProduct(data);
@@ -140,7 +140,9 @@ export default function ProductPage() {
     const getSimilarProducts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/get-similar-products/${id}`,
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/product/get-similar-products/${id}`,
           { withCredentials: true }
         );
         setSimilarProducts(response.data);
@@ -151,7 +153,7 @@ export default function ProductPage() {
 
     const fetchCurrentPrice = async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/get-current-price/${id}`
+        `${import.meta.env.VITE_BACKEND_URL}/product/get-current-price/${id}`
       );
       // console.log(response.data.price);
       setCurrentPrice(response.data.price);

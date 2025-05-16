@@ -25,9 +25,12 @@ const UserWishlist = () => {
 
           // Fetch all product details in parallel
           const productPromises = wishlistIds.map((id) =>
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, {
-              withCredentials: true,
-            })
+            axios.get(
+              `${import.meta.env.VITE_BACKEND_URL}/product/products/${id}`,
+              {
+                withCredentials: true,
+              }
+            )
           );
 
           // Wait for all requests to complete

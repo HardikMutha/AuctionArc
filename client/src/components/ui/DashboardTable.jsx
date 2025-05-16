@@ -11,7 +11,7 @@ export default function DashboardTable() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/my-products/${page}`,
+        `${import.meta.env.VITE_BACKEND_URL}/product/my-products/${page}`,
         {
           withCredentials: true,
         }

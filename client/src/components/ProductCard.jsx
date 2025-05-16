@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -8,7 +9,7 @@ import useAuthContext from "../hooks/useAuthContext";
 const ProductCard = ({ productDetails }) => {
   const navigate = useNavigate();
   const [productSeller, setProductSeller] = useState("");
-  const { state, dispatch } = useAuthContext();
+  const { state } = useAuthContext();
   const user = state.user;
 
   const userWishList = user?.wishList;
@@ -64,7 +65,7 @@ const ProductCard = ({ productDetails }) => {
 
   const fetchCurrentPrice = async () => {
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/get-current-price/${
+      `${import.meta.env.VITE_BACKEND_URL}/product/get-current-price/${
         productDetails._id
       }`
     );
@@ -75,7 +76,7 @@ const ProductCard = ({ productDetails }) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/user-details/${
+          `${import.meta.env.VITE_BACKEND_URL}/user/user-details/${
             productDetails.productSeller
           }`
         );
