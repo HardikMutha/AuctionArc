@@ -9,9 +9,13 @@ import SellAProduct from "./Pages/SellAProduct";
 import ProductPage from "./Pages/ProductPage";
 import UserWishlist from "../src/Pages/UserWishlist";
 import AuctionHistoryPage from "./Pages/AuctionHistory";
+import Spinner from "./components/Spinner";
 
 function App() {
-  const { state, dispach } = useAuthContext();
+  const { state } = useAuthContext();
+  if (state.isLoading) {
+    return <Spinner size={100} />;
+  }
   return (
     <>
       <BrowserRouter>

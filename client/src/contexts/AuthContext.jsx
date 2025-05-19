@@ -48,6 +48,7 @@ const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   useEffect(() => {
     async function checkLogin() {
+      dispatch({ type: "LOADING" });
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/auth/authenticate-user`,
@@ -62,9 +63,11 @@ const AuthProvider = ({ children }) => {
               token: response?.data?.token,
             },
           });
+          dispatch({ type: "SET_LOADING" });
         }
       } catch (err) {
         console.log(err);
+        dispatch({ type: "SET_LOADING" });
       }
     }
     checkLogin();
