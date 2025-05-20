@@ -1,18 +1,21 @@
 import Navbar from "../../components/Navbar";
-import { Link } from "react-router";
 import { useState } from "react";
 import CreateAuctionModal from "../../components/Realtime/CreateAuctionModal";
+import ViewAuctions from "../../components/Realtime/ViewAuctions";
 
 export const RealtimeHome = () => {
   const [joinCode, setJoinCode] = useState("");
   const [showCreateAuction, setShowCreateAuction] = useState(false);
+  const [showLiveAuctions, setShowLiveAuctions] = useState(false);
 
   const onClose = () => setShowCreateAuction(false);
+  const onShowLiveClose = () => setShowLiveAuctions(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-white">
       <Navbar showSearch={true} />
       <CreateAuctionModal isOpen={showCreateAuction} onClose={onClose} />
+      <ViewAuctions isOpen={showLiveAuctions} onClose={onShowLiveClose} />
 
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-cyan-600 to-cyan-800 py-16 px-4">
@@ -31,7 +34,10 @@ export const RealtimeHome = () => {
             >
               Create an Auction
             </button>
-            <button className="px-8 py-3 bg-cyan-700 text-white font-medium rounded-lg border border-cyan-200 hover:bg-cyan-600 transition-colors">
+            <button
+              className="px-8 py-3 bg-cyan-700 text-white font-medium rounded-lg border border-cyan-200 hover:bg-cyan-600 transition-colors"
+              onClick={() => setShowLiveAuctions(true)}
+            >
               Join an Auction
             </button>
           </div>
@@ -101,12 +107,12 @@ export const RealtimeHome = () => {
             >
               Create an Auction
             </button>
-            <Link
-              to="/realtime/browse"
+            <button
               className="px-8 py-3 bg-cyan-700 text-white font-medium rounded-lg border border-cyan-200 hover:bg-cyan-600 transition-colors"
+              onClick={() => setShowLiveAuctions(true)}
             >
               Browse Auctions
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -137,15 +143,6 @@ export const RealtimeHome = () => {
             >
               Join Now
             </button>
-          </div>
-
-          <div className="mt-6">
-            <Link
-              to="/realtime/browse"
-              className="text-cyan-100 hover:text-white underline font-medium"
-            >
-              Browse all available auctions
-            </Link>
           </div>
         </div>
       </div>

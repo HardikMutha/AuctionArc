@@ -6,6 +6,7 @@ const { validateRealtimeProduct } = require("../middlewares/product.js");
 const {
   createAuction,
   completeAuction,
+  getAllAuctions,
 } = require("../controllers/realtime.js");
 
 router.post(
@@ -17,5 +18,6 @@ router.post(
 );
 
 router.post("/complete-auction", authenticateUser, completeAuction);
+router.get("/all-auctions", getAllAuctions);
 
 module.exports = router;

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Image as ImageIcon, X } from "lucide-react";
 import axios from "axios";
-
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 import { useNavigate } from "react-router";
@@ -16,17 +15,15 @@ export default function CreateAuctionModal(props) {
     description: "",
     category: "",
     price: "",
-    startDate: "",
   });
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     const data = new FormData(event.currentTarget);
-
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/product/add-newproduct`,
+        `${import.meta.env.VITE_BACKEND_URL}/realtime/new-auction`,
         data,
         {
           withCredentials: true,
@@ -37,7 +34,6 @@ export default function CreateAuctionModal(props) {
       );
       toast.success(response.data.msg);
       setLoading(false);
-      navigate(`/products/${response.data.id}`);
     } catch (err) {
       console.log(err.response.data);
       if (err.response?.status == 409) {
@@ -66,16 +62,6 @@ export default function CreateAuctionModal(props) {
     "Car",
     "Other",
   ];
-
-  function disablePastDates() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0");
-    var yyyy = today.getFullYear();
-    today = yyyy + "-" + mm + "-" + dd;
-    return today;
-  }
-  const currentDate = disablePastDates();
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -239,28 +225,12 @@ export default function CreateAuctionModal(props) {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Start Date
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <input
-                    type="date"
-                    value={currentDate}
-                    disabled
-                    required
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    name="duration"
-                  />
-                </div>
-              </div>
-
               <div className="pt-2">
                 <button
                   type="submit"
                   className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                 >
-                  Create Listing
+                  Go Live
                 </button>
               </div>
             </form>

@@ -29,7 +29,7 @@ const createAuction = async (req, res) => {
   try {
     const savedProduct = await finalProduct.save();
     res.status(200).json({
-      msg: "Added to database successfully",
+      msg: "Auction Created Succefully, Redirecting...",
       id: savedProduct._id,
     });
   } catch (err) {
@@ -57,4 +57,10 @@ const completeAuction = async (req, res) => {
     .json({ message: "Auction Completed Successfully", winner: newUser });
 };
 
-module.exports = { createAuction, completeAuction };
+const getAllAuctions = async (req, res) => {
+  const auctions = await RealtimeAuctionModel.find();
+  res.status(200).json({ data: auctions });
+  return;
+};
+
+module.exports = { createAuction, completeAuction, getAllAuctions };
