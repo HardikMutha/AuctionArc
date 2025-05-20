@@ -309,4 +309,5 @@ module.exports = {
   placeBid,
   getProductsInfiniteScroll,
   getSoldProducts,
+  uploadImagesToCloudinary,
 };

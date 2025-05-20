@@ -11,7 +11,7 @@ app.use(cookieParser());
 
 const authRoutes = require("./routes/auth");
 const wishListRoutes = require("./routes/wishlist");
-
+const realtimeRoutes = require("./routes/realtime");
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
 const bodyParser = require("body-parser");
@@ -28,6 +28,7 @@ app.use("/product", productRoutes);
 app.use("/user", userRoutes);
 app.use("/wish-list", wishListRoutes);
 app.use("/auth", authRoutes);
+app.use("/realtime", realtimeRoutes);
 
 const connectDB = async () => {
   try {
