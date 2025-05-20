@@ -58,7 +58,7 @@ const Navbar = (props) => {
     {
       text: "RealTime Auction",
       icon: <AlarmOnRounded className="text-zinc-100" size={20} />,
-      link: "/auction-live",
+      link: "/live-auction",
     },
   ];
 
@@ -81,7 +81,7 @@ const Navbar = (props) => {
     {
       text: "RealTime Auction",
       icon: <AccessTime className="text-black" size={20} />,
-      link: "/auction-live",
+      link: "/live-auction",
     },
   ];
 
@@ -118,7 +118,7 @@ const Navbar = (props) => {
             </Link>
           </div>
 
-          {props.showSearch === undefined && (
+          {props?.showSearch === undefined && (
             <div className="relative flex-grow max-w-xl mx-2 md:mx-4">
               <div className="flex items-center h-10 bg-zinc-800/50 hover:bg-zinc-800/70 rounded-full transition-colors duration-300">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -172,12 +172,7 @@ const Navbar = (props) => {
                     >
                       Dashboard
                     </Link>
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      Profile
-                    </Link>
+
                     <button
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => {

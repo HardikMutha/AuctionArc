@@ -15,7 +15,7 @@ const loginSchema = joi.object({
 });
 
 const productSchemaValidation = joi.object({
-  name: joi.string(),
+  name: joi.string().required(),
   description: joi.string().required(),
   images: [joi.string().uri()],
   category: joi.string().required(),
@@ -24,4 +24,17 @@ const productSchemaValidation = joi.object({
   duration: joi.date().required(),
 });
 
-module.exports = { signupSchema, loginSchema, productSchemaValidation };
+const RealtimeSchemaValidation = joi.object({
+  name: joi.string().required(),
+  description: joi.string().required(),
+  images: [joi.string().uri()],
+  category: joi.string().required(),
+  listingPrice: joi.number().required(),
+});
+
+module.exports = {
+  signupSchema,
+  loginSchema,
+  productSchemaValidation,
+  RealtimeSchemaValidation,
+};

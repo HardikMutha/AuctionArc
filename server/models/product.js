@@ -11,13 +11,13 @@ const productSchema = new mongoose.Schema({
   auctionStatus: { type: Boolean, default: true },
   duration: {
     type: Date,
-    default: Date.now,
+    default: Date.now(),
   },
   currentPrice: { type: Number, default: 0.0 },
   productSeller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    default: "6757231c22b9b895928c3a7b",
+    default: null,
   },
   bidHistory: {
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: "bidModel" }],
@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
   soldTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    default: "6757231c22b9b895928c3a7b",
+    default: null,
   },
 });
 
