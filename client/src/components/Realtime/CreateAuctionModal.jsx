@@ -32,6 +32,11 @@ export default function CreateAuctionModal(props) {
           },
         }
       );
+      if (response?.status == 200) {
+        toast.success(response?.data?.msg);
+        setTimeout(() => {}, 2000);
+        navigate(`/live-auction/host/${response?.data?.auctionCode}`);
+      }
       toast.success(response.data.msg);
       setLoading(false);
     } catch (err) {
@@ -76,7 +81,7 @@ export default function CreateAuctionModal(props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className=" bg-gray-50 py-2 px-4 sm:px-6 lg:px-8 w-[40%] pb-10 rounded-lg">
+      <div className=" bg-gray-50 py-2 px-4 sm:px-6 lg:px-8 w-[40%] pb-10 rounded-lg overflow-clip">
         <div className="flex items-center justify-end pb-3 border-b">
           <button
             onClick={props?.onClose}

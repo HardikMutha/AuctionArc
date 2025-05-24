@@ -21,6 +21,9 @@ const RealtimeAuctionSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  auctionCode: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("RealtimeAuction", RealtimeAuctionSchema);
