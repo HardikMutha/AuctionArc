@@ -61,7 +61,7 @@ const Homepage = () => {
   }, []);
 
   const filteredProducts = AllProducts.filter((product) =>
-    product.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    product?.name?.toLowerCase().startsWith(searchQuery.toLowerCase())
   );
 
   return (

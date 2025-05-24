@@ -334,7 +334,7 @@ export default function ProductPage() {
                     Listing Price: ${product?.listingPrice || "0.00"}
                     <br />
                     Current Price: $
-                    {currentPrice || product?.listingPrice || "0.00"}
+                    {product?.currentPrice || product?.listingPrice || "0.00"}
                   </Typography>
                 </Box>
 
