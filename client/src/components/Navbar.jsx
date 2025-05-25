@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
+import axios from "axios";
 
 const Navbar = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -172,15 +173,29 @@ const Navbar = (props) => {
                     >
                       Dashboard
                     </Link>
-
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => {
-                        console.log("Logging out");
-                      }}
+                    <Link
+                      to="/login"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
-                      Logout
-                    </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        onClick={async () => {
+                          try {
+                            const res = await axios.get(
+                              `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
+                              {
+                                withCredentials: true,
+                              }
+                            );
+                            console.log("Logging out");
+                          } catch (error) {
+                            console.error("Logout failed:", error);
+                          }
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </Link>
                   </div>
                 )}
               </div>
