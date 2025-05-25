@@ -16,31 +16,54 @@ import Spinner from "../../components/Spinner";
 import fullData from "./TempData";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
+import Supabase from "../../config/supabase";
 
 export default function AuctionHost() {
   const { id } = useParams();
-  const [auction, setAuction] = useState(fullData.auction);
+  const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
   const [bidHistory, setBidHistory] = useState(fullData.bidHistory);
-  const [participants, setParticipants] = useState(fullData.participants);
+  const [participants, setParticipants] = useState([]);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState(fullData.messages);
+  const [messages, setMessages] = useState([
+    {
+      id: `msg_${Date.now()}`,
+      userId: "system",
+      username: "System",
+      text: `The auction has started`,
+      timestamp: new Date().toISOString(),
+      isSystem: true,
+    },
+  ]);
   const messagesEndRef = useRef(null);
   const [isCompleting, setIsCompleting] = useState(false);
   const navigate = useNavigate();
 
+  const channel = Supabase.channel(`auction:${id}`);
+
   useEffect(() => {
     checkHost();
     fetchAuctionDetails();
+    channel
+      .on("broadcast", { event: "participant-message" }, (payload) => {
+        setMessages((prev) => [...prev, payload.payload.newMessage]);
+      })
+      .on("broadcast", { event: "participant-join" }, (payload) => {
+        setParticipants((prev) => [...prev, payload?.payload?.user]);
+      })
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        const participants = Object.entries(state).map(([key, [info]]) => ({
+          id: key,
+          ...info,
+        }));
+        const data = participants.map((participant) => {
+          return participant.user;
+        });
+        setParticipants((prev) => [...prev, ...data]);
+      })
+      .subscribe();
   }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, bidHistory]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const checkHost = async () => {
     try {
@@ -56,7 +79,7 @@ export default function AuctionHost() {
       }
     } catch (err) {
       console.log(err);
-      toast.error("Unauthorized");
+      toast.error("An Error Ocurred Please Try Again");
       navigate("/live-auction");
     }
   };
@@ -71,11 +94,10 @@ export default function AuctionHost() {
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch auction details:", error);
-      toast.error("Failed to load auction details");
+      toast.error("Failed to load auction details,Make sure it Exists");
       setLoading(false);
     }
   };
-
   const sendMessage = () => {
     if (!message.trim()) return;
 
@@ -87,6 +109,11 @@ export default function AuctionHost() {
       timestamp: new Date().toISOString(),
       isHost: true,
     };
+    channel.send({
+      type: "broadcast",
+      event: "host-message",
+      payload: { newMessage },
+    });
     setMessages((prev) => [...prev, newMessage]);
     setMessage("");
   };
@@ -117,10 +144,17 @@ export default function AuctionHost() {
       setIsCompleting(false);
     }
   };
-
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, bidHistory]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   if (loading) {
@@ -253,7 +287,7 @@ export default function AuctionHost() {
                 <ul>
                   {participants.map((participant) => (
                     <li
-                      key={participant.id}
+                      key={participant?._id || crypto.randomUUID()}
                       className="px-2 py-2 hover:bg-gray-50 rounded flex items-center"
                     >
                       <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
@@ -261,10 +295,10 @@ export default function AuctionHost() {
                       </div>
                       <div>
                         <p className="text-sm font-medium">
-                          {participant.username}
+                          {participant?.username}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {participant.bidCount || 0} bids
+                          {participant?.bidCount || 0} bids
                         </p>
                       </div>
                     </li>
