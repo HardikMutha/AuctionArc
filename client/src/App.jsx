@@ -10,7 +10,8 @@ import ProductPage from "./Pages/ProductPage";
 import UserWishlist from "../src/Pages/UserWishlist";
 import Spinner from "./components/Spinner";
 import { RealtimeHome } from "./Pages/Realtime_Auction/RealtimeHome";
-import CreateAuctionModal from "./components/Realtime/CreateAuctionModal";
+import AuctionHost from "./Pages/Realtime_Auction/AuctionHost";
+import AuctionParticipant from "./Pages/Realtime_Auction/AuctionParticipant";
 
 function App() {
   const { state } = useAuthContext();
@@ -38,7 +39,17 @@ function App() {
             element={state?.isAuthenticated ? <UserWishlist /> : <Login />}
           />
           <Route path="/live-auction/" element={<RealtimeHome />} />
-          <Route path="/temp/" element={<CreateAuctionModal isOpen={true} />} />
+          <Route
+            path="/live-auction/host/:id"
+            element={state?.isAuthenticated ? <AuctionHost /> : <Login />}
+          />
+          <Route
+            path="/live-auction/participant/:id"
+            element={
+              state?.isAuthenticated ? <AuctionParticipant /> : <Login />
+            }
+          />
+          <Route path="/temp/" element={<AuctionParticipant />} />
         </Routes>
       </BrowserRouter>
     </>

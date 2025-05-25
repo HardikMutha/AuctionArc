@@ -20,10 +20,13 @@ const createAuction = async (req, res) => {
     }
   }
   const images = inputFiles.map((f) => f);
+  const auctionCode =
+    Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
   const newProduct = {
     ...inputData,
     images: images,
     productSeller: userid,
+    auctionCode: `${auctionCode}`,
   };
   const finalProduct = new RealtimeAuctionModel(newProduct);
   try {
@@ -31,9 +34,10 @@ const createAuction = async (req, res) => {
     res.status(200).json({
       msg: "Auction Created Succefully, Redirecting...",
       id: savedProduct._id,
+      auctionCode: savedProduct.auctionCode,
     });
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).json({ msg: err?.message });
   }
 };
 
@@ -44,7 +48,9 @@ const completeAuction = async (req, res) => {
     res.status(404).json({ msg: "Product Not Found Invalid Request" });
     return;
   }
-  const newUser = await userModel.findById(soldTo);
+  const newUser = await userModel
+    .findById(soldTo)
+    .select(["username", "email", "_id"]);
   if (!newUser) {
     res.status(404).json({ msg: "Product Not Found Invalid Request" });
     return;
@@ -63,4 +69,18 @@ const getAllAuctions = async (req, res) => {
   return;
 };
 
-module.exports = { createAuction, completeAuction, getAllAuctions };
+const getAuctionById = async (req, res) => {
+  const { id } = req.params;
+  const foundAuction = await RealtimeAuctionModel.findOne({ auctionCode: id });
+  if (!foundAuction) {
+    return res.status(404).json({ msg: "Auction Not Found" });
+  }
+  return res.status(200).json({ data: foundAuction });
+};
+
+module.exports = {
+  createAuction,
+  completeAuction,
+  getAllAuctions,
+  getAuctionById,
+};

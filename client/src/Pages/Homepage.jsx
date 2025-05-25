@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -5,7 +6,6 @@ import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
 import InfiniteScroll from "react-infinite-scroll-component";
-import "../styles/Homepage.css";
 import Spinner from "../components/Spinner";
 
 const Homepage = () => {

@@ -7,7 +7,10 @@ const {
   createAuction,
   completeAuction,
   getAllAuctions,
+  getAuctionById,
 } = require("../controllers/realtime.js");
+
+const { checkAuctionHost } = require("../middlewares/realtime.js");
 
 router.post(
   "/new-auction",
@@ -19,5 +22,9 @@ router.post(
 
 router.post("/complete-auction", authenticateUser, completeAuction);
 router.get("/all-auctions", getAllAuctions);
+router.get("/auction-details/:id", getAuctionById);
+router.post("/check-host", authenticateUser, checkAuctionHost, (req, res) => {
+  res.status(200).json({ msg: "Authorization Successfull" });
+});
 
 module.exports = router;
