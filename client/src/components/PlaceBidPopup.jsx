@@ -38,7 +38,7 @@ function PlaceBidPopup({
     try {
       console.log(product._id);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/place-bid/${product._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/product/place-bid/${product._id}`,
         { bidAmount: price },
         { withCredentials: true }
       );
@@ -58,7 +58,7 @@ function PlaceBidPopup({
           "Error placing bid. Please check your network and try again."
         );
       }
-      console.error("Error placing bid:", error);
+      console.log("Error placing bid:", error);
     }
   };
 
