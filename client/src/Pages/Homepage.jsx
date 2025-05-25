@@ -98,11 +98,26 @@ const Homepage = () => {
             style={{ overflow: "hidden" }}
           >
             <Box spacing={4} sx={{ width: "80vw" }}>
-              {filteredProducts.map((product) => (
-                <Box item key={product._id} marginX={"auto"}>
-                  <ProductCard productDetails={product} />
-                </Box>
-              ))}
+              {
+                filteredProducts.length === 0 ? (
+                  <div className="p-10 flex flex-col justify-center align-middle items-center h-[50vh]">
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/106/106469.png"
+                      alt="No such product"
+                      className="w-40 h-40 mb-4"
+                    />
+                    <h2 className="text-2xl font-semibold text-gray-600">
+                      Oops! No products found matching your search...
+                    </h2>
+                  </div>
+                ) : (
+                  filteredProducts.map((product) => (
+                    <Box item key={product._id} marginX={"auto"}>
+                      <ProductCard productDetails={product} />
+                    </Box>
+                  ))
+                )
+              }
             </Box>
           </InfiniteScroll>
         </Box>
