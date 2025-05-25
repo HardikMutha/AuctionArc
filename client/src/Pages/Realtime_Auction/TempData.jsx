@@ -1,6 +1,3 @@
-// Placeholder data for Auction Host Interface
-
-// Main auction details
 const auctionData = {
   _id: "auction_12345",
   name: "Vintage Rolex Submariner 1680",
@@ -8,7 +5,7 @@ const auctionData = {
   description:
     "Rare 1970s Rolex Submariner ref. 1680, excellent condition with original box and papers. Serviced in 2023.",
   listingPrice: 8500,
-  status: true, // true = live, false = completed
+  status: true,
   images: [
     "https://example.com/images/rolex_submariner_1.jpg",
     "https://example.com/images/rolex_submariner_2.jpg",
@@ -20,7 +17,6 @@ const auctionData = {
   hostName: "Premier Auctions",
 };
 
-// Auction participants
 const participantsData = [
   {
     id: "user_5678",
@@ -59,7 +55,6 @@ const participantsData = [
   },
 ];
 
-// Bid history
 const bidHistoryData = [
   {
     id: "bid_001",
@@ -154,7 +149,7 @@ const bidHistoryData = [
   },
 ];
 
-const completedAuctionStatus = {
+export const completedAuctionStatus = {
   status: false,
   winningBid: {
     id: "bid_013",
@@ -166,7 +161,7 @@ const completedAuctionStatus = {
   completedAt: "2025-05-21T14:00:00Z",
 };
 
-const auctionCompletedMessage = {
+export const auctionCompletedMessage = {
   id: "msg_016",
   userId: "system",
   username: "System",
@@ -175,24 +170,10 @@ const auctionCompletedMessage = {
   isSystem: true,
 };
 
-// Full dataset to use
 const fullData = {
   auction: auctionData,
   participants: participantsData,
   bidHistory: bidHistoryData,
 };
 
-// Export the data
 export default fullData;
-
-// Usage example:
-// To use this data in your component, you would import it and set your initial states like this:
-/*
-import auctionPlaceholderData from './auctionPlaceholderData';
-
-// Then in your component:
-const [auction, setAuction] = useState(auctionPlaceholderData.auction);
-const [participants, setParticipants] = useState(auctionPlaceholderData.participants);
-const [bidHistory, setBidHistory] = useState(auctionPlaceholderData.bidHistory);
-const [messages, setMessages] = useState(auctionPlaceholderData.messages);
-*/

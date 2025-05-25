@@ -89,16 +89,16 @@ export default function AuctionParticipant() {
       })
       .on("presence", { event: "sync" }, () => {
         const presenceState = channel.presenceState();
-        const participants = Object.entries(presenceState).map(
+        const auctionParticipants = Object.entries(presenceState).map(
           ([key, [info]]) => ({
             id: key,
             ...info,
           })
         );
-        const data = participants.map((participant) => {
+        let data = auctionParticipants.map((participant) => {
           return participant.user;
         });
-        setParticipants((prev) => [...prev, ...data]);
+        setParticipants((prev) => [...data]);
       })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
         console.log(`New participant joined: ${key}`, newPresences);
@@ -114,6 +114,9 @@ export default function AuctionParticipant() {
           });
         }
       });
+    return () => {
+      Supabase.removeChannel(channel);
+    };
   }, []);
 
   const sendMessage = () => {

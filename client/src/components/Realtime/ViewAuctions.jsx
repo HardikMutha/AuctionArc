@@ -4,11 +4,13 @@ import { Image as ImageIcon, X, DollarSign, Tag, Clock } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
+import { useNavigate } from "react-router";
 
 export default function ViewAuctions(props) {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("live");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (props.isOpen) {
@@ -28,6 +30,7 @@ export default function ViewAuctions(props) {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/all-auctions`
       );
+      console.log(response.data.data);
       setAuctions(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -41,11 +44,6 @@ export default function ViewAuctions(props) {
   const completedAuctions = auctions.filter(
     (auction) => auction.status === false
   );
-
-  const handlePlaceBid = (auctionId) => {
-    toast.info(`Preparing to place bid on auction #${auctionId}`);
-    props.onBid && props.onBid(auctionId);
-  };
 
   if (!props?.isOpen) return null;
 
@@ -147,7 +145,9 @@ export default function ViewAuctions(props) {
                         </span>
                       </div>
                       <button
-                        onClick={() => handlePlaceBid(auction.id)}
+                        onClick={() =>
+                          navigate(`./participant/${auction.auctionCode}`)
+                        }
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                       >
                         Join Now

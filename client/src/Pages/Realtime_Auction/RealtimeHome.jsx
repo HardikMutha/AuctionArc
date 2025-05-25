@@ -43,7 +43,6 @@ export const RealtimeHome = () => {
           </div>
         </div>
       </div>
-      {/* How It Works Section */}
       <div className="max-w-6xl mx-auto py-16 px-4">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
           How Real-Time Auctions Work
@@ -89,7 +88,6 @@ export const RealtimeHome = () => {
         </div>
       </div>
 
-      {/* Call to Action */}
       <div className="max-w-6xl mx-auto pb-16 px-4">
         <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 rounded-2xl p-8 text-center shadow-lg">
           <h2 className="text-3xl font-bold text-white mb-4">

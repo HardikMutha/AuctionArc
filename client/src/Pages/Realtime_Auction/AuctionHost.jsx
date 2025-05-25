@@ -53,16 +53,22 @@ export default function AuctionHost() {
       })
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
-        const participants = Object.entries(state).map(([key, [info]]) => ({
-          id: key,
-          ...info,
-        }));
-        const data = participants.map((participant) => {
+        const auctionParticipants = Object.entries(state).map(
+          ([key, [info]]) => ({
+            id: key,
+            ...info,
+          })
+        );
+        let data = auctionParticipants.map((participant) => {
           return participant.user;
         });
-        setParticipants((prev) => [...prev, ...data]);
+
+        setParticipants((prev) => [...data]);
       })
       .subscribe();
+    return () => {
+      Supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkHost = async () => {
