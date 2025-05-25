@@ -174,7 +174,6 @@ export default function ProductPage() {
       <Navbar />
       <PlaceBidPopup
         product={product}
-        currentPrice={currentPrice}
         trigger={bidPopup}
         setBidPopup={setBidPopup}
       />

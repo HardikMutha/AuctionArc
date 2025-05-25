@@ -6,7 +6,6 @@ import { toast } from "sonner";
 
 function PlaceBidPopup({
   product,
-  currentPrice,
   trigger,
   setBidPopup,
   children,
@@ -14,8 +13,11 @@ function PlaceBidPopup({
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
-  const [price, setPrice] = useState(listingPrice);
-  const maxPrice = listingPrice * 2;
+
+  const currentPrice = product?.currentPrice? parseInt(product.currentPrice): listingPrice;
+
+  const [price, setPrice] = useState(currentPrice);
+  const maxPrice = currentPrice * 2;
 
   const handleSliderChange = (event) => {
     setPrice(Number(event.target.value));
@@ -81,14 +83,14 @@ function PlaceBidPopup({
         <div className="w-full max-w-md mx-auto space-y-8">
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">
-              Listing Price: ${listingPrice}
+              Current Price: ${currentPrice}
             </h3>
 
             <input
               type="range"
               value={price}
               onChange={handleSliderChange}
-              min={currentPrice}
+              min={listingPrice}
               max={maxPrice}
               step={10}
               className="w-full h-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg appearance-none cursor-pointer"

@@ -10,6 +10,8 @@ const validateBidAmount = async (req, res, next) => {
   }
   const productId = req.params.id;
   const foundProduct = await productModel.findById(productId);
+  console.log("Current Price:" , foundProduct.currentPrice);
+  console.log("Bid Amount:", bidAmount);
   if (foundProduct.currentPrice >= bidAmount) {
     return res
       .status(400)
