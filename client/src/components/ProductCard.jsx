@@ -120,12 +120,18 @@ const ProductCard = ({ productDetails }) => {
           <div className="flex-grow flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div className="flex flex-col justify-start">
-                <h2 className="text-xl md:text-2xl font-semibold mb-2">
+                <h2 className="text-xl md:text-2xl font-bold mb-2">
                   {productDetails.name}
                 </h2>
                 <div className="flex items-center gap-4">
                   <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5">
-                    About - {productDetails.description}
+                    {productDetails.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4 mt-4">
+                  <p className="text-gray-800 text-xl font-semibold">
+                    ${productDetails.currentPrice}
                   </p>
                 </div>
               </div>
