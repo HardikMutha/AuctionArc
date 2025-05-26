@@ -43,10 +43,17 @@ const createAuction = async (req, res) => {
 
 const completeAuction = async (req, res) => {
   const { productId, soldTo } = req.body;
+
   const product = await RealtimeAuctionModel.findById(productId);
   if (!product) {
     res.status(404).json({ msg: "Product Not Found Invalid Request" });
     return;
+  }
+  if (soldTo === "unsold") {
+    (product.soldTo = null), (product.status = false), await product.save();
+    return res
+      .status(200)
+      .json({ message: "Auction Completed with Product going unsold" });
   }
   const newUser = await userModel
     .findById(soldTo)

@@ -13,7 +13,6 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
-import fullData from "./TempData";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
 import Supabase from "../../config/supabase";
@@ -22,7 +21,7 @@ export default function AuctionHost() {
   const { id } = useParams();
   const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
-  const [bidHistory, setBidHistory] = useState(fullData.bidHistory);
+  const [bidHistory, setBidHistory] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
@@ -38,9 +37,7 @@ export default function AuctionHost() {
   const messagesEndRef = useRef(null);
   const [isCompleting, setIsCompleting] = useState(false);
   const navigate = useNavigate();
-
   const channel = Supabase.channel(`auction:${id}`);
-
   useEffect(() => {
     checkHost();
     fetchAuctionDetails();
@@ -50,6 +47,23 @@ export default function AuctionHost() {
       })
       .on("broadcast", { event: "participant-join" }, (payload) => {
         setParticipants((prev) => [...prev, payload?.payload?.user]);
+      })
+      .on("broadcast", { event: "place-bid" }, (payload) => {
+        console.log("Bid Placed", payload);
+        setBidHistory((prev) => [...prev, payload.payload.newBid]);
+        const initParticipants = participants.filter(
+          (participant) =>
+            participant.username !== payload.payload.newBid.username
+        );
+        const updatedParticipants = participants.filter(
+          (participant) =>
+            participant.username === payload.payload.newBid.username
+        );
+        if (!updatedParticipants[0].bidCount)
+          updatedParticipants[0].bidCount = 0;
+        updatedParticipants[0].bidCount = updatedParticipants[0].bidCount + 1;
+        console.log(initParticipants, updatedParticipants);
+        setParticipants([...initParticipants, ...updatedParticipants]);
       })
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
@@ -106,7 +120,6 @@ export default function AuctionHost() {
   };
   const sendMessage = () => {
     if (!message.trim()) return;
-
     const newMessage = {
       id: `msg_${Date.now()}`,
       userId: "host",
@@ -125,24 +138,36 @@ export default function AuctionHost() {
   };
 
   const handleMarkCompleted = async () => {
+    bidHistory.sort((a, b) => a.amount - b.amount);
+    const winningBid = bidHistory.length && bidHistory[bidHistory.length - 1];
     setIsCompleting(true);
     try {
+      let productId = auction._id;
+      let soldTo = "unsold";
+      if (winningBid) {
+        soldTo = winningBid.userId;
+      }
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/complete-auction`,
-        { productId: auction._id, soldTo: "680d5221f7fccbad799d6d88" },
+        { productId, soldTo },
         { withCredentials: true }
       );
       setAuction((prev) => ({ ...prev, status: false }));
-      toast.success("Auction marked as completed successfully");
+      toast.success("Auction completed successfully");
       const completionMessage = {
         id: `msg_${Date.now()}`,
         userId: response?.data?.winner?._id,
-        username: response.data.winner.username,
-        text: `This auction has been completed, The Winner is ${response.data.winner.username}`,
+        username: response?.data?.winner?.username,
+        text: `This auction has been completed, The Winner is ${response?.data?.winner?.username}`,
         timestamp: new Date().toISOString(),
         isSystem: true,
       };
       setMessages((prev) => [...prev, completionMessage]);
+      channel.send({
+        type: "broadcast",
+        event: "auction-completed",
+        payload: { completionMessage },
+      });
     } catch (err) {
       console.log(err);
       toast.error("Failed to complete the auction");
@@ -150,6 +175,7 @@ export default function AuctionHost() {
       setIsCompleting(false);
     }
   };
+
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
