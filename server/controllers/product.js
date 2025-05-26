@@ -216,60 +216,41 @@ const getProductPrice = async (req, res) => {
   }
 };
 
-// const placeBid = async (req, res) => {
-//   const productId = req.params?.id;
-//   if (!req.body.bidAmount)
-//     return res.status(400).json({ message: "No Bid Amount Specified" });
-//   try {
-//     const product = await productModel.findById(productId);
-//     if (!product) return res.status(404).json({ message: "Product Not Found" });
-//     const userid = req.user?.id;
-//     const foundUser = await userModel.findById(userid);
-//     const newBid = new bidModel({
-//       bidder: userid,
-//       bidAmount: req.body.bidAmount,
-//       bidDate: Date.now(),
-//     });
-//     const bidId = newBid._id;
-//     if (product.bidHistory.length == 0) {
-//       await newBid.save();
-//       product.bidHistory.push(bidId);
-//       foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-//       await foundUser.save();
-//       await product.save();
-//       return res.status(200).json({ message: "Bid Placed Successfully" });
-//     } else {
-//       if (
-//         req.body.bidAmount <
-//         product.bidHistory[product.bidHistory.length - 1].bidAmount
-//       ) {
-//         return res.status(400).json({ message: "Invalid Bid Amount" });
-//       } else {
-//         await newBid.save();
-//         product.bidHistory.push(newBid);
-//         foundUser.ongoingBids.push({ product: product._id, Bid: newBid._id });
-//         await foundUser.save();
-//         await product.save();
-//         return res.status(200).json({ message: "Bid Placed Successfully" });
-//       }
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(404).send("Invalid Product Id");
-//   }
-// };
-
 const placeBid = async (req, res) => {
-  const user = req?.user;
-  const product = req?.product;
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const user = req?.user;
+    const product = req?.product;
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { bidAmount } = req.body;
+
+    product.currentPrice = bidAmount;
+    await product.save();
+
+    const foundUser = await userModel.findById(user?.id);
+    if (!foundUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const productIdStr = product._id.toString();
+
+    // Add only if product ID string not already in array
+    if (!foundUser.ongoingBids.includes(productIdStr)) {
+      foundUser.ongoingBids.push(productIdStr);
+    }
+
+    await foundUser.save();
+
+    res.status(200).json({ message: "Bid Placed Successfully" });
+  } catch (err) {
+    console.error("Error placing bid:", err);
+    res.status(500).json({ message: "An error occurred while placing the bid" });
   }
-  const { bidAmount } = req.body;
-  product.currentPrice = bidAmount;
-  await product.save();
-  res.status(200).json({ message: "Bid Placed Successfully" });
 };
+
 
 const getProductsInfiniteScroll = async (req, res) => {
   try {

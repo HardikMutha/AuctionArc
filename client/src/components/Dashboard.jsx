@@ -16,7 +16,7 @@ const Dashboard = ({ data }) => {
             withCredentials: true,
           }
         );
-        console.log(response.data.data);
+        console.log("Ongoing bidS ", response.data.data);
         setUserBids([...response.data.data]);
       } catch (err) {
         console.log(err);

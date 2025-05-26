@@ -169,12 +169,11 @@ export default function ProductPage() {
   }, [id]);
 
   return (
-    <>
+    <div className="min-h-[100vh] bg-gradient-to-t from-[#f8f9fa] to-[#d9ecef]">
       <CssBaseline enableColorScheme />
       <Navbar />
       <PlaceBidPopup
         product={product}
-        currentPrice={currentPrice}
         trigger={bidPopup}
         setBidPopup={setBidPopup}
       />
@@ -471,6 +470,6 @@ export default function ProductPage() {
           )}
         </Box>
       </Box>
-    </>
+    </div>
   );
 }
