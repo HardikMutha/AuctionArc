@@ -28,7 +28,7 @@ const Homepage = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/product/all-products`,
+          `${import.meta.env.VITE_BACKEND_URL}/product/all-products-infinite-scroll?page=${page}&limit=${limit}`,
           { withCredentials: true }
         );
 
@@ -81,13 +81,12 @@ const Homepage = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            overflow: "hidden",
           }}
         >
           <InfiniteScroll
             dataLength={filteredProducts.length}
             next={debouncedFetchProducts}
-            hasMore={false}
+            hasMore={hasMore}
             loader={<Spinner />}
             endMessage={
               <p className="m-20 font-bold text-lg text-center">
@@ -127,3 +126,5 @@ const Homepage = () => {
 };
 
 export default Homepage;
+
+
