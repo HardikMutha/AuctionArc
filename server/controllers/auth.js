@@ -13,29 +13,25 @@ const createUser = async (req, res) => {
         .status(400)
         .json({ message: `Validation error: ${error.details[0].message}` });
     }
-
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser) {
       return res
         .status(409)
         .json({ message: "User already exists, please log in" });
     }
-
     hash = await hashPassword(req.body.password);
-
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,
       password_hash: hash,
     });
-
     const savedUser = await newUser.save();
     const token = createSecretToken(newUser._id);
     res.cookie("token", token, {
-      path: "/", // Accessible across the app
-      httpOnly: false, // Prevent client-side access
-      secure: false, // Use `true` only for HTTPS
-      sameSite: "Lax", // Allow basic cross-origin
+      path: "/",
+      httpOnly: false,
+      secure: false,
+      sameSite: "Lax",
       expire: new Date(Date.now() + 28800000),
     });
     return res.status(200).json({ user: savedUser, token });
@@ -45,7 +41,6 @@ const createUser = async (req, res) => {
       .json({ message: "An Error Occured Please try again later" });
   }
 };
-
 const loginUser = async (req, res) => {
   try {
     const { error } = loginSchema.validate(req.body);
@@ -54,29 +49,30 @@ const loginUser = async (req, res) => {
         .status(400)
         .json({ message: `Validation error: ${error.details[0].message}` });
     }
-
     const existingUser = await User.findOne({ email: req.body.email });
     if (!existingUser) return res.status(404).send("User Not Found");
     const password = req.body.password;
     const result = await matchPassword(password, existingUser.password_hash);
+    console.log(result);
     if (!existingUser || !result) {
       return res.status(409).json({ message: "Invalid Credentials" });
     }
-
     const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
-      path: "/", // Accessible across the app
-      httpOnly: false, // Prevent client-side access
-      secure: false, // Use `true` only for HTTPS
-      sameSite: "Lax", // Allow basic cross-origin
-      expires: new Date(Date.now() + 28800000), // Cookie will be removed after 8 hours
+      path: "/",
+      httpOnly: false,
+      secure: false,
+      sameSite: "Lax",
+      expires: new Date(Date.now() + 28800000),
     });
     res.json({ user: existingUser, token: token });
   } catch (err) {
-    console.log("Got an error", err);
+    console.log(err);
+    return res
+      .status(400)
+      .json({ message: "An Error Occured Please Try Again" });
   }
 };
-
 const deleteUser = async (req, res) => {
   try {
     const userID = req.user.id;
@@ -86,7 +82,6 @@ const deleteUser = async (req, res) => {
       return res.status(201).json({ msg: "please log in!" });
     } else {
       res.clearCookie("token");
-      // res.json({ message: "Logged Out" })
       User.deleteOne(doc).then((result) => console.log(result));
       return res.status(200).json({ msg: "user deleted!" });
     }

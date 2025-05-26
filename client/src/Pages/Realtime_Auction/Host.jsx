@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import {
   DollarSign,
@@ -9,22 +8,25 @@ import {
   MessageSquare,
   User,
   Gavel,
+  LogOut,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
-import fullData from "./TempData";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
 import Supabase from "../../config/supabase";
 
 export default function AuctionHost() {
   const { id } = useParams();
+
+  const channel = Supabase.channel(`auction:${id}`);
   const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
-  const [bidHistory, setBidHistory] = useState(fullData.bidHistory);
+  const [bidHistory, setBidHistory] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [message, setMessage] = useState("");
+  const [isCompleting, setIsCompleting] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: `msg_${Date.now()}`,
@@ -35,34 +37,71 @@ export default function AuctionHost() {
       isSystem: true,
     },
   ]);
+
+  const checkLocalStorage = () => {
+    const data = localStorage.getItem(`auction:${id}`);
+    if (data && typeof data === "string") {
+      const finalData = JSON.parse(data);
+      const allMessages = finalData?.messages;
+      const allBids = finalData?.bidHistory;
+      setMessages(allMessages);
+      setBidHistory(allBids);
+    }
+  };
+  const updateLocalStorage = () => {
+    const data = {
+      messages,
+      bidHistory,
+    };
+    localStorage.setItem(`auction:${id}`, JSON.stringify(data));
+  };
   const messagesEndRef = useRef(null);
-  const [isCompleting, setIsCompleting] = useState(false);
   const navigate = useNavigate();
-
-  const channel = Supabase.channel(`auction:${id}`);
-
   useEffect(() => {
     checkHost();
     fetchAuctionDetails();
+    checkLocalStorage();
     channel
       .on("broadcast", { event: "participant-message" }, (payload) => {
         setMessages((prev) => [...prev, payload.payload.newMessage]);
+        updateLocalStorage();
       })
       .on("broadcast", { event: "participant-join" }, (payload) => {
         setParticipants((prev) => [...prev, payload?.payload?.user]);
       })
+      .on("broadcast", { event: "place-bid" }, (payload) => {
+        setBidHistory((prev) => [...prev, payload.payload.newBid]);
+        updateLocalStorage();
+        const initParticipants = participants.filter(
+          (participant) =>
+            participant.username !== payload.payload.newBid.username
+        );
+        const updatedParticipants = participants.filter(
+          (participant) =>
+            participant.username === payload.payload.newBid.username
+        );
+        if (!updatedParticipants[0].bidCount)
+          updatedParticipants[0].bidCount = 0;
+        updatedParticipants[0].bidCount = updatedParticipants[0].bidCount + 1;
+        setParticipants([...initParticipants, ...updatedParticipants]);
+      })
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
-        const participants = Object.entries(state).map(([key, [info]]) => ({
-          id: key,
-          ...info,
-        }));
-        const data = participants.map((participant) => {
+        const auctionParticipants = Object.entries(state).map(
+          ([key, [info]]) => ({
+            id: key,
+            ...info,
+          })
+        );
+        let data = auctionParticipants.map((participant) => {
           return participant.user;
         });
-        setParticipants((prev) => [...prev, ...data]);
+        setParticipants([...data]);
       })
       .subscribe();
+    return () => {
+      Supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkHost = async () => {
@@ -100,7 +139,6 @@ export default function AuctionHost() {
   };
   const sendMessage = () => {
     if (!message.trim()) return;
-
     const newMessage = {
       id: `msg_${Date.now()}`,
       userId: "host",
@@ -115,35 +153,51 @@ export default function AuctionHost() {
       payload: { newMessage },
     });
     setMessages((prev) => [...prev, newMessage]);
+    updateLocalStorage();
     setMessage("");
   };
 
   const handleMarkCompleted = async () => {
+    bidHistory.sort((a, b) => a.amount - b.amount);
+    const winningBid = bidHistory.length && bidHistory[bidHistory.length - 1];
     setIsCompleting(true);
     try {
+      let productId = auction._id;
+      let soldTo = "unsold";
+      if (winningBid) {
+        soldTo = winningBid.userId;
+      }
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/complete-auction`,
-        { productId: auction._id, soldTo: "680d5221f7fccbad799d6d88" },
+        { productId, soldTo },
         { withCredentials: true }
       );
       setAuction((prev) => ({ ...prev, status: false }));
-      toast.success("Auction marked as completed successfully");
+      toast.success("Auction completed successfully");
       const completionMessage = {
         id: `msg_${Date.now()}`,
         userId: response?.data?.winner?._id,
-        username: response.data.winner.username,
-        text: `This auction has been completed, The Winner is ${response.data.winner.username}`,
+        username: response?.data?.winner?.username,
+        text: `This auction has been completed, The Winner is ${response?.data?.winner?.username}`,
         timestamp: new Date().toISOString(),
         isSystem: true,
       };
       setMessages((prev) => [...prev, completionMessage]);
+      channel.send({
+        type: "broadcast",
+        event: "auction-completed",
+        payload: { completionMessage },
+      });
     } catch (err) {
       console.log(err);
       toast.error("Failed to complete the auction");
     } finally {
       setIsCompleting(false);
+      //clean up the localStorage once the auction is Over
+      localStorage.removeItem(`auction:${id}`);
     }
   };
+
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -165,6 +219,13 @@ export default function AuctionHost() {
       </div>
     );
   }
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
 
   if (!auction) {
     return (
@@ -194,20 +255,41 @@ export default function AuctionHost() {
       {/* Header */}
       <div className="bg-white border-b px-4 py-3 shadow-sm">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">{auction.name}</h1>
-            <p className="text-sm text-gray-600">{auction.category}</p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center text-gray-700">
-              <Users size={18} className="mr-1" />
-              <span>{participants.length}</span>
+          <div className="flex items-center space-x-4">
+            <img
+              src={
+                auction?.images?.length
+                  ? auction?.images[0]
+                  : "https://www.istockphoto.com/photos/placeholder-image"
+              }
+              alt={auction.name}
+              className="w-12 h-12 rounded-lg object-cover"
+            />
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">
+                {auction?.name}
+              </h1>
+              <p className="text-sm text-gray-600">{auction?.category}</p>
             </div>
-            <div className="flex items-center text-green-600">
-              <DollarSign size={18} className="mr-1" />
-              <span className="font-semibold">
-                {highestBid ? highestBid.amount : auction.listingPrice}
-              </span>
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="text-center">
+              <div className="flex items-center text-gray-700">
+                <Users size={18} className="mr-1" />
+                <span className="font-medium">{participants.length}</span>
+              </div>
+              <span className="text-xs text-gray-500">Participants</span>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center text-green-600">
+                <DollarSign size={18} className="mr-1" />
+                <span className="font-bold text-lg">
+                  {formatCurrency(
+                    highestBid ? highestBid?.amount : auction?.listingPrice
+                  )}
+                </span>
+              </div>
+              <span className="text-xs text-gray-500">Current Bid</span>
             </div>
             {auction.status ? (
               <div className="flex items-center">
@@ -333,9 +415,20 @@ export default function AuctionHost() {
                   )}
                 </button>
               ) : (
-                <div className="text-center py-2 text-gray-600">
-                  <CheckCircle size={18} className="inline-block mr-2" />
-                  Auction completed
+                <div>
+                  <div className="text-center py-2 text-gray-600">
+                    <CheckCircle size={18} className="inline-block mr-2" />
+                    Auction completed
+                  </div>
+                  <button
+                    className="block hover:bg-red-500 p-2 rounded-md mt-2 hover:text-white mx-auto"
+                    onClick={() => navigate("/live-auction")}
+                  >
+                    <span className="flex">
+                      <LogOut className="mr-2" />
+                      Exit
+                    </span>
+                  </button>
                 </div>
               )}
             </div>

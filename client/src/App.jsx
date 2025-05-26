@@ -10,8 +10,8 @@ import ProductPage from "./Pages/ProductPage";
 import UserWishlist from "../src/Pages/UserWishlist";
 import Spinner from "./components/Spinner";
 import { RealtimeHome } from "./Pages/Realtime_Auction/RealtimeHome";
-import AuctionHost from "./Pages/Realtime_Auction/AuctionHost";
-import AuctionParticipant from "./Pages/Realtime_Auction/AuctionParticipant";
+import AuctionHost from "./Pages/Realtime_Auction/Host";
+import AuctionParticipant from "./Pages/Realtime_Auction/Participant";
 
 function App() {
   const { state } = useAuthContext();

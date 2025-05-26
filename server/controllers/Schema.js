@@ -11,7 +11,7 @@ const signupSchema = joi.object({
 // Login Schema
 const loginSchema = joi.object({
   email: joi.string().email().required(),
-  password: joi.string().min(6).required(),
+  password: joi.string().required(),
 });
 
 const productSchemaValidation = joi.object({

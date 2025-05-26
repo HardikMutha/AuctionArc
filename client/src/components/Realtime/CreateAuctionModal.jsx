@@ -34,10 +34,10 @@ export default function CreateAuctionModal(props) {
       );
       if (response?.status == 200) {
         toast.success(response?.data?.msg);
-        setTimeout(() => {}, 2000);
-        navigate(`/live-auction/host/${response?.data?.auctionCode}`);
+        setTimeout(() => {
+          navigate(`/live-auction/host/${response?.data?.auctionCode}`);
+        }, 2000);
       }
-      toast.success(response.data.msg);
       setLoading(false);
     } catch (err) {
       console.log(err.response.data);

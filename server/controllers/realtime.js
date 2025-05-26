@@ -1,7 +1,5 @@
 const RealtimeAuctionModel = require("../models/RealtimeAuction");
-const productModel = require("../models/product");
 const userModel = require("../models/user");
-const mongoose = require("mongoose");
 const { uploadImagesToCloudinary } = require("./product");
 const fs = require("fs");
 
@@ -43,10 +41,17 @@ const createAuction = async (req, res) => {
 
 const completeAuction = async (req, res) => {
   const { productId, soldTo } = req.body;
+
   const product = await RealtimeAuctionModel.findById(productId);
   if (!product) {
     res.status(404).json({ msg: "Product Not Found Invalid Request" });
     return;
+  }
+  if (soldTo === "unsold") {
+    (product.soldTo = null), (product.status = false), await product.save();
+    return res
+      .status(200)
+      .json({ message: "Auction Completed with Product going unsold" });
   }
   const newUser = await userModel
     .findById(soldTo)
@@ -64,14 +69,18 @@ const completeAuction = async (req, res) => {
 };
 
 const getAllAuctions = async (req, res) => {
-  const auctions = await RealtimeAuctionModel.find();
+  const auctions = await RealtimeAuctionModel.find()
+    .populate("soldTo", "username")
+    .exec();
   res.status(200).json({ data: auctions });
   return;
 };
 
 const getAuctionById = async (req, res) => {
   const { id } = req.params;
-  const foundAuction = await RealtimeAuctionModel.findOne({ auctionCode: id });
+  let foundAuction = await RealtimeAuctionModel.findOne({
+    auctionCode: id,
+  });
   if (!foundAuction) {
     return res.status(404).json({ msg: "Auction Not Found" });
   }
