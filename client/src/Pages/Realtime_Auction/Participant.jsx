@@ -19,8 +19,10 @@ import { toast } from "react-toastify";
 import Supabase from "../../config/supabase";
 import useAuthContext from "../../hooks/useAuthContext";
 import { WinnerModal } from "../../components/Realtime/WinnerModal";
+
 export default function AuctionParticipant() {
   const [auction, setAuction] = useState([]);
+  const { id } = useParams();
   const { state } = useAuthContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -29,6 +31,9 @@ export default function AuctionParticipant() {
   const [message, setMessage] = useState("");
   const [showWinnerModal, setShowWinnerModal] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [bidAmount, setBidAmount] = useState("");
+  const [isPlacingBid, setIsPlacingBid] = useState(false);
+  const [showBidForm, setShowBidForm] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: `msg_${Date.now()}`,
@@ -39,11 +44,25 @@ export default function AuctionParticipant() {
       isSystem: true,
     },
   ]);
-  const [bidAmount, setBidAmount] = useState("");
-  const [isPlacingBid, setIsPlacingBid] = useState(false);
-  const [showBidForm, setShowBidForm] = useState(false);
+  const checkLocalStorage = () => {
+    const data = localStorage.getItem(`auction:${id}`);
+    if (data && typeof data === "string") {
+      const finalData = JSON.parse(data);
+      const allMessages = finalData?.messages || [];
+      const allBids = finalData?.bidHistory || [];
+      setMessages(allMessages);
+      setBidHistory(allBids);
+    }
+  };
+  const updateLocalStorage = () => {
+    const data = {
+      messages,
+      bidHistory,
+    };
+    localStorage.setItem(`auction:${id}`, JSON.stringify(data));
+  };
+
   const messagesEndRef = useRef(null);
-  const { id } = useParams();
   const channel = Supabase.channel(`auction:${id}`, {
     config: { broadcast: { self: false } },
   });
@@ -76,11 +95,13 @@ export default function AuctionParticipant() {
     } catch (error) {
       console.error("Failed to fetch auction details:", error);
       toast.error("Failed to load auction details,Make sure it Exists");
+      navigate("/live-auction");
       setLoading(false);
     }
   };
   useEffect(() => {
     fetchAuctionData();
+    checkLocalStorage();
     channel
       .on("broadcast", { event: "host-message" }, (payload) => {
         setMessages((prev) => [...prev, payload.payload.newMessage]);
@@ -88,15 +109,18 @@ export default function AuctionParticipant() {
       .on("broadcast", { event: "participant-message" }, (payload) => {
         console.log(payload.payload.newMessage);
         setMessages((prev) => [...prev, payload.payload.newMessage]);
+        updateLocalStorage();
       })
       .on("broadcast", { event: "auction-completed" }, (payload) => {
         console.log("The auction is completed ", payload);
         setWinner(payload?.payload?.completionMessage?.username);
         setShowWinnerModal(true);
+        localStorage.removeItem(`auction:${id}`);
       })
       .on("broadcast", { event: "place-bid" }, (payload) => {
         console.log("Bid Placed ", payload);
         setBidHistory((prev) => [...prev, payload?.payload?.newBid]);
+        updateLocalStorage();
       })
       .on("presence", { event: "sync" }, () => {
         const presenceState = channel.presenceState();

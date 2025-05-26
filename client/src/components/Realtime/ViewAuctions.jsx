@@ -22,7 +22,7 @@ export default function ViewAuctions(props) {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [props.isOpen]);
+  }, [props?.isOpen]);
 
   const fetchAuctions = async () => {
     try {
@@ -30,7 +30,6 @@ export default function ViewAuctions(props) {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/all-auctions`
       );
-      console.log(response.data.data);
       setAuctions(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -40,9 +39,9 @@ export default function ViewAuctions(props) {
     }
   };
 
-  const liveAuctions = auctions.filter((auction) => auction.status === true);
+  const liveAuctions = auctions.filter((auction) => auction?.status === true);
   const completedAuctions = auctions.filter(
-    (auction) => auction.status === false
+    (auction) => auction?.status === false
   );
 
   if (!props?.isOpen) return null;
@@ -101,13 +100,13 @@ export default function ViewAuctions(props) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
               {liveAuctions.map((auction) => (
                 <div
-                  key={auction._id}
+                  key={auction?._id}
                   className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
                 >
                   <div className="relative h-48 bg-gray-200 overflow-hidden">
-                    {auction.images.length ? (
+                    {auction?.images.length ? (
                       <img
-                        src={auction.images[0]}
+                        src={auction?.images[0]}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -122,17 +121,17 @@ export default function ViewAuctions(props) {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-lg text-gray-800 mb-1 truncate">
-                      {auction.name}
+                      {auction?.name}
                     </h3>
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
-                      {auction.description}
+                      {auction?.description}
                     </p>
 
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center text-gray-600">
                         <Tag size={16} className="mr-1" />
                         <span className="text-sm capitalize">
-                          {auction.category}
+                          {auction?.category}
                         </span>
                       </div>
                     </div>
@@ -141,12 +140,12 @@ export default function ViewAuctions(props) {
                       <div className="flex items-center">
                         <DollarSign size={18} className="text-green-600" />
                         <span className="font-bold text-lg text-gray-800">
-                          {auction.listingPrice}
+                          {auction?.listingPrice}
                         </span>
                       </div>
                       <button
                         onClick={() =>
-                          navigate(`./participant/${auction.auctionCode}`)
+                          navigate(`./participant/${auction?.auctionCode}`)
                         }
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                       >
@@ -166,13 +165,13 @@ export default function ViewAuctions(props) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
             {completedAuctions.map((auction) => (
               <div
-                key={auction._id}
+                key={auction?._id}
                 className="bg-white rounded-lg overflow-hidden shadow-md opacity-75 grayscale"
               >
                 <div className="relative h-48 bg-gray-200 overflow-hidden">
-                  {auction.images.length ? (
+                  {auction?.images.length ? (
                     <img
-                      src={auction.images[0]}
+                      src={auction?.images[0]}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -188,17 +187,22 @@ export default function ViewAuctions(props) {
 
                 <div className="p-4">
                   <h3 className="font-semibold text-lg text-gray-800 mb-1 truncate">
-                    {auction.name}
+                    {auction?.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
-                    {auction.description}
+                  <p className="text-gray-600 text-sm mb-1 line-clamp-2 h-6">
+                    {auction?.description}
                   </p>
-
+                  <p className="mb-2 text-sm line-clamp-2">
+                    Winner -{" "}
+                    <span className="font-semibold !text-green-500">
+                      {auction?.soldTo?.username}
+                    </span>
+                  </p>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center text-gray-600">
                       <Tag size={16} className="mr-1" />
                       <span className="text-sm capitalize">
-                        {auction.category}
+                        {auction?.category}
                       </span>
                     </div>
                   </div>
@@ -207,7 +211,7 @@ export default function ViewAuctions(props) {
                     <div className="flex items-center">
                       <DollarSign size={18} className="text-green-600" />
                       <span className="font-bold text-lg text-gray-800">
-                        {auction.listingPrice}
+                        {auction?.listingPrice}
                       </span>
                     </div>
                     <button

@@ -2,6 +2,7 @@ import Navbar from "../../components/Navbar";
 import { useState } from "react";
 import CreateAuctionModal from "../../components/Realtime/CreateAuctionModal";
 import ViewAuctions from "../../components/Realtime/ViewAuctions";
+import { useNavigate } from "react-router";
 
 export const RealtimeHome = () => {
   const [joinCode, setJoinCode] = useState("");
@@ -10,6 +11,7 @@ export const RealtimeHome = () => {
 
   const onClose = () => setShowCreateAuction(false);
   const onShowLiveClose = () => setShowLiveAuctions(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 to-white">
@@ -17,7 +19,6 @@ export const RealtimeHome = () => {
       <CreateAuctionModal isOpen={showCreateAuction} onClose={onClose} />
       <ViewAuctions isOpen={showLiveAuctions} onClose={onShowLiveClose} />
 
-      {/* Hero Section */}
       <div className="bg-gradient-to-r from-cyan-600 to-cyan-800 py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -135,9 +136,7 @@ export const RealtimeHome = () => {
             </div>
             <button
               className="px-6 py-3 bg-white text-cyan-700 font-medium rounded-lg hover:bg-cyan-50 transition-colors"
-              onClick={() =>
-                (window.location.href = `/realtime/join/${joinCode}`)
-              }
+              onClick={() => navigate(`./participant/${joinCode}`)}
             >
               Join Now
             </button>

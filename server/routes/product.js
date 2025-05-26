@@ -95,6 +95,4 @@ productRoutes
     }
   });
 
-// Todo -  Figure out the update Model for Bid.
-
 module.exports = productRoutes;
