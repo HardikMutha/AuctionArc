@@ -48,7 +48,7 @@ const getUserBidsFromId = async (req, res) => {
 
     return res.status(200).json({ data: r1 });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
     return res.status(404).json({ message: "Invalid User Id" });
   }
 };

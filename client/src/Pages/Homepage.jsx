@@ -28,7 +28,9 @@ const Homepage = () => {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/product/all-products-infinite-scroll?page=${page}&limit=${limit}`,
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/product/all-products-infinite-scroll?page=${page}&limit=${limit}`,
           { withCredentials: true }
         );
 
@@ -65,13 +67,11 @@ const Homepage = () => {
   );
 
   return (
-    // <div className="min-h-[100vh] bg-[radial-gradient(circle_at_top,_#1a1a2e,_#16213e)]">
-    // <div className="min-h-[100vh] bg-gradient-to-t from-[#ffffff] to-[#f8fae3]">
     <div className="min-h-[100vh] bg-gradient-to-t from-[#f8f9fa] to-[#d9ecef]">
       <Navbar searchQuery={searchQuery} setsearchQuery={setsearchQuery} />
       <div className="pt-[5vh] min-h-[100vh]">
-        <h1 className="text-5xl font-semibold text-center m-2 mb-6">
-          All Products
+        <h1 className="text-5xl font-semibold text-center m-2 mb-1">
+          Live Auctions
         </h1>
         <Box
           sx={{
@@ -97,26 +97,24 @@ const Homepage = () => {
             style={{ overflow: "hidden" }}
           >
             <Box spacing={4} sx={{ width: "80vw" }}>
-              {
-                filteredProducts.length === 0 ? (
-                  <div className="p-10 flex flex-col justify-center align-middle items-center h-[50vh]">
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/106/106469.png"
-                      alt="No such product"
-                      className="w-40 h-40 mb-4"
-                    />
-                    <h2 className="text-2xl font-semibold text-gray-600">
-                      Oops! No products found matching your search...
-                    </h2>
-                  </div>
-                ) : (
-                  filteredProducts.map((product) => (
-                    <Box item key={product._id} marginX={"auto"}>
-                      <ProductCard productDetails={product} />
-                    </Box>
-                  ))
-                )
-              }
+              {filteredProducts.length === 0 ? (
+                <div className="p-10 flex flex-col justify-center align-middle items-center h-[50vh]">
+                  <img
+                    src="https://cdn-icons-png.flaticon.com/512/106/106469.png"
+                    alt="No such product"
+                    className="w-40 h-40 mb-4"
+                  />
+                  <h2 className="text-2xl font-semibold text-gray-600">
+                    Oops! No products found matching your search...
+                  </h2>
+                </div>
+              ) : (
+                filteredProducts.map((product) => (
+                  <Box item key={product._id} marginX={"auto"}>
+                    <ProductCard productDetails={product} />
+                  </Box>
+                ))
+              )}
             </Box>
           </InfiniteScroll>
         </Box>
@@ -126,5 +124,3 @@ const Homepage = () => {
 };
 
 export default Homepage;
-
-

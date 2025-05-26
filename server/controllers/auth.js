@@ -53,7 +53,6 @@ const loginUser = async (req, res) => {
     if (!existingUser) return res.status(404).send("User Not Found");
     const password = req.body.password;
     const result = await matchPassword(password, existingUser.password_hash);
-    console.log(result);
     if (!existingUser || !result) {
       return res.status(409).json({ message: "Invalid Credentials" });
     }

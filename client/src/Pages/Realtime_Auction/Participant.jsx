@@ -107,18 +107,15 @@ export default function AuctionParticipant() {
         setMessages((prev) => [...prev, payload.payload.newMessage]);
       })
       .on("broadcast", { event: "participant-message" }, (payload) => {
-        console.log(payload.payload.newMessage);
         setMessages((prev) => [...prev, payload.payload.newMessage]);
         updateLocalStorage();
       })
       .on("broadcast", { event: "auction-completed" }, (payload) => {
-        console.log("The auction is completed ", payload);
         setWinner(payload?.payload?.completionMessage?.username);
         setShowWinnerModal(true);
         localStorage.removeItem(`auction:${id}`);
       })
       .on("broadcast", { event: "place-bid" }, (payload) => {
-        console.log("Bid Placed ", payload);
         setBidHistory((prev) => [...prev, payload?.payload?.newBid]);
         updateLocalStorage();
       })

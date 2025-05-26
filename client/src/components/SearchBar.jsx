@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
@@ -8,7 +9,6 @@ export default function SearchBar({ setsearchQuery }) {
   const [query, setQuery] = React.useState("");
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Search Query : ", query);
   };
   return (
     <Stack spacing={2} sx={{ width: "60%" }}>
@@ -27,15 +27,15 @@ export default function SearchBar({ setsearchQuery }) {
             borderRadius: "40px",
             boxShadow: 3,
             "& .MuiOutlinedInput-root": {
-              borderRadius: "40px", // Apply border radius to the input
+              borderRadius: "40px",
               "& fieldset": {
-                borderColor: "black", // Change border color
+                borderColor: "black",
               },
               "&:hover fieldset": {
-                borderColor: "#FF5A5F", // Change border color on hover
+                borderColor: "#FF5A5F",
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#FF5A5F", // Change border color when focused
+                borderColor: "#FF5A5F",
               },
             },
             width: "100%",

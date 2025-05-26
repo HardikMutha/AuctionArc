@@ -118,7 +118,7 @@ export const RealtimeHome = () => {
       <div className="bg-cyan-700 py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-6">
-            Ready to Join an Auction?
+            Join Using A Code
           </h2>
           <p className="text-xl text-cyan-100 mb-8">
             Enter an auction code to join instantly or browse available auctions

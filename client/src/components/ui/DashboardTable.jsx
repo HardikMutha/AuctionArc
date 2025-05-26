@@ -18,7 +18,6 @@ export default function DashboardTable() {
       );
       setProductData([...response.data.products]);
       setTotalProducts(response.data.totalProducts);
-      console.log(response.data);
     };
     fetchData();
   }, [page]);
@@ -36,7 +35,6 @@ export default function DashboardTable() {
       <div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
         {/* Header Section */}
         <div className="max-w-7xl mx-auto">
-
           {/* Grid Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {productData.map((product, index) => (

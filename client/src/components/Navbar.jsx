@@ -10,6 +10,7 @@ import {
   Close,
   FavoriteBorder,
   AlarmOnRounded,
+  Gavel,
 } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
@@ -32,7 +33,6 @@ const Navbar = (props) => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -44,11 +44,11 @@ const Navbar = (props) => {
     {
       text: "Past Auctions",
       icon: <History className="text-zinc-100" size={20} />,
-      link: "/temp",
+      link: "/past-auctions",
     },
     {
-      text: "Sell a Product",
-      icon: <ShoppingBag className="text-zinc-100" size={20} />,
+      text: "Start an Auction",
+      icon: <Gavel className="text-zinc-100" size={20} />,
       link: "/sell-new-product",
     },
     {
@@ -93,6 +93,20 @@ const Navbar = (props) => {
       link: "/dashboard",
     },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status == 200) console.log("Logging out");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -179,19 +193,7 @@ const Navbar = (props) => {
                     >
                       <button
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={async () => {
-                          try {
-                            const res = await axios.get(
-                              `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
-                              {
-                                withCredentials: true,
-                              }
-                            );
-                            console.log("Logging out");
-                          } catch (error) {
-                            console.error("Logout failed:", error);
-                          }
-                        }}
+                        onClick={async () => {}}
                       >
                         Logout
                       </button>
@@ -284,8 +286,8 @@ const Navbar = (props) => {
                   <button
                     className="w-full py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors duration-300"
                     onClick={() => {
-                      console.log("Logging out");
                       handleDrawerToggle();
+                      handleLogout();
                     }}
                   >
                     Logout

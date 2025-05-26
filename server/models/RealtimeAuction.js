@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const userModel = require("./user.js");
-const bidModel = require("./bids.js");
 
 const RealtimeAuctionSchema = new mongoose.Schema({
   name: String,

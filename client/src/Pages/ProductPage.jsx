@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
@@ -46,7 +47,6 @@ export default function ProductPage() {
     if (!url) return null;
     const tempURL = url.split("upload/");
     const newURL = tempURL[0].concat("upload/w_350,h_350/").concat(tempURL[1]);
-    // console.log(newURL);
     return newURL;
   }
 
@@ -65,23 +65,6 @@ export default function ProductPage() {
       );
     }
   };
-
-  // Adds the product to current user's wishlist
-  // const handleWishListClick = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/wish-list/add-to-wishlist/${id}`,
-  //       { id: id },
-  //       // required for token validation
-  //       { withCredentials: true }
-  //     );
-  //     console.log("Item added to wishlist:", response.data);
-  //     toast.success("Item Added to Wishlist");
-  //   } catch (error) {
-  //     console.error("Error adding item to wishlist:", error);
-  //     toast.error("Error Adding Item to Wishlist");
-  //   }
-  // };
 
   function updateWishList() {
     wishlist ? removeFromWishlist() : addToWishList();
@@ -147,7 +130,7 @@ export default function ProductPage() {
         );
         setSimilarProducts(response.data);
       } catch (error) {
-        console.log("Error getting similar products : ", error);
+        console.log(error);
       }
     };
 
@@ -155,10 +138,8 @@ export default function ProductPage() {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/product/get-current-price/${id}`
       );
-      // console.log(response.data.price);
       setCurrentPrice(response.data.price);
     };
-
     await fetchProduct();
     await getSimilarProducts();
     await fetchCurrentPrice();

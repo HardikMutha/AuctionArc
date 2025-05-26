@@ -22,16 +22,13 @@ const AuctionHistoryPage = () => {
     fetchData();
   }, []);
 
-  // Filter state
   const [filter, setFilter] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  // Filter and sort auctions
   const filteredAuctions = myAuctions
     .filter(
       (auction) =>

@@ -11,6 +11,7 @@ import UserWishlist from "../src/Pages/UserWishlist";
 import Spinner from "./components/Spinner";
 import { RealtimeHome } from "./Pages/Realtime_Auction/RealtimeHome";
 import AuctionHost from "./Pages/Realtime_Auction/Host";
+import AuctionHistoryPage from "./Pages/AuctionHistory";
 import AuctionParticipant from "./Pages/Realtime_Auction/Participant";
 
 function App() {
@@ -40,6 +41,12 @@ function App() {
           />
           <Route path="/live-auction/" element={<RealtimeHome />} />
           <Route
+            path="/past-auctions"
+            element={
+              state?.isAuthenticated ? <AuctionHistoryPage /> : <Login />
+            }
+          />
+          <Route
             path="/live-auction/host/:id"
             element={state?.isAuthenticated ? <AuctionHost /> : <Login />}
           />
@@ -49,7 +56,6 @@ function App() {
               state?.isAuthenticated ? <AuctionParticipant /> : <Login />
             }
           />
-          <Route path="/temp/" element={<AuctionParticipant />} />
         </Routes>
       </BrowserRouter>
     </>
