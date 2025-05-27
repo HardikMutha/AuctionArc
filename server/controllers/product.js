@@ -15,14 +15,24 @@ const checkProduct = async (req, res, next) => {
 const uploadImagesToCloudinary = async (req) => {
   const inputFiles = req?.files;
   const uploadResults = [];
+  const streamUpload = (fileBuffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { timeout: 120000 },
+        (error, result) => {
+          if (result) resolve(result.url);
+          else reject(error);
+        },
+      );
+      stream.end(fileBuffer);
+    });
+  };
   for (const image of inputFiles) {
     try {
-      const result = await cloudinary.uploader.upload(image.path, {
-        timeout: 120000,
-      });
-      uploadResults.push(result.url);
+      const resultUrl = await streamUpload(image.buffer);
+      uploadResults.push(resultUrl);
     } catch (err) {
-      console.log(err);
+      console.log("Cloudinary upload error:", err);
     }
   }
   return uploadResults;
@@ -36,11 +46,6 @@ const uploadProduct = async (req, res) => {
     return res
       .status(401)
       .json({ message: "File Size too large, Upload Failed" });
-  }
-  if (inputFiles.length > 0) {
-    for (const file of req.files) {
-      fs.rmSync(file.path);
-    }
   }
   const images = inputFiles.map((f) => f);
   const newProduct = {
@@ -82,7 +87,7 @@ const deleteProduct = async (req, res) => {
   const allUsers = await userModel.find();
   for (let i = 0; i < allUsers.length; i++) {
     const newArr = allUsers[i].ongoingBids.filter(
-      (bid) => !bid.Bid._id.equals(productId)
+      (bid) => !bid.Bid._id.equals(productId),
     );
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
@@ -108,7 +113,7 @@ const updateProduct = async (req, res) => {
     if (!productId) return res.status(400).json({ message: "Invalid Request" });
     const product = await productModel.findByIdAndUpdate(
       productId,
-      updatedContent
+      updatedContent,
     );
     return res.status(200).json({ message: "Product Updated Successfully" });
   } catch (err) {
@@ -247,10 +252,11 @@ const placeBid = async (req, res) => {
     res.status(200).json({ message: "Bid Placed Successfully" });
   } catch (err) {
     console.error("Error placing bid:", err);
-    res.status(500).json({ message: "An error occurred while placing the bid" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while placing the bid" });
   }
 };
-
 
 const getProductsInfiniteScroll = async (req, res) => {
   try {
