@@ -38,6 +38,15 @@ const authReducer = (state, action) => {
         ...state,
         isLoading: false,
       };
+
+    case "UPDATE_WISHLIST":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          wishlist: action.payload.userWishList,
+        },
+      };
     default:
       return state;
   }

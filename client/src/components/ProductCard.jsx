@@ -6,15 +6,17 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import useAuthContext from "../hooks/useAuthContext";
 
+
+// Terrible logic to sync the wishlist products imo but hey it works ig ¯\_(ツ)_/¯
+// keeps track of the list in the frontend and updates it when the user clicks the heart icon / red add/remove button
+
 const ProductCard = ({ productDetails }) => {
   const navigate = useNavigate();
   const [productSeller, setProductSeller] = useState("");
-  const { state } = useAuthContext();
+  const { state, dispatch } = useAuthContext();
   const user = state.user;
 
-  const userWishList = user?.wishList;
-  const iscontainedInWishList = userWishList?.includes(productDetails?._id);
-  const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
+  let userWishList = user?.wishList;
   const [currentPrice, setCurrentPrice] = useState(0);
 
   function getImageURL(url) {
@@ -26,7 +28,9 @@ const ProductCard = ({ productDetails }) => {
 
   function updateWishList(e) {
     e.stopPropagation();
-    wishlist ? removeFromWishlist() : addToWishList();
+    userWishList.includes(productDetails?._id)
+      ? removeFromWishlist()
+      : addToWishList();
   }
 
   async function addToWishList() {
@@ -39,11 +43,15 @@ const ProductCard = ({ productDetails }) => {
         { withCredentials: true }
       );
       toast.success(response.data.msg);
-      setaddtoWishlist(true);
+      userWishList.push(productDetails?._id);
+      dispatch({
+        type: "UPDATE_WISHLIST",
+        payload: userWishList,
+      });
     } catch (err) {
       console.log(err);
       if (err.status == 401) toast.warn("Please Login to use Wishlist");
-      else toast.warn(err.response.data);
+      else toast.warn(err.response);
     }
   }
 
@@ -57,7 +65,11 @@ const ProductCard = ({ productDetails }) => {
     );
     if (response.status == 200) {
       toast.success(response.data.msg);
-      setaddtoWishlist(false);
+      userWishList.splice(userWishList.indexOf(productDetails?._id), 1);
+      dispatch({
+        type: "UPDATE_WISHLIST",
+        payload: userWishList,
+      });
     } else {
       toast.error(response.data.msg);
     }
@@ -113,7 +125,14 @@ const ProductCard = ({ productDetails }) => {
               className="absolute top-2 right-2 bg-white p-2 rounded-full shadow"
               onClick={updateWishList}
             >
-              <Heart color="purple" fill={wishlist ? "purple" : "white"} />
+              <Heart
+                color="purple"
+                fill={
+                  userWishList.includes(productDetails?._id)
+                    ? "purple"
+                    : "white"
+                }
+              />
             </button>
           </div>
 

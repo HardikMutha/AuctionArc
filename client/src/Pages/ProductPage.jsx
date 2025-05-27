@@ -31,6 +31,10 @@ import useAuthContext from "../hooks/useAuthContext";
 export default function ProductPage() {
   const { state, dispatch } = useAuthContext();
   const user = state.user;
+
+  let userWishList = user?.wishList;
+  console.log(userWishList);
+
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -38,9 +42,6 @@ export default function ProductPage() {
   const theme = useTheme();
   const [currentPrice, setCurrentPrice] = useState(0.0);
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const userWishList = user?.wishList;
-  const iscontainedInWishList = userWishList?.includes(id);
-  const [wishlist, setaddtoWishlist] = useState(iscontainedInWishList);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   function getImageURL(url) {
@@ -67,7 +68,7 @@ export default function ProductPage() {
   };
 
   function updateWishList() {
-    wishlist ? removeFromWishlist() : addToWishList();
+    userWishList.includes(id) ? removeFromWishlist() : addToWishList();
   }
 
   async function addToWishList() {
@@ -77,8 +78,12 @@ export default function ProductPage() {
         null,
         { withCredentials: true }
       );
-      toast.success(response.data.msg);
-      setaddtoWishlist(true);
+      userWishList.push(id);
+      dispatch({
+        type: "UPDATE_WISHLIST",
+        payload: userWishList,
+      });
+      // setaddtoWishlist(true);
     } catch (err) {
       console.log(err);
       if (err.status == 401) toast.warn("Please Login to use Wishlist");
@@ -96,7 +101,11 @@ export default function ProductPage() {
     );
     if (response.status == 200) {
       toast.success(response.data.msg);
-      setaddtoWishlist(false);
+      userWishList.splice(userWishList.indexOf(id), 1);
+      dispatch({
+        type: "UPDATE_WISHLIST",
+        payload: userWishList,
+      });
     } else {
       toast.error(response.data.msg);
     }
@@ -340,7 +349,9 @@ export default function ProductPage() {
                     }}
                     onClick={updateWishList} // Attach the click handler
                   >
-                    {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                    {userWishList.includes(id)
+                      ? "Remove from Wishlist"
+                      : "Add to Wishlist"}
                   </Button>
                   <Button
                     variant="contained"
