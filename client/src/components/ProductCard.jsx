@@ -81,7 +81,7 @@ const ProductCard = ({ productDetails }) => {
         productDetails._id
       }`
     );
-    setCurrentPrice(response.data.price);
+    setCurrentPrice(response?.data?.price);
   };
 
   useEffect(() => {
@@ -89,11 +89,11 @@ const ProductCard = ({ productDetails }) => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/user/user-details/${
-            productDetails.productSeller
+            productDetails?.productSeller
           }`
         );
         if (response.status == 200) {
-          setProductSeller(response.data.foundUser.username);
+          setProductSeller(response?.data?.foundUser?.username);
         }
       } catch (err) {
         console.log(err);
@@ -128,7 +128,7 @@ const ProductCard = ({ productDetails }) => {
               <Heart
                 color="purple"
                 fill={
-                  userWishList.includes(productDetails?._id)
+                  userWishList?.includes(productDetails?._id)
                     ? "purple"
                     : "white"
                 }
@@ -140,17 +140,17 @@ const ProductCard = ({ productDetails }) => {
             <div className="flex justify-between items-start">
               <div className="flex flex-col justify-start">
                 <h2 className="text-xl md:text-2xl font-bold mb-2">
-                  {productDetails.name}
+                  {productDetails?.name}
                 </h2>
                 <div className="flex items-center gap-4">
                   <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5">
-                    {productDetails.description}
+                    {productDetails?.description}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-4 mt-4">
                   <p className="text-gray-800 text-xl font-semibold">
-                    ${productDetails.currentPrice}
+                    ${productDetails?.currentPrice}
                   </p>
                 </div>
               </div>

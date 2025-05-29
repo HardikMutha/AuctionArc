@@ -13,7 +13,7 @@ const Homepage = () => {
   const [page, setPage] = useState(1);
   const [AllProducts, setAllProducts] = useState([]);
   const [searchQuery, setsearchQuery] = useState("");
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
 
@@ -93,7 +93,7 @@ const Homepage = () => {
                 You have Reached the End !!
               </p>
             }
-            scrollThreshold={0.8}
+            scrollThreshold={0}
             style={{ overflow: "hidden" }}
           >
             <Box spacing={4} sx={{ width: "80vw" }}>
