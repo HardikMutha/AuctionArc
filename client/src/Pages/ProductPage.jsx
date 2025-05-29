@@ -68,7 +68,7 @@ export default function ProductPage() {
   };
 
   function updateWishList() {
-    userWishList.includes(id) ? removeFromWishlist() : addToWishList();
+    userWishList?.includes(id) ? removeFromWishlist() : addToWishList();
   }
 
   async function addToWishList() {
@@ -349,7 +349,7 @@ export default function ProductPage() {
                     }}
                     onClick={updateWishList} // Attach the click handler
                   >
-                    {userWishList.includes(id)
+                    {userWishList?.includes(id)
                       ? "Remove from Wishlist"
                       : "Add to Wishlist"}
                   </Button>

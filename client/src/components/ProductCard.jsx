@@ -28,7 +28,7 @@ const ProductCard = ({ productDetails }) => {
 
   function updateWishList(e) {
     e.stopPropagation();
-    userWishList.includes(productDetails?._id)
+    userWishList?.includes(productDetails?._id)
       ? removeFromWishlist()
       : addToWishList();
   }
