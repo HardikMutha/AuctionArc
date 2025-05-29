@@ -28,10 +28,9 @@ const createUser = async (req, res) => {
     const savedUser = await newUser.save();
     const token = createSecretToken(newUser._id);
     res.cookie("token", token, {
-      path: "/",
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
       expire: new Date(Date.now() + 28800000),
     });
     return res.status(200).json({ user: savedUser, token });
@@ -58,10 +57,9 @@ const loginUser = async (req, res) => {
     }
     const token = createSecretToken(existingUser._id);
     res.cookie("token", token, {
-      path: "/",
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
       expires: new Date(Date.now() + 28800000),
     });
     res.json({ user: existingUser, token: token });
