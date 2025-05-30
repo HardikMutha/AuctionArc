@@ -12,11 +12,6 @@ const createAuction = async (req, res) => {
       .status(401)
       .json({ message: "File Size too large, Upload Failed" });
   }
-  if (inputFiles.length > 0) {
-    for (const file of req.files) {
-      fs.rmSync(file.path);
-    }
-  }
   const images = inputFiles.map((f) => f);
   const auctionCode =
     Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
