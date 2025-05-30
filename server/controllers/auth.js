@@ -32,6 +32,7 @@ const createUser = async (req, res) => {
       secure: true,
       sameSite: "None",
       expire: new Date(Date.now() + 28800000),
+      domain: "auction-arc-backend.vercel.app",
     });
     return res.status(200).json({ user: savedUser, token });
   } catch (err) {
@@ -61,6 +62,7 @@ const loginUser = async (req, res) => {
       secure: true,
       sameSite: "None",
       expires: new Date(Date.now() + 28800000),
+      domain: "auction-arc-backend.vercel.app",
     });
     res.json({ user: existingUser, token: token });
   } catch (err) {

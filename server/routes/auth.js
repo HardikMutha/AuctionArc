@@ -9,10 +9,11 @@ router.post("/login", loginUser);
 router.get("/logout", (req, res) => {
   res.cookie("token", "none", {
     path: "/",
-    httpOnly: false,
-    secure: false,
-    sameSite: "Lax",
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
     expires: new Date(Date.now() + 1000),
+    domain: "auction-arc-backend.vercel.app",
   });
 
   res.status(200).json({ message: "Logged Out" });
