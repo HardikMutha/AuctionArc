@@ -75,7 +75,6 @@ const AuthProvider = ({ children }) => {
           dispatch({ type: "SET_LOADING" });
         }
       } catch (err) {
-        console.log(err);
         dispatch({ type: "SET_LOADING" });
       }
     }

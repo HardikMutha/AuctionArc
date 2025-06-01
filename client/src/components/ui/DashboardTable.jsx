@@ -1,7 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight, Edit2, TrendingUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import CustomModal from "./DeleteModal";
 
 export default function DashboardTable() {
@@ -33,9 +33,7 @@ export default function DashboardTable() {
   return (
     <>
       <div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
-        {/* Header Section */}
         <div className="max-w-7xl mx-auto">
-          {/* Grid Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {productData.map((product, index) => (
               <div
@@ -96,16 +94,12 @@ export default function DashboardTable() {
                 </div>
 
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
-                  <button className="p-2 rounded-lg hover:bg-white text-blue-600 transition-colors duration-200">
-                    <Edit2 className="h-5 w-5" />
-                  </button>
                   <CustomModal productid={product._id} />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Pagination */}
           <div className="mt-8 flex justify-between items-center">
             <span className="text-sm text-gray-500">
               Showing {productData.length} of {totalProducts} products
@@ -128,7 +122,7 @@ export default function DashboardTable() {
                   />
                 </button>
               )}
-              {page == Math.ceil(totalProducts / 4) ? (
+              {page == Math.ceil(totalProducts / 3) ? (
                 <button
                   className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled

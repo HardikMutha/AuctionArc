@@ -18,7 +18,6 @@ export const RealtimeHome = () => {
       <Navbar showSearch={true} />
       <CreateAuctionModal isOpen={showCreateAuction} onClose={onClose} />
       <ViewAuctions isOpen={showLiveAuctions} onClose={onShowLiveClose} />
-
       <div className="bg-gradient-to-r from-cyan-600 to-cyan-800 py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">

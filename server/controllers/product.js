@@ -22,7 +22,7 @@ const uploadImagesToCloudinary = async (req) => {
         (error, result) => {
           if (result) resolve(result.url);
           else reject(error);
-        },
+        }
       );
       stream.end(fileBuffer);
     });
@@ -30,7 +30,7 @@ const uploadImagesToCloudinary = async (req) => {
   for (const image of inputFiles) {
     try {
       const resultUrl = await streamUpload(image.buffer);
-      uploadResults.push(resultUrl);
+      uploadResults.push(resultUrl.replace("http", "https"));
     } catch (err) {
       console.log("Cloudinary upload error:", err);
     }
@@ -87,7 +87,7 @@ const deleteProduct = async (req, res) => {
   const allUsers = await userModel.find();
   for (let i = 0; i < allUsers.length; i++) {
     const newArr = allUsers[i].ongoingBids.filter(
-      (bid) => !bid.Bid._id.equals(productId),
+      (bid) => !bid.Bid._id.equals(productId)
     );
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
@@ -113,7 +113,7 @@ const updateProduct = async (req, res) => {
     if (!productId) return res.status(400).json({ message: "Invalid Request" });
     const product = await productModel.findByIdAndUpdate(
       productId,
-      updatedContent,
+      updatedContent
     );
     return res.status(200).json({ message: "Product Updated Successfully" });
   } catch (err) {
@@ -126,7 +126,7 @@ const getUserProducts = async (req, res) => {
   try {
     const userid = req.user?.id;
     const page = parseInt(req.params.page) || 1;
-    const limit = 4;
+    const limit = 3;
     if (!userid) return res.status(404).json({ message: "User Not Found" });
     const updatedId = new mongoose.Types.ObjectId(userid);
     const foundUser = await userModel.findOne({ _id: updatedId });
@@ -283,6 +283,31 @@ const getSoldProducts = async (req, res) => {
   }
 };
 
+const deleteBid = async (req, res) => {
+  const productId = req.params?.id;
+  if (!productId)
+    return res.status(404).json({ message: "Invalid Product Id" });
+  const bidId = req.body.bidId;
+  if (!bidId) return res.status(404).json({ message: "Invalid Product Id" });
+  const userid = req.user?.id;
+  try {
+    const foundUser = await userModel.findById(userid);
+    const foundProduct = await productModel.findById(productId);
+    foundProduct.bidHistory.pull({ _id: bidId });
+    await foundProduct.save();
+    const newArr = foundUser.ongoingBids.filter(
+      (bid) => !bid.Bid.equals(bidId)
+    );
+    await userModel.findByIdAndUpdate(userid, {
+      ongoingBids: newArr,
+    });
+    return res.status(200).json({ message: "Bid Removed Successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: "Invalid Request " });
+  }
+};
+
 module.exports = {
   uploadProduct,
   deleteProduct,
@@ -297,4 +322,5 @@ module.exports = {
   getProductsInfiniteScroll,
   getSoldProducts,
   uploadImagesToCloudinary,
+  deleteBid,
 };

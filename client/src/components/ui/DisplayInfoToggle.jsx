@@ -5,11 +5,9 @@ import UserBidsComponent from "./UserBidsComponent";
 
 const DisplayInfoToggle = (props) => {
   const [isExpanded, setIsExpanded] = useState(props.state);
-
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
   return (
     <div className="border-[#ddd] border-[1px] lg:w-[80%] rounded-lg mx-auto my-[20px] w-[100%] shadow-lg shadow-cyan-400/20 hover:shadow-xl hover:shadow-cyan-500/20 px-4">
       <div

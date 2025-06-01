@@ -45,7 +45,7 @@ const userSchema = new Schema({
 userSchema.statics.getUserBidsFromId = async function (userId) {
   try {
     const foundUser = await this.findById(userId).populate("ongoingBids");
-    const userBids = foundUser.ongoingBids;
+    const userBids = foundUser?.ongoingBids;
     return userBids;
   } catch (err) {
     console.err(err);

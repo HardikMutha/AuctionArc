@@ -29,7 +29,7 @@ export default function LogoutModal() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { state, dispatch } = useAuthContext();
+  const { dispatch } = useAuthContext();
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {

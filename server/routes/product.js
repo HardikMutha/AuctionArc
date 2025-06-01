@@ -25,6 +25,7 @@ const {
   placeBid,
   getProductsInfiniteScroll,
   getSoldProducts,
+  deleteBid,
 } = require("../controllers/product.js");
 
 productRoutes
@@ -65,34 +66,10 @@ productRoutes
   .get(getProductsInfiniteScroll);
 
 productRoutes.route("/get-sold-products").get(getSoldProducts);
-// Placing a Bid
 
 productRoutes
   .route("/place-bid/:id")
   .post(authenticateUser, validateBidAmount, placeBid)
-  .delete(authenticateUser, async (req, res) => {
-    const productId = req.params?.id;
-    if (!productId)
-      return res.status(404).json({ message: "Invalid Product Id" });
-    const bidId = req.body.bidId;
-    if (!bidId) return res.status(404).json({ message: "Invalid Product Id" });
-    const userid = req.user?.id;
-    try {
-      const foundUser = await userModel.findById(userid);
-      const foundProduct = await productModel.findById(productId);
-      foundProduct.bidHistory.pull({ _id: bidId });
-      await foundProduct.save();
-      const newArr = foundUser.ongoingBids.filter(
-        (bid) => !bid.Bid.equals(bidId)
-      );
-      const updatedUser = await userModel.findByIdAndUpdate(userid, {
-        ongoingBids: newArr,
-      }); // This returns the previous state of the updated user model,To obtain newState,pass {new:true} as parameter
-      return res.status(200).json({ message: "Bid Removed Successfully" });
-    } catch (err) {
-      console.log(err);
-      res.status(400).json({ message: "Invalid Request " });
-    }
-  });
+  .delete(authenticateUser, deleteBid);
 
 module.exports = productRoutes;

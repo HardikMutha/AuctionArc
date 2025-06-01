@@ -17,7 +17,11 @@ import AuctionParticipant from "./Pages/Realtime_Auction/Participant";
 function App() {
   const { state } = useAuthContext();
   if (state.isLoading) {
-    return <Spinner size={100} />;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size={100} />
+      </div>
+    );
   }
   return (
     <>

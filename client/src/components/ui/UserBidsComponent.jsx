@@ -1,10 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useNavigate } from "react-router-dom";
 const UserBidsComponent = ({ userBids }) => {
   const navigate = useNavigate();
-
   return (
     <div className="flex flex-wrap gap-5">
-      {userBids.map((userBid) => (
+      {userBids?.map((userBid) => (
         <div
           className="m-5 bg-white shadow-lg rounded-2xl p-4 w-full sm:w-1/2 md:w-2/3 max-w-md border border-gray-200"
           key={userBid.product._id}

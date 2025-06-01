@@ -8,13 +8,12 @@ function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
-
   const currentPrice = product?.currentPrice
     ? parseInt(product.currentPrice)
     : listingPrice;
 
   const [price, setPrice] = useState(currentPrice);
-  const maxPrice = currentPrice * 2;
+  const maxPrice = currentPrice * 10;
 
   const handleSliderChange = (event) => {
     setPrice(Number(event.target.value));

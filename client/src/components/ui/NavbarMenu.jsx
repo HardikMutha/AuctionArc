@@ -50,7 +50,6 @@ export default function NavbarMenu(props) {
         <Link to={"/dashboard"}>
           <MenuItem>Dashboard</MenuItem>
         </Link>
-
         <LogoutModal />
       </Menu>
     </div>

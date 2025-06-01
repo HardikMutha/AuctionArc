@@ -47,6 +47,7 @@ export default function CreateAuctionModal(props) {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (props.isOpen) {
       document.body.style.overflow = "hidden";
@@ -80,9 +81,9 @@ export default function CreateAuctionModal(props) {
   if (!props?.isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className=" bg-gray-50 py-2 px-4 sm:px-6 lg:px-8 w-[40%] pb-10 rounded-lg overflow-clip">
-        <div className="flex items-center justify-end pb-3 border-b">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-gray-50 py-2 px-4 sm:px-6 lg:px-8 w-full max-w-2xl max-h-[90vh] pb-10 rounded-lg overflow-y-auto hide-scrollbar">
+        <div className="flex items-center justify-end pb-3 sticky top-0 bg-gray-50 z-10">
           <button
             onClick={props?.onClose}
             className="text-gray-600 hover:text-gray-800"
@@ -91,8 +92,8 @@ export default function CreateAuctionModal(props) {
           </button>
         </div>
 
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-xl shadow-lg hover:shadow-cyan-200 p-6 space-y-6 border-[1px] border-cyan-500">
+        <div className="mx-auto">
+          <div className="bg-white rounded-xl shadow-lg hover:shadow-cyan-200 p-6 space-y-6 border-[1px] border-cyan-500 my-4">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-gray-900">Live Auction</h2>
               <p className="mt-2 text-sm text-gray-600">

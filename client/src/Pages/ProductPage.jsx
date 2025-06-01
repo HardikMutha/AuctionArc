@@ -2,19 +2,6 @@
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  Stack,
-  Chip,
-  Paper,
-  Grid2,
-  useTheme,
-  useMediaQuery,
-  IconButton,
-} from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import GavelIcon from "@mui/icons-material/Gavel";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -24,26 +11,21 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import { toast } from "react-toastify";
-import CssBaseline from "@mui/material/CssBaseline";
 import PlaceBidPopup from "../components/PlaceBidPopup";
 import useAuthContext from "../hooks/useAuthContext";
 
 export default function ProductPage() {
   const { state, dispatch } = useAuthContext();
   const user = state.user;
-
   let userWishList = user?.wishList;
-  console.log(userWishList);
 
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [bidPopup, setBidPopup] = useState(false);
-  const theme = useTheme();
   const [currentPrice, setCurrentPrice] = useState(0.0);
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   function getImageURL(url) {
     if (!url) return null;
     const tempURL = url.split("upload/");
@@ -83,7 +65,6 @@ export default function ProductPage() {
         type: "UPDATE_WISHLIST",
         payload: userWishList,
       });
-      // setaddtoWishlist(true);
     } catch (err) {
       console.log(err);
       if (err.status == 401) toast.warn("Please Login to use Wishlist");
@@ -110,7 +91,6 @@ export default function ProductPage() {
       toast.error(response.data.msg);
     }
   }
-
   const renderBidPopup = () => {
     setBidPopup(true);
   };
@@ -138,8 +118,9 @@ export default function ProductPage() {
           { withCredentials: true }
         );
         setSimilarProducts(response.data);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
+        toast.error(err?.message);
       }
     };
 
@@ -159,309 +140,180 @@ export default function ProductPage() {
   }, [id]);
 
   return (
-    <div className="min-h-[100vh] bg-gradient-to-t from-[#f8f9fa] to-[#d9ecef]">
-      <CssBaseline enableColorScheme />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <Navbar />
       <PlaceBidPopup
         product={product}
         trigger={bidPopup}
         setBidPopup={setBidPopup}
       />
-      <Container
-        maxWidth="lg"
-        sx={{
-          pt: { xs: 8, md: 12 },
-          pb: 8,
-          marginTop: 10,
-        }}
-      >
-        <Grid2
-          container
-          spacing={{ xs: 2, md: 4 }}
-          alignItems="center"
-          justifyContent="center"
-        >
-          {/* Product Image */}
-          {/* Product Image Carousel */}
-          <Grid2 item="true" xs={12} md={6}>
-            <Paper
-              elevation={3}
-              sx={{
-                borderRadius: 4,
-                overflow: "hidden",
-                aspectRatio: "1/1",
-                width: "100%",
-                maxWidth: { xs: "100%", md: 500 },
-                mx: "auto",
-                position: "relative",
-              }}
-            >
-              <Box
-                component="img"
-                src={
-                  product?.images?.[currentImageIndex]
-                    ? `${getImageURL(product?.images?.[currentImageIndex])}`
-                    : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-                }
-                alt="product"
-                sx={{
-                  width: { md: "450px", xs: "300px" },
-                  height: { md: "450px", xs: "300px" },
-                  objectFit: "cover",
-                  transition: "all 0.3s ease-in-out",
-                }}
-              />
-              {product?.images?.length > 1 && (
-                <>
-                  <IconButton
-                    onClick={prevImage}
-                    sx={{
-                      position: "absolute",
-                      left: 8,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      bgcolor: "rgba(255, 255, 255, 0.8)",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.9)",
-                      },
-                    }}
-                  >
-                    <ChevronLeftIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={nextImage}
-                    sx={{
-                      position: "absolute",
-                      right: 8,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      bgcolor: "rgba(255, 255, 255, 0.8)",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.9)",
-                      },
-                    }}
-                  >
-                    <ChevronRightIcon />
-                  </IconButton>
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: 16,
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      display: "flex",
-                      gap: 1,
-                    }}
-                  >
-                    {product.images.map((_, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          bgcolor:
+      <div className="pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            <div className="relative flex items-center justify-center">
+              <div className="aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 relative group w-[80%] h-[80%]">
+                <img
+                  src={
+                    product?.images?.[currentImageIndex]
+                      ? `${getImageURL(product?.images?.[currentImageIndex])}`
+                      : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  }
+                  alt="product"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {product?.images?.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg rounded-full p-3 transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                    >
+                      <ChevronLeftIcon className="w-6 h-6 text-gray-700" />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg rounded-full p-3 transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                    >
+                      <ChevronRightIcon className="w-6 h-6 text-gray-700" />
+                    </button>
+
+                    {/* Image Indicators */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                      {product.images.map((_, index) => (
+                        <button
+                          key={index}
+                          className={`w-3 h-3 rounded-full transition-all duration-200 ${
                             index === currentImageIndex
-                              ? "primary.main"
-                              : "rgba(255, 255, 255, 0.8)",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => setCurrentImageIndex(index)}
-                      />
-                    ))}
-                  </Box>
-                </>
-              )}
-            </Paper>
-          </Grid2>
+                              ? "bg-blue-600 scale-125"
+                              : "bg-white/70 hover:bg-white/90"
+                          }`}
+                          onClick={() => setCurrentImageIndex(index)}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
 
-          {/* Product Details */}
-          <Grid2 item="true" xs={12} md={6}>
-            <Box
-              sx={{
-                borderRadius: 4,
-                p: { xs: 3, md: 4 },
-                height: "100%",
-                maxWidth: { xs: "100%", md: 500 },
-                mx: "auto",
-              }}
-            >
-              <Stack spacing={3}>
-                {/* Title */}
-                <Typography variant={isMobile ? "h4" : "h3"} fontWeight="500">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight text-center">
                   {product?.name || "Product Name"}
-                </Typography>
+                </h1>
 
-                {/* Tags */}
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  flexWrap="wrap"
-                  sx={{ gap: 1 }}
+                <div className="flex flex-wrap gap-3">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 rounded-full text-sm font-medium text-blue-800">
+                    <LocalOfferIcon className="w-4 h-4" />
+                    {product?.category}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-4">
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  {product?.description || "Product description"}
+                </p>
+              </div>
+
+              {/* Pricing */}
+              <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 font-medium">
+                      Listing Price:
+                    </span>
+                    <span className="text-2xl font-bold text-gray-400 line-through">
+                      ${product?.listingPrice || "0.00"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-900 font-semibold text-lg">
+                      Current Price:
+                    </span>
+                    <span className="text-3xl font-bold text-green-600">
+                      $
+                      {product?.currentPrice || product?.listingPrice || "0.00"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Timer */}
+              <div className="flex items-center gap-3 text-orange-600 bg-orange-50 rounded-xl p-4 border border-orange-200">
+                <TimerIcon className="w-6 h-6" />
+                <span className="font-semibold text-lg">
+                  Auction ends: {product?.duration?.slice(0, 10) || "N/A"}
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl transform active:scale-95"
+                  onClick={updateWishList}
                 >
-                  {/* {['Fashion', 'Formals', 'Electronics'].map((tag) => ( */}
-                  <Chip
-                    key={product?.category}
-                    icon={<LocalOfferIcon />}
-                    label={product?.category}
-                    variant="outlined"
-                    size={isMobile ? "small" : "medium"}
-                  />
-                  {/* ))} */}
-                </Stack>
+                  <FavoriteBorderIcon className="w-5 h-5" />
+                  {userWishList?.includes(id)
+                    ? "Remove from Wishlist"
+                    : "Add to Wishlist"}
+                </button>
 
-                {/* Price and Description */}
-                <Box>
-                  <Typography variant="body1" color="text.secondary">
-                    {product?.description || "Product description"}
-                  </Typography>
-                  <Typography
-                    variant={isMobile ? "h7" : "h8"}
-                    fontWeight="500"
-                    gutterBottom
-                  >
-                    Listing Price: ${product?.listingPrice || "0.00"}
-                    <br />
-                    Current Price: $
-                    {product?.currentPrice || product?.listingPrice || "0.00"}
-                  </Typography>
-                </Box>
-
-                {/* Action Buttons */}
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  sx={{ width: "100%" }}
+                <button
+                  className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl transform active:scale-95 hover:text-white"
+                  onClick={renderBidPopup}
                 >
-                  <Button
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    startIcon={<FavoriteBorderIcon />}
-                    fullWidth
-                    sx={{
-                      borderRadius: 8,
-                      bgcolor: "#E43A36",
-                      "&:hover": {
-                        bgcolor: "#D32F2F",
-                        transform: "scale(1.02)",
-                        transition: "all 0.3s",
-                      },
-                    }}
-                    onClick={updateWishList} // Attach the click handler
-                  >
-                    {userWishList?.includes(id)
-                      ? "Remove from Wishlist"
-                      : "Add to Wishlist"}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    size={isMobile ? "medium" : "large"}
-                    startIcon={<GavelIcon />}
-                    fullWidth
-                    sx={{
-                      borderRadius: 8,
-                      bgcolor: "#FFD700",
-                      color: "black",
-                      "&:hover": {
-                        bgcolor: "black",
-                        color: "white",
-                        transform: "scale(1.02)",
-                        transition: "all 0.3s",
-                      },
-                    }}
-                    onClick={renderBidPopup}
-                  >
-                    Place Bid!
-                  </Button>
-                </Stack>
+                  <GavelIcon className="w-5 h-5" />
+                  Place Bid
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                {/* Timer */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    color: "text.secondary",
-                  }}
+      {/* Similar Products Section */}
+      <div className="bg-white/50 backdrop-blur-sm py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              Similar Products
+            </h2>
+            <p className="text-xl text-gray-600">
+              More items like "{product?.name}"
+            </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-6"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {similarProducts && similarProducts.length > 0 ? (
+              similarProducts.map((similarProduct) => (
+                <div
+                  key={similarProduct._id}
+                  className="transform hover:scale-105 transition-transform duration-300"
                 >
-                  <TimerIcon />
-                  <Typography>
-                    Auction live till:{" "}
-                    {product?.duration?.slice(0, 10) || "N/A"}
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
-          </Grid2>
-        </Grid2>
-      </Container>
-
-      <Box
-        sx={{
-          p: "20px",
-          display: "flex", // Use flexbox for centering
-          justifyContent: "center", // Center horizontally
-          alignItems: "center", // Center vertically
-          flexDirection: "column", // Stack items vertically
-          gap: 8,
-          mt: 2,
-        }}
-      >
-        <Typography
-          variant={isMobile ? "h5" : "h6"}
-          fontWeight="500"
-          color="text.secondary"
-          sx={{ px: "20px" }}
-        >
-          Products similar to &quot;{product?.name}&quot; ...
-        </Typography>
-        <hr
-          style={{
-            color: "black", // This will not affect the <hr> color
-            height: "1px", // Increase the thickness
-            backgroundColor: "gray", // Set the color of the <hr>
-            border: "none", // Remove the default border
-            width: "100%",
-          }}
-        ></hr>
-
-        {/* Check if similarProducts is available */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(1, 1fr)",
-            // {
-            //   xs: "repeat(1, 1fr)", // 1 column for extra small screens
-            //   sm: "repeat(2, 1fr)", // 2 columns for small screens
-            //   md: "repeat(2, 1fr)", // 3 columns for medium screens
-            //   lg: "repeat(2, 1fr)", // 3 columns for large screens
-            // },
-            gap: 8,
-          }}
-        >
-          {similarProducts && similarProducts.length > 0 ? (
-            similarProducts.map((similarProduct) => (
-              <ProductCard
-                key={similarProduct._id} // Ensure the key is set on ProductCard
-                productDetails={similarProduct}
-              />
-            ))
-          ) : (
-            <Box
-              key="no-product-found"
-              sx={{ textAlign: "left", width: "100%" }}
-            >
-              <Typography
-                variant={isMobile ? "h5" : "h4"}
-                fontWeight="500"
-                gutterBottom
-              >
-                No similar product found
-              </Typography>
-            </Box>
-          )}
-        </Box>
-      </Box>
+                  <ProductCard productDetails={similarProduct} />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-16">
+                <div className="max-w-md mx-auto">
+                  <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <LocalOfferIcon className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                    No Similar Products Found
+                  </h3>
+                  <p className="text-gray-600">
+                    We couldn't find any products similar to this one at the
+                    moment.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
