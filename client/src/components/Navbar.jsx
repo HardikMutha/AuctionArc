@@ -12,16 +12,16 @@ import {
   AlarmOnRounded,
   Gavel,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
-import axios from "axios";
 
 const Navbar = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const { state } = useAuthContext();
+  const { state, dispatch } = useAuthContext();
+  const navigate = useNavigate();
 
   const auth = {
     state: {
@@ -95,17 +95,9 @@ const Navbar = (props) => {
   ];
 
   const handleLogout = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
-        {
-          withCredentials: true,
-        }
-      );
-      if (res.status == 200) console.log("Logging out");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    localStorage.removeItem("token");
+    dispatch({ type: "LOGOUT" });
+    navigate("/");
   };
 
   return (

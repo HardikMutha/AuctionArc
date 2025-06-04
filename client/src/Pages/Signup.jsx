@@ -5,9 +5,9 @@ import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 import useAuthContext from "../hooks/useAuthContext";
 
-const SplitSignupPage = () => {
+const SignupPage = () => {
   const [loading, setLoading] = useState(false);
-  const { state, dispatch } = useAuthContext();
+  const { dispatch } = useAuthContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
@@ -34,10 +34,10 @@ const SplitSignupPage = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
-        userdata,
-        { withCredentials: true }
+        userdata
       );
-      localStorage.setItem("user", response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.data.token);
       setLoading(false);
       dispatch({
         type: "LOGIN",
@@ -57,7 +57,6 @@ const SplitSignupPage = () => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* Left Side - App Info */}
       <div className="w-full lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-8 lg:p-12">
         <div className="h-full flex flex-col justify-center max-w-xl mx-auto text-white">
           <h1 className="text-4xl lg:text-4xl font-bold mb-8 text-center">
@@ -216,4 +215,4 @@ const SplitSignupPage = () => {
   );
 };
 
-export default SplitSignupPage;
+export default SignupPage;

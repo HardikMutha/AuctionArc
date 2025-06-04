@@ -3,18 +3,18 @@ import axios from "axios";
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import CustomModal from "./DeleteModal";
+import useAuthContext from "../../hooks/useAuthContext";
 
 export default function DashboardTable() {
   const [page, setPage] = React.useState(1);
   const [totalProducts, setTotalProducts] = React.useState(0);
   const [productData, setProductData] = React.useState([{}]);
+  const { state } = useAuthContext();
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/product/my-products/${page}`,
-        {
-          withCredentials: true,
-        }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       setProductData([...response.data.products]);
       setTotalProducts(response.data.totalProducts);

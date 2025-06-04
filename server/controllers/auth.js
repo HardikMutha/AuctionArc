@@ -27,13 +27,6 @@ const createUser = async (req, res) => {
     });
     const savedUser = await newUser.save();
     const token = createSecretToken(newUser._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      expire: new Date(Date.now() + 28800000),
-      domain: "auction-arc-backend.vercel.app",
-    });
     return res.status(200).json({ user: savedUser, token });
   } catch (err) {
     res
@@ -57,13 +50,7 @@ const loginUser = async (req, res) => {
       return res.status(409).json({ message: "Invalid Credentials" });
     }
     const token = createSecretToken(existingUser._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      expires: new Date(Date.now() + 28800000),
-      domain: "auction-arc-backend.vercel.app",
-    });
+
     res.json({ user: existingUser, token: token });
   } catch (err) {
     console.log(err);
@@ -80,7 +67,6 @@ const deleteUser = async (req, res) => {
     if (!userID || !doc) {
       return res.status(201).json({ msg: "please log in!" });
     } else {
-      res.clearCookie("token");
       User.deleteOne(doc).then((result) => console.log(result));
       return res.status(200).json({ msg: "user deleted!" });
     }

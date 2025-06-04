@@ -6,7 +6,6 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import useAuthContext from "../hooks/useAuthContext";
 
-
 // Terrible logic to sync the wishlist products imo but hey it works ig ¯\_(ツ)_/¯
 // keeps track of the list in the frontend and updates it when the user clicks the heart icon / red add/remove button
 
@@ -40,7 +39,7 @@ const ProductCard = ({ productDetails }) => {
           productDetails?._id
         }`,
         null,
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       toast.success(response.data.msg);
       userWishList.push(productDetails?._id);
@@ -61,7 +60,7 @@ const ProductCard = ({ productDetails }) => {
         productDetails._id
       }`,
       null,
-      { withCredentials: true }
+      { headers: { Authorization: `Bearer ${state?.token}` } }
     );
     if (response.status == 200) {
       toast.success(response.data.msg);

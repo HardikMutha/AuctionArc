@@ -16,6 +16,7 @@ import Spinner from "../../components/Spinner";
 import { useParams } from "react-router";
 import { useNavigate } from "react-router";
 import Supabase from "../../config/supabase";
+import useAuthContext from "../../hooks/useAuthContext";
 
 export default function AuctionHost() {
   const { id } = useParams();
@@ -23,6 +24,7 @@ export default function AuctionHost() {
   const channel = Supabase.channel(`auction:${id}`);
   const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
+  const { state } = useAuthContext();
   const [bidHistory, setBidHistory] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [message, setMessage] = useState("");
@@ -110,7 +112,7 @@ export default function AuctionHost() {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/check-host`,
         { id },
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       if (response.status != 200) {
         toast.error("Unauthorized");
@@ -170,7 +172,7 @@ export default function AuctionHost() {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/realtime/complete-auction`,
         { productId, soldTo },
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       setAuction((prev) => ({ ...prev, status: false }));
       toast.success("Auction completed successfully");

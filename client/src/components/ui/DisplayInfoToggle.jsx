@@ -4,7 +4,7 @@ import DashboardTable from "./DashboardTable";
 import UserBidsComponent from "./UserBidsComponent";
 
 const DisplayInfoToggle = (props) => {
-  const [isExpanded, setIsExpanded] = useState(props.state);
+  const [isExpanded, setIsExpanded] = useState(props?.state);
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -21,7 +21,7 @@ const DisplayInfoToggle = (props) => {
           fontWeight: "bold",
         }}
       >
-        <span className="md:text-3xl font-semibold text-xl">{props.type}</span>
+        <span className="md:text-3xl font-semibold text-xl">{props?.type}</span>
         <span
           style={{
             transform: isExpanded ? "rotate(180deg)" : "rotate(0)",
@@ -39,10 +39,10 @@ const DisplayInfoToggle = (props) => {
             backgroundColor: "#f9f9f9",
           }}
         >
-          {!(props.type === "My Bids") ? (
+          {!(props?.type === "My Bids") ? (
             <DashboardTable />
           ) : (
-            <UserBidsComponent userBids={props.userBids} />
+            <UserBidsComponent userBids={props?.userBids} />
           )}
         </div>
       )}

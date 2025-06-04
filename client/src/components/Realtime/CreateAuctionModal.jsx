@@ -5,10 +5,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 import { useNavigate } from "react-router";
+import useAuthContext from "../../hooks/useAuthContext";
 
 export default function CreateAuctionModal(props) {
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
+  const { state } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -26,9 +28,9 @@ export default function CreateAuctionModal(props) {
         `${import.meta.env.VITE_BACKEND_URL}/realtime/new-auction`,
         data,
         {
-          withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${state?.token}`,
           },
         }
       );

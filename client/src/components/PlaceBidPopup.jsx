@@ -3,8 +3,10 @@ import { useState } from "react";
 import { X, Gavel } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import useAuthContext from "../hooks/useAuthContext";
 
 function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
+  const { state } = useAuthContext();
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
@@ -36,7 +38,7 @@ function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/product/place-bid/${product._id}`,
         { bidAmount: price },
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
 
       if (response.status === 200) {

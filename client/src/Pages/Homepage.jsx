@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "../components/Spinner";
+import useAuthContext from "../hooks/useAuthContext";
 
 const Homepage = () => {
   const limit = 3;
@@ -16,6 +17,7 @@ const Homepage = () => {
   const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
+  const { state } = useAuthContext();
 
   const debouncedFetchProducts = useCallback(() => {
     if (timeoutId) {
@@ -31,7 +33,7 @@ const Homepage = () => {
           `${
             import.meta.env.VITE_BACKEND_URL
           }/product/all-products-infinite-scroll?page=${page}&limit=${limit}`,
-          { withCredentials: true }
+          { headers: { Authorization: `Bearer ${state?.token}` } }
         );
 
         if (response.data.length === 0) {

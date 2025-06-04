@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
 import { useState } from "react";
 
-const SplitLoginPage = () => {
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,10 +21,10 @@ const SplitLoginPage = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
-        userData,
-        { withCredentials: true }
+        userData
       );
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.data.token);
       setLoading(false);
       dispatch({
         type: "LOGIN",
@@ -170,4 +170,4 @@ const SplitLoginPage = () => {
   );
 };
 
-export default SplitLoginPage;
+export default LoginPage;

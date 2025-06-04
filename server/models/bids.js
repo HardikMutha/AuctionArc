@@ -18,7 +18,6 @@ const bidSchema = new Schema({
 });
 
 bidSchema.statics.getBidById = async function (bidId) {
-  console.log(bidId);
   const foundBid = await this.findById(bidId);
   if (!foundBid) throw new Error("Bid not found");
   return foundBid;

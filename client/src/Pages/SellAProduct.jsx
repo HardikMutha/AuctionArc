@@ -6,11 +6,13 @@ import Spinner from "../components/Spinner";
 import { useNavigate } from "react-router";
 import { IoArrowBack } from "react-icons/io5";
 import Navbar from "../components/Navbar";
+import useAuthContext from "../hooks/useAuthContext";
 
 export default function SellAProduct() {
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { state } = useAuthContext();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -29,9 +31,9 @@ export default function SellAProduct() {
         `${import.meta.env.VITE_BACKEND_URL}/product/add-newproduct`,
         data,
         {
-          withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${state?.token}`,
           },
         }
       );

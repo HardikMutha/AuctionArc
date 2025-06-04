@@ -14,9 +14,7 @@ const UserWishlist = () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/wish-list`,
-          {
-            withCredentials: true,
-          }
+          { headers: { Authorization: `Bearer ${state?.token}` } }
         );
 
         if (response.status === 200) {
@@ -25,9 +23,7 @@ const UserWishlist = () => {
           const productPromises = wishlistIds.map((id) =>
             axios.get(
               `${import.meta.env.VITE_BACKEND_URL}/product/products/${id}`,
-              {
-                withCredentials: true,
-              }
+              { headers: { Authorization: `Bearer ${state?.token}` } }
             )
           );
           const productResponses = await Promise.all(productPromises);

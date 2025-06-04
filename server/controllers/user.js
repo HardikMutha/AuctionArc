@@ -25,14 +25,14 @@ const getUserBidsFromId = async (req, res) => {
   if (!userid) return res.status(404).json({ message: "Invalid User Id" });
   try {
     const userBids = await userModel.getUserBidsFromId(userid);
-    if (!userBids) return res.status(404).json({ message: "Invalid User Id" });
+    // if (!userBids) return res.status(404).json({ message: "Invalid User Id" });
     var r1 = [];
-    for (let i = 0; i < userBids.length; i++) {
-      const foundProduct = await productModel.getProductbyId(userBids[i]?._id);
-      const foundBid = await bidModel.getBidById(userBids[i]?.Bid);
-      const resObject = { product: foundProduct, bid: foundBid };
-      r1.push(resObject);
-    }
+    // for (let i = 0; i < userBids.length; i++) {
+    //   const foundProduct = await productModel.getProductbyId(userBids[i]?._id);
+    //   const foundBid = await bidModel.getBidById(userBids[i]?.Bid);
+    //   const resObject = { product: foundProduct, bid: foundBid };
+    //   r1.push(resObject);
+    // }
 
     //forEach does not support asynchronous operations. therefore it always returns empty array
 

@@ -5,8 +5,6 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import { IoMdAlert } from "react-icons/io";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import useAuthContext from "../../hooks/useAuthContext";
 
@@ -32,24 +30,9 @@ export default function LogoutModal() {
   const { dispatch } = useAuthContext();
   const navigate = useNavigate();
   const handleLogout = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/logout`,
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.status == 200) {
-        toast.success(response.data.message);
-        localStorage.removeItem("user");
-        dispatch({ type: "LOGOUT" });
-        handleClose();
-        navigate("/") || location.reload();
-      }
-    } catch (err) {
-      toast.error("An Error Occurred !! Please Try Again");
-      console.log(err);
-    }
+    localStorage.removeItem("token");
+    dispatch({ type: "LOGOUT" });
+    navigate("/");
   };
 
   return (

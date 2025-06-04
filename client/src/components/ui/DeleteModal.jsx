@@ -1,4 +1,3 @@
-import * as React from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -7,6 +6,8 @@ import { IoMdAlert } from "react-icons/io";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import useAuthContext from "../../hooks/useAuthContext";
 import { Trash2 } from "lucide-react";
 import Spinner from "../Spinner";
 
@@ -25,8 +26,9 @@ const style = {
 
 // eslint-disable-next-line react/prop-types
 export default function CustomModal({ productid }) {
-  const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const { state } = useAuthContext();
+  const [loading, setLoading] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleDelete = async (productid) => {
@@ -35,7 +37,7 @@ export default function CustomModal({ productid }) {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/delete-product/${productid}`,
         null,
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       setLoading(false);
       if (response.status == 200) {

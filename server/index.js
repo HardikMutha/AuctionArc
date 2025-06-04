@@ -6,9 +6,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 app.use(cors({ credentials: true, origin: true }));
 
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
-
 const authRoutes = require("./routes/auth");
 const wishListRoutes = require("./routes/wishlist");
 const realtimeRoutes = require("./routes/realtime");

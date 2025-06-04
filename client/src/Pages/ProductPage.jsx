@@ -58,7 +58,7 @@ export default function ProductPage() {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/wish-list/add-to-wishlist/${id}`,
         null,
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${state?.token}` } }
       );
       userWishList.push(id);
       dispatch({
@@ -78,7 +78,7 @@ export default function ProductPage() {
         import.meta.env.VITE_BACKEND_URL
       }/wish-list/remove-from-wishlist/${id}`,
       null,
-      { withCredentials: true }
+      { headers: { Authorization: `Bearer ${state?.token}` } }
     );
     if (response.status == 200) {
       toast.success(response.data.msg);
@@ -115,7 +115,7 @@ export default function ProductPage() {
           `${
             import.meta.env.VITE_BACKEND_URL
           }/product/get-similar-products/${id}`,
-          { withCredentials: true }
+          { headers: { Authorization: `Bearer ${state?.token}` } }
         );
         setSimilarProducts(response.data);
       } catch (err) {
@@ -280,7 +280,7 @@ export default function ProductPage() {
               Similar Products
             </h2>
             <p className="text-xl text-gray-600">
-              More items like "{product?.name}"
+              More items like &quot;{product?.name}&quot;
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-6"></div>
           </div>
@@ -305,8 +305,8 @@ export default function ProductPage() {
                     No Similar Products Found
                   </h3>
                   <p className="text-gray-600">
-                    We couldn't find any products similar to this one at the
-                    moment.
+                    We couldn&apos;t find any products similar to this one at
+                    the moment.
                   </p>
                 </div>
               </div>
