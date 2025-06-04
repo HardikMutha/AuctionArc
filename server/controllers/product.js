@@ -1,5 +1,6 @@
 const productModel = require("../models/product");
 const userModel = require("../models/user");
+const bidModel = require("../models/bids");
 const fs = require("fs");
 const mongoose = require("mongoose");
 
@@ -67,7 +68,6 @@ const uploadProduct = async (req, res) => {
       id: savedProduct._id,
     });
   } catch (err) {
-    console.log("Error 3 ->", err);
     res.status(400).send(err);
   }
 };
@@ -153,8 +153,6 @@ const getUserProducts = async (req, res) => {
 
 const getSimilarProducts = async (req, res) => {
   const productID = req.params?.id;
-
-  // Check if the productId is a valid MongoDB ObjectId
   if (!mongoose.Types.ObjectId.isValid(productID)) {
     return res.status(400).json({ message: "Invalid Product ID format" });
   }
@@ -174,6 +172,7 @@ const getSimilarProducts = async (req, res) => {
     const similarProducts = await productModel.find({
       category: productCategory,
       _id: { $ne: productID }, // Exclude the current product from the similar products
+      auctionStatus: true, // Ensure only products that are currently up for auction are returned
     });
 
     return res.status(200).json(similarProducts);
@@ -225,12 +224,22 @@ const placeBid = async (req, res) => {
   try {
     const user = req?.user;
     const product = req?.product;
-
-    if (!user) {
+    if (!req?.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { bidAmount } = req.body;
+
+    // Creating a new Bid object to store in Bid History
+    const newBid = new bidModel({
+      bidder: user?.id,
+      bidAmount: bidAmount,
+      bidDate: new Date(),
+      product: product?._id,
+    });
+
+    await newBid.save();
+    product.bidHistory.push(newBid._id);
 
     product.currentPrice = bidAmount;
     await product.save();
@@ -243,8 +252,8 @@ const placeBid = async (req, res) => {
     const productIdStr = product._id.toString();
 
     // Add only if product ID string not already in array
-    if (!foundUser.ongoingBids.includes(productIdStr)) {
-      foundUser.ongoingBids.push(productIdStr);
+    if (!foundUser.ongoingBids.includes(newBid._id)) {
+      foundUser.ongoingBids.push(newBid._id);
     }
 
     await foundUser.save();

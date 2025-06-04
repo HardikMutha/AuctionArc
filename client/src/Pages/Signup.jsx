@@ -36,8 +36,8 @@ const SignupPage = () => {
         `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
         userdata
       );
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      localStorage.setItem("token", response?.data?.token);
       setLoading(false);
       dispatch({
         type: "LOGIN",
@@ -48,9 +48,12 @@ const SignupPage = () => {
       console.log(err);
       console.log(err.response);
       if (err.response?.status == 409) {
-        toast.error(err.response.data.message);
+        toast.error(err?.response?.data?.message);
+        console.log(err?.response?.data?.message);
+      } else if (err.response?.status == 400) {
+        toast.error(err?.response?.data?.message);
       } else toast.error("An Error Occured Please try again");
-      setFormData({ fullName: "", username: "", email: "", password: "" });
+      // setFormData({ fullName: "", username: "", email: "", password: "" });
       setLoading(false);
     }
   };

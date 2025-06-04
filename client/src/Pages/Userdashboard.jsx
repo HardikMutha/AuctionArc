@@ -7,7 +7,7 @@ const Userdashboard = () => {
   const { state, dispatch } = useAuthContext();
   return (
     <>
-      <div>
+      <div >
         {state.isLoading ? <Spinner /> : <Dashboard data={state?.user} />}
       </div>
     </>

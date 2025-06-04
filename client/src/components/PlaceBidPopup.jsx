@@ -41,15 +41,16 @@ function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
         { headers: { Authorization: `Bearer ${state?.token}` } }
       );
 
-      if (response.status === 200) {
+      if (response.status == 200) {
         toast.success("Bid Placed Successfully");
         setBidPopup(false);
-        window.location.reload();
+        setTimeout(() => {window.location.reload()}, 1000);
       } else {
         toast.error("Failed to place bid. Please try again.");
       }
     } catch (error) {
       if (error.response?.data?.message) {
+        console.log(error);
         toast.error(error.response.data.message);
       } else {
         toast.error(

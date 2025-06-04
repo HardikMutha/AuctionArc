@@ -32,7 +32,7 @@ export default function DashboardTable() {
   }
   return (
     <>
-      <div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
+      {(totalProducts !== 0) ? (<div className="w-full p-6 bg-gray-50 min-h-[50vh] ">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {productData.map((product, index) => (
@@ -142,7 +142,10 @@ export default function DashboardTable() {
             </div>
           </div>
         </div>
-      </div>
+      </div>)
+      : 
+      <p className="py-4 font-semibold text-center">You have no Listed Products!</p>
+      }
     </>
   );
 }
