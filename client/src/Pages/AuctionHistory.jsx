@@ -60,14 +60,16 @@ const AuctionHistoryPage = () => {
   return (
     <div>
       <Navbar showSearch={true} />
-      <div className="min-h-screen bg-cyan-50">
+      <div className="min-h-screen  bg-gradient-to-t from-[#f8f9fa] to-[#d9ecef]">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-cyan-800">
+            <h1 className="text-center text-3xl font-bold text-cyan-800">
               Auction History
             </h1>
-            <p className="text-cyan-600 mt-2">Browse all completed auctions</p>
+            <p className="font-semibold text-center text-cyan-600 mt-2">
+              Browse all completed auctions
+            </p>
           </div>
 
           {/* Filters and Search */}

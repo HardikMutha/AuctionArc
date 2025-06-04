@@ -15,6 +15,12 @@ const bidSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
+
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: "Product",
+    default: null,
+  },
 });
 
 bidSchema.statics.getBidById = async function (bidId) {

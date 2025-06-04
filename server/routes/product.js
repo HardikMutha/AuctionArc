@@ -49,9 +49,7 @@ productRoutes
   .route("/my-products/:page")
   .get(authenticateUser, getUserProducts);
 
-productRoutes
-  .route("/get-similar-products/:id")
-  .get(authenticateUser, getSimilarProducts);
+productRoutes.route("/get-similar-products/:id").get(getSimilarProducts);
 
 productRoutes.route("/all-products").get(getAllProducts);
 

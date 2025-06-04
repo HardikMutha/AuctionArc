@@ -7,7 +7,6 @@ import useAuthContext from "../hooks/useAuthContext";
 
 function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
   const { state } = useAuthContext();
-  // console.log("Token: ", state?.token);
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
@@ -42,10 +41,10 @@ function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
         { headers: { Authorization: `Bearer ${state?.token}` } }
       );
 
-      if (response.status === 200) {
+      if (response.status == 200) {
         toast.success("Bid Placed Successfully");
         setBidPopup(false);
-        window.location.reload();
+        setTimeout(() => {window.location.reload()}, 1000);
       } else {
         toast.error("Failed to place bid. Please try again.");
       }

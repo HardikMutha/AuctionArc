@@ -30,7 +30,9 @@ const Dashboard = ({ data }) => {
         Welcome to {data?.username}&apos;s Dashboard
       </h1>
       <DisplayInfoToggle type={"My Listed Products"} state={true} />
-      <DisplayInfoToggle type={"My Bids"} userBids={userBids} />
+      <div className="!pb-10">
+        <DisplayInfoToggle type={"My Bids"} userBids={userBids} />
+      </div>
     </div>
   );
 };

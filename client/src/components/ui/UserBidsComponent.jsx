@@ -11,7 +11,7 @@ const UserBidsComponent = ({ userBids }) => {
           {userBids?.map((userBid) => (
             <div
               className="m-5 bg-white shadow-lg rounded-2xl p-4 w-full sm:w-1/2 md:w-2/3 max-w-md border border-gray-200"
-              key={userBid?.product?._id}
+              key={userBid?.product?._id || crypto.randomUUID()}
             >
               <h3 className="text-2xl font-semibold text-gray-800 text-center">
                 {userBid?.product?.name}
@@ -54,7 +54,7 @@ const UserBidsComponent = ({ userBids }) => {
                       navigate(`/products/${userBid?.product._id}`)
                     }
                   >
-                    Increase Bid
+                    View Product
                   </button>
                 </p>
               </div>

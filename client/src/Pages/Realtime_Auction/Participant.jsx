@@ -235,7 +235,7 @@ export default function AuctionParticipant() {
         onClose={onClose}
         isOpen={showWinnerModal}
         winner={winner}
-        winningBid={1000}
+        winningBid={highestBid ? highestBid?.amount : auction?.listingPrice}
       />
       <div className="flex flex-col h-screen bg-gray-50">
         {/* Header */}
@@ -369,9 +369,6 @@ export default function AuctionParticipant() {
                         Bid Amount
                       </label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                          $
-                        </span>
                         <input
                           type="number"
                           value={bidAmount}

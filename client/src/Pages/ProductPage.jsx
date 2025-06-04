@@ -8,6 +8,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import SoldIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
 import { toast } from "react-toastify";
@@ -16,7 +17,7 @@ import useAuthContext from "../hooks/useAuthContext";
 
 export default function ProductPage() {
   const { state, dispatch } = useAuthContext();
-  const user = state.user;
+  const user = state?.user;
   let userWishList = user?.wishList;
 
   const { id } = useParams();
@@ -25,6 +26,9 @@ export default function ProductPage() {
   const [bidPopup, setBidPopup] = useState(false);
   const [currentPrice, setCurrentPrice] = useState(0.0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Check if auction is active
+  const isAuctionActive = product?.auctionStatus !== false;
 
   function getImageURL(url) {
     if (!url) return null;
@@ -50,6 +54,10 @@ export default function ProductPage() {
   };
 
   function updateWishList() {
+    if (!isAuctionActive) {
+      toast.info("This auction has ended. Cannot modify wishlist.");
+      return;
+    }
     userWishList?.includes(id) ? removeFromWishlist() : addToWishList();
   }
 
@@ -65,6 +73,9 @@ export default function ProductPage() {
         type: "UPDATE_WISHLIST",
         payload: userWishList,
       });
+      if (response.status === 200) {
+        toast.success("Product added to Wishlist");
+      }
     } catch (err) {
       console.log(err);
       if (err.status == 401) toast.warn("Please Login to use Wishlist");
@@ -91,7 +102,12 @@ export default function ProductPage() {
       toast.error(response.data.msg);
     }
   }
+
   const renderBidPopup = () => {
+    if (!isAuctionActive) {
+      toast.info("This auction has ended. Cannot place bids.");
+      return;
+    }
     setBidPopup(true);
   };
 
@@ -114,8 +130,7 @@ export default function ProductPage() {
         const response = await axios.get(
           `${
             import.meta.env.VITE_BACKEND_URL
-          }/product/get-similar-products/${id}`,
-          { headers: { Authorization: `Bearer ${state?.token}` } }
+          }/product/get-similar-products/${id}`
         );
         setSimilarProducts(response.data);
       } catch (err) {
@@ -151,7 +166,11 @@ export default function ProductPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <div className="relative flex items-center justify-center">
-              <div className="aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 relative group w-[80%] h-[80%]">
+              <div
+                className={`aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 relative group w-[75%] h-[75%] ${
+                  !isAuctionActive ? "opacity-75" : ""
+                }`}
+              >
                 <img
                   src={
                     product?.images?.[currentImageIndex]
@@ -159,9 +178,24 @@ export default function ProductPage() {
                       : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                   }
                   alt="product"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                    !isAuctionActive ? "grayscale" : ""
+                  }`}
                 />
-                {product?.images?.length > 1 && (
+
+                {/* Sold Overlay */}
+                {!isAuctionActive && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="bg-red-600 text-white px-8 py-4 rounded-2xl shadow-2xl transform rotate-12">
+                      <div className="flex items-center gap-3">
+                        <SoldIcon className="w-8 h-8" />
+                        <span className="text-2xl font-bold">SOLD</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {product?.images?.length > 1 && isAuctionActive && (
                   <>
                     <button
                       onClick={prevImage}
@@ -197,12 +231,31 @@ export default function ProductPage() {
 
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight text-center">
-                  {product?.name || "Product Name"}
-                </h1>
+                <div className="flex items-center gap-4">
+                  <h1
+                    className={`text-4xl lg:text-5xl font-bold leading-tight text-center flex-1 ${
+                      !isAuctionActive ? "text-gray-500" : "text-gray-900"
+                    }`}
+                  >
+                    {product?.name || "Product Name"}
+                  </h1>
+                  {!isAuctionActive && (
+                    <div className="bg-red-100 border border-red-300 rounded-full px-4 py-2">
+                      <span className="text-red-700 font-semibold text-sm">
+                        AUCTION ENDED
+                      </span>
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-200 rounded-full text-sm font-medium text-blue-800">
+                  <span
+                    className={`inline-flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-medium ${
+                      !isAuctionActive
+                        ? "bg-gray-100 border-gray-200 text-gray-500"
+                        : "bg-gradient-to-r from-blue-100 to-purple-100 border-blue-200 text-blue-800"
+                    }`}
+                  >
                     <LocalOfferIcon className="w-4 h-4" />
                     {product?.category}
                   </span>
@@ -211,27 +264,53 @@ export default function ProductPage() {
 
               {/* Description */}
               <div className="space-y-4">
-                <p className="text-lg text-gray-600 leading-relaxed">
+                <p
+                  className={`text-lg leading-relaxed ${
+                    !isAuctionActive ? "text-gray-500" : "text-gray-600"
+                  }`}
+                >
                   {product?.description || "Product description"}
                 </p>
               </div>
 
               {/* Pricing */}
-              <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+              <div
+                className={`rounded-2xl p-6 border ${
+                  !isAuctionActive
+                    ? "bg-gray-50 border-gray-200"
+                    : "bg-gradient-to-r from-gray-50 to-blue-50 border-gray-200"
+                }`}
+              >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600 font-medium">
+                    <span
+                      className={`font-medium ${
+                        !isAuctionActive ? "text-gray-500" : "text-gray-600"
+                      }`}
+                    >
                       Listing Price:
                     </span>
-                    <span className="text-2xl font-bold text-gray-400 line-through">
+                    <span
+                      className={`text-2xl font-bold line-through ${
+                        !isAuctionActive ? "text-gray-400" : "text-gray-400"
+                      }`}
+                    >
                       ${product?.listingPrice || "0.00"}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-900 font-semibold text-lg">
-                      Current Price:
+                    <span
+                      className={`font-semibold text-lg ${
+                        !isAuctionActive ? "text-gray-600" : "text-gray-900"
+                      }`}
+                    >
+                      {!isAuctionActive ? "Final Price:" : "Current Price:"}
                     </span>
-                    <span className="text-3xl font-bold text-green-600">
+                    <span
+                      className={`text-3xl font-bold ${
+                        !isAuctionActive ? "text-gray-600" : "text-green-600"
+                      }`}
+                    >
                       $
                       {product?.currentPrice || product?.listingPrice || "0.00"}
                     </span>
@@ -240,31 +319,50 @@ export default function ProductPage() {
               </div>
 
               {/* Timer */}
-              <div className="flex items-center gap-3 text-orange-600 bg-orange-50 rounded-xl p-4 border border-orange-200">
+              <div
+                className={`flex items-center gap-3 rounded-xl p-4 border ${
+                  !isAuctionActive
+                    ? "text-red-600 bg-red-50 border-red-200"
+                    : "text-orange-600 bg-orange-50 border-orange-200"
+                }`}
+              >
                 <TimerIcon className="w-6 h-6" />
                 <span className="font-semibold text-lg">
-                  Auction ends: {product?.duration?.slice(0, 10) || "N/A"}
+                  {!isAuctionActive ? "Auction ended on: " : "Auction ends: "}
+                  {product?.duration?.slice(0, 10) || "N/A"}
                 </span>
               </div>
 
               {/* Action Buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
-                  className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl transform active:scale-95"
+                  className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform ${
+                    !isAuctionActive
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white hover:scale-105 hover:shadow-xl active:scale-95"
+                  }`}
                   onClick={updateWishList}
+                  disabled={!isAuctionActive}
                 >
                   <FavoriteBorderIcon className="w-5 h-5" />
-                  {userWishList?.includes(id)
+                  {!isAuctionActive
+                    ? "Auction Ended"
+                    : userWishList?.includes(id)
                     ? "Remove from Wishlist"
                     : "Add to Wishlist"}
                 </button>
 
                 <button
-                  className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl transform active:scale-95 hover:text-white"
+                  className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 transform ${
+                    !isAuctionActive
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-black hover:scale-105 hover:shadow-xl active:scale-95 hover:text-white"
+                  }`}
                   onClick={renderBidPopup}
+                  disabled={!isAuctionActive}
                 >
                   <GavelIcon className="w-5 h-5" />
-                  Place Bid
+                  {!isAuctionActive ? "Bidding Closed" : "Place Bid"}
                 </button>
               </div>
             </div>
@@ -285,7 +383,7 @@ export default function ProductPage() {
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mt-6"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="gap-8">
             {similarProducts && similarProducts.length > 0 ? (
               similarProducts.map((similarProduct) => (
                 <div

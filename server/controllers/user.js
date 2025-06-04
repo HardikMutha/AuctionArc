@@ -31,8 +31,9 @@ const getUserBidsFromId = async (req, res) => {
       return res.status(404).json({ message: "Invalid User Id" });
     var r1 = [];
     for (let i = 0; i < userBids?.length; i++) {
-      const foundProduct = await productModel.getProductbyId(userBids[i]?._id);
-      const foundBid = await bidModel.getBidById(userBids[i]);
+      // const foundProduct = await productModel.getProductbyId(request?.user);
+      const foundBid = await bidModel.getBidById(userBids[i]?._id);
+      const foundProduct = await productModel.findById(foundBid?.product);
       const resObject = { product: foundProduct, bid: foundBid };
       r1.push(resObject);
     }

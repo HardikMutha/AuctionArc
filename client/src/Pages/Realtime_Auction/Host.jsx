@@ -286,9 +286,7 @@ export default function AuctionHost() {
               <div className="flex items-center text-green-600">
                 <DollarSign size={18} className="mr-1" />
                 <span className="font-bold text-lg">
-                  {formatCurrency(
-                    highestBid ? highestBid?.amount : auction?.listingPrice
-                  )}
+                  {highestBid ? highestBid?.amount : auction?.listingPrice}
                 </span>
               </div>
               <span className="text-xs text-gray-500">Current Bid</span>
