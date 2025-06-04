@@ -109,7 +109,6 @@ const ProductCard = ({ productDetails }) => {
     >
       <div className="max-w-5xl w-[96%] mx-auto my-16 p-8 bg-white/60 backdrop-blur-xl shadow-md hover:shadow-cyan-400/40 border-2 border-cyan-400/40 rounded-2xl">
         <div className="flex flex-col md:flex-row gap-12">
-          {/* Product Image */}
           <div className="relative flex-shrink-0">
             <img
               src={
@@ -143,7 +142,9 @@ const ProductCard = ({ productDetails }) => {
                 </h2>
                 <div className="flex items-center gap-4">
                   <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5">
-                    {productDetails?.description}
+                    {productDetails?.description?.length >= 120
+                      ? productDetails?.description?.slice(0, 120) + "..."
+                      : productDetails?.description}
                   </p>
                 </div>
 

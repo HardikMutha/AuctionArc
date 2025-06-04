@@ -1,5 +1,5 @@
+/* eslint-disable react/prop-types */
 import { useNavigate } from "react-router";
-// eslint-disable-next-line react/prop-types
 const SoldProductCard = ({ auction }) => {
   const navigate = useNavigate();
   const formatCurrency = (amount) => {

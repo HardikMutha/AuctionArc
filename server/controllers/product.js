@@ -68,6 +68,7 @@ const uploadProduct = async (req, res) => {
       id: savedProduct._id,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).send(err);
   }
 };
