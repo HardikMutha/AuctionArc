@@ -14,6 +14,7 @@ import {
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthContext from "../hooks/useAuthContext";
+import { toast } from "react-toastify";
 
 const Navbar = (props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -98,6 +99,7 @@ const Navbar = (props) => {
     localStorage.removeItem("token");
     dispatch({ type: "LOGOUT" });
     navigate("/");
+    toast.warn("Logged Out");
   };
 
   return (
@@ -170,7 +172,6 @@ const Navbar = (props) => {
                   {auth?.state?.user?.username.charAt(0)}
                 </button>
 
-                {/* Dropdown Menu */}
                 {isLogoutModalOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     <Link
@@ -179,27 +180,30 @@ const Navbar = (props) => {
                     >
                       Dashboard
                     </Link>
-                    <Link
-                      to="/login"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={handleLogout}
                     >
-                      <button
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={async () => {}}
-                      >
-                        Logout
-                      </button>
-                    </Link>
+                      Logout
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="ml-2 px-4 py-1 text-zinc-300 border border-[rgba(215,67,29,0.3)] hover:border-[rgba(215,67,29,0.7)] rounded-full transition-all duration-300"
-              >
-                Login
-              </Link>
+              <div>
+                <Link
+                  to="/login"
+                  className="ml-2 px-4 py-1 text-zinc-300 border-2 border-[rgba(215,67,29,0.3)]  hover:border-[rgba(215,67,29,0.7)] rounded-full transition-all duration-300"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="ml-2 px-4 py-1 text-zinc-300 border-2 border-[rgba(215,67,29,0.3)] hover:border-[rgba(215,67,29,0.7)] rounded-full transition-all duration-300"
+                >
+                  Sign up
+                </Link>
+              </div>
             )}
           </div>
           <div className="md:hidden">
@@ -274,7 +278,7 @@ const Navbar = (props) => {
               </div>
 
               <div className="p-4 border-t">
-                {auth.state.isAuthenticated ? (
+                {auth?.state?.isAuthenticated ? (
                   <button
                     className="w-full py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors duration-300"
                     onClick={() => {
