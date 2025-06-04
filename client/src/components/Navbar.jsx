@@ -67,7 +67,7 @@ const Navbar = (props) => {
     {
       text: "Past Auctions",
       icon: <History className="text-black" size={20} />,
-      link: "/temp",
+      link: "/past-auctions",
     },
     {
       text: "Sell a Product",
