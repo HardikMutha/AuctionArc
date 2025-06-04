@@ -13,6 +13,7 @@ import { RealtimeHome } from "./Pages/Realtime_Auction/RealtimeHome";
 import AuctionHost from "./Pages/Realtime_Auction/Host";
 import AuctionHistoryPage from "./Pages/AuctionHistory";
 import AuctionParticipant from "./Pages/Realtime_Auction/Participant";
+import NotFound from "./Pages/NotFound";
 
 function App() {
   const { state } = useAuthContext();
@@ -60,6 +61,8 @@ function App() {
               state?.isAuthenticated ? <AuctionParticipant /> : <Login />
             }
           />
+          <Route path="/not-found" element={<NotFound />} />
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>

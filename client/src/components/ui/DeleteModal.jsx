@@ -35,7 +35,9 @@ export default function CustomModal({ productid }) {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/delete-product/${productid}`,
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/product/delete-product/${productid}`,
         null,
         { headers: { Authorization: `Bearer ${state?.token}` } }
       );

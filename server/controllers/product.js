@@ -74,12 +74,6 @@ const uploadProduct = async (req, res) => {
 };
 
 const deleteProduct = async (req, res) => {
-  // function to get modified URL
-  const getURL = (url) => {
-    const temp = url.split("/AuctionArc/");
-    const finalURL = temp[1].split(".");
-    return finalURL[0];
-  };
   const userid = req.user?.id;
   const productId = req.params.id;
   const foundUser = await userModel.findById(userid);
@@ -88,18 +82,19 @@ const deleteProduct = async (req, res) => {
   const allUsers = await userModel.find();
   for (let i = 0; i < allUsers.length; i++) {
     const newArr = allUsers[i].ongoingBids.filter(
-      (bid) => !bid.Bid._id.equals(productId)
+      (bid) => !bid._id.equals(productId)
     );
     allUsers[i].updateOne({ ongoingBids: newArr });
   }
   try {
     const foundProduct = await productModel.findByIdAndDelete(productId);
     for (let i = 0; i < foundProduct.images.length; i++) {
-      const newURL = getURL(foundProduct.images[i]);
+      const newURL = foundProduct.images[i];
       await cloudinary.uploader.destroy(newURL);
     }
     return res.status(200).json({ message: "The Product has been removed" });
   } catch (err) {
+    console.log(err);
     return res
       .status(404)
       .json({ message: "An Error Occurred Please Try Again" });
@@ -342,8 +337,6 @@ const updateAllProductStatus = async (req, res) => {
           product.soldTo = foundUser?._id;
           foundUser.ongoingBids?.filter((bid) => !bid.equals(highestBidID));
           await foundUser?.save();
-        } else {
-          console.log("No bids found for this product");
         }
         await product.save();
       }

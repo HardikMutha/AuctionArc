@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -19,6 +19,7 @@ export default function ProductPage() {
   const { state, dispatch } = useAuthContext();
   const user = state?.user;
   let userWishList = user?.wishList;
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -117,6 +118,9 @@ export default function ProductPage() {
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/product/products/${id}`
         );
+        if (response.status == 404) {
+          navigate("/not-found");
+        }
         const data = await response.json();
         setProduct(data);
       } catch (error) {
