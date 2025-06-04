@@ -141,9 +141,11 @@ The client will be available at [http://localhost:5173](http://localhost:5173) a
 ## Tech Used
 
 1. **Frontend** -- React, Tailwind CSS, TypeScript
-2. **Backend** -- Express, JWT, MongoDB
+2. **Backend** -- Express, JWT, MongoDB,Node.js
 3. **Realtime** -- Supabase Realtime
 4. **Deployment** -- Vercel
+
+<h6>Special mention to claude for helping out with designs and color scheme</h6>
 
 ## 🤝 Contributing
 
@@ -186,6 +188,8 @@ git push origin feature/your-feature-name
 - Open a Pull Request from your branch to the main branch of the original repository.
 
 - Describe your PR clearly — mention what you changed, why you did it, and any issues it closes.
+
+- Any Improvements in UI/UX or color-schemes are encouraged as designing is not our forte.
 
 ## 💡 Tips for Contributing
 

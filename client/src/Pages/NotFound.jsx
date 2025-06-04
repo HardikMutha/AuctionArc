@@ -8,7 +8,7 @@ const NotFound = () => {
       <div className="flex justify-center items-center h-full">
         <div className="flex flex-col items-center">
           <img
-            src="../../public/404notfound.png"
+            src="https://res.cloudinary.com/dxjbmtq0h/image/upload/v1749057186/404notfound_rrbwdb.png"
             alt="404 Not Found"
             loading="lazy"
             className="mb-12"
