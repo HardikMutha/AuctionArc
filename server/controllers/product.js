@@ -275,7 +275,10 @@ const getProductsInfiniteScroll = async (req, res) => {
 
     const totalProductCount = await productModel.countDocuments();
 
-    const products = await productModel.find().skip(skip).limit(limit);
+    const products = await productModel
+      .find({ auctionStatus: true })
+      .skip(skip)
+      .limit(limit);
     res.status(200).json(products);
   } catch (err) {
     res.status(404).json({ message: "Please Try again later" });
@@ -317,6 +320,43 @@ const deleteBid = async (req, res) => {
   }
 };
 
+const updateAllProductStatus = async (req, res) => {
+  try {
+    const allProducts = await productModel.find();
+
+    for (let i = 0; i < allProducts.length; i++) {
+      let product = allProducts[i];
+
+      if (product?.auctionStatus && product?.duration < new Date()) {
+        // mark the product as sold
+        product.auctionStatus = false;
+
+        // Find the highest bid in the bid history of the product (always the last one because we push to the end)
+        const highestBidID = product?.bidHistory[product.bidHistory.length - 1];
+
+        // find the user who placed the highest bid
+        const foundUser = await bidModel.findById(highestBidID);
+        if (foundUser) {
+          // Update the product's soldTo field with the user's ID
+          product.soldTo = foundUser?._id;
+          foundUser.ongoingBids?.filter((bid) => !bid.equals(highestBidID));
+          await foundUser?.save();
+        } else {
+          console.log("No bids found for this product");
+        }
+        await product.save();
+      }
+    }
+
+    res.status(200).json({ msg: "All products updated successfully" });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ msg: `Error updating product status: ${err.message}` });
+    console.error(err);
+  }
+};
+
 module.exports = {
   uploadProduct,
   deleteProduct,
@@ -332,4 +372,5 @@ module.exports = {
   getSoldProducts,
   uploadImagesToCloudinary,
   deleteBid,
+  updateAllProductStatus,
 };

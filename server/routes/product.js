@@ -26,6 +26,7 @@ const {
   getProductsInfiniteScroll,
   getSoldProducts,
   deleteBid,
+  updateAllProductStatus,
 } = require("../controllers/product.js");
 
 productRoutes
@@ -70,4 +71,8 @@ productRoutes
   .post(authenticateUser, validateBidAmount, placeBid)
   .delete(authenticateUser, deleteBid);
 
+
+productRoutes
+  .route("/update-products-status")
+  .get(updateAllProductStatus);
 module.exports = productRoutes;

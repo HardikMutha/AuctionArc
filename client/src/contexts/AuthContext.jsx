@@ -84,6 +84,18 @@ const AuthProvider = ({ children }) => {
     }
     checkLogin();
   }, []);
+  useEffect(() => {
+    async function updateProducts() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/product/update-products-status`
+        );
+      } catch (error) {
+        console.error("Error updating products:", error);
+      }
+    }
+    updateProducts();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
