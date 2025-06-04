@@ -1,5 +1,6 @@
 const productModel = require("../models/product");
 const userModel = require("../models/user");
+const bidModel = require("../models/bids");
 const fs = require("fs");
 const mongoose = require("mongoose");
 
@@ -67,7 +68,6 @@ const uploadProduct = async (req, res) => {
       id: savedProduct._id,
     });
   } catch (err) {
-    console.log("Error 3 ->", err);
     res.status(400).send(err);
   }
 };
@@ -226,11 +226,21 @@ const placeBid = async (req, res) => {
     const user = req?.user;
     const product = req?.product;
 
-    if (!user) {
+    if (!req?.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { bidAmount } = req.body;
+
+    // Creating a new Bid object to store in Bid History
+    const newBid = new bidModel({
+      bidder: user?.id,
+      bidAmount: bidAmount,
+      bidDate: new Date(),
+    });
+
+    await newBid.save();
+    product.bidHistory.push(newBid._id);
 
     product.currentPrice = bidAmount;
     await product.save();
@@ -243,8 +253,8 @@ const placeBid = async (req, res) => {
     const productIdStr = product._id.toString();
 
     // Add only if product ID string not already in array
-    if (!foundUser.ongoingBids.includes(productIdStr)) {
-      foundUser.ongoingBids.push(productIdStr);
+    if (!foundUser.ongoingBids.includes(newBid._id)) {
+      foundUser.ongoingBids.push(newBid._id);
     }
 
     await foundUser.save();

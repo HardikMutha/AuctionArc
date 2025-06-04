@@ -7,6 +7,7 @@ import useAuthContext from "../hooks/useAuthContext";
 
 function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
   const { state } = useAuthContext();
+  // console.log("Token: ", state?.token);
   const listingPrice = product?.listingPrice
     ? parseInt(product.listingPrice)
     : 0;
@@ -50,6 +51,7 @@ function PlaceBidPopup({ product, trigger, setBidPopup, children }) {
       }
     } catch (error) {
       if (error.response?.data?.message) {
+        console.log(error);
         toast.error(error.response.data.message);
       } else {
         toast.error(
