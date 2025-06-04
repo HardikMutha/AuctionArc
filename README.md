@@ -1,6 +1,7 @@
-# AuctionARC 
+# AuctionARC
 
-![AuctionArc Logo](./assets/AuctionArcLogo.jpg)
+<p style="text-align: center"> <img src = "./assets/AuctionArcLogo.jpg"> </p>
+
 Welcome to Auction Arc's Repository 🥳! This is a **hobby project** made **Hardik Mutha** and **Aryan Mehta** to explore and refine our skills in fullstack development.
 
 ## What is Auction Arc?
@@ -137,13 +138,12 @@ The client will be available at [http://localhost:5173](http://localhost:5173) a
 5. **Finish Live Auction**
    ![Finish Live Auction](./assets/readme/finish_live_auction.jpg)
 
-
 ## Tech Used
-1) **Frontend** -- React, Tailwind CSS, TypeScript
-2) **Backend** -- Express, JWT, MongoDB
-3) **Realtime** -- Supabase Realtime
-4) **Deployment** -- Vercel
 
+1. **Frontend** -- React, Tailwind CSS, TypeScript
+2. **Backend** -- Express, JWT, MongoDB
+3. **Realtime** -- Supabase Realtime
+4. **Deployment** -- Vercel
 
 ## 🤝 Contributing
 
@@ -152,17 +152,23 @@ We welcome contributions from the community! If you'd like to help improve this 
 ### 🛠️ Setup Instructions
 
 1. **Fork this repository** and clone it locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/YOUR_FORK.git
    cd YOUR_FORK
 
+   ```
+
 2. Follow the instructions above to run the project locally
 
 ## 🙌 How to Contribute
+
 - Create a new branch for your feature or bug fix:
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
+
 - Make your changes and ensure everything works as expected.
 
 - Commit your changes with a clear message:
@@ -170,6 +176,7 @@ git checkout -b feature/your-feature-name
 ```bash
 git commit -m "Add your message here"
 ```
+
 - Push your branch to your fork:
 
 ```bash
@@ -181,6 +188,7 @@ git push origin feature/your-feature-name
 - Describe your PR clearly — mention what you changed, why you did it, and any issues it closes.
 
 ## 💡 Tips for Contributing
+
 - Make sure your code follows the project's coding standards.
 
 - Add tests for new features or bug fixes.
