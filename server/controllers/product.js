@@ -238,6 +238,7 @@ const placeBid = async (req, res) => {
     product.bidHistory.push(newBid._id);
 
     product.currentPrice = bidAmount;
+    product.soldTo = user?.id; // Update soldTo to the current user
     await product.save();
 
     const foundUser = await userModel.findById(user?.id);
@@ -245,13 +246,34 @@ const placeBid = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const productIdStr = product._id.toString();
+    const productIdStr = product?._id;
 
     // Add only if product ID string not already in array
-    if (!foundUser.ongoingBids.includes(newBid._id)) {
-      foundUser.ongoingBids.push(newBid._id);
+    // if (!foundUser.ongoingBids.includes(newBid._id)) {
+    //   foundUser.ongoingBids.push(newBid._id);
+    // }
+
+    let userOngoingBids = foundUser?.ongoingBids;
+    let bidReplacedFlag = false;
+    let i = 0;
+    for (i = 0; i < userOngoingBids?.length; i++) {
+      const associatedBid = await bidModel.findById(userOngoingBids[i]);
+      const associatedProduct = associatedBid?.product;
+      if (associatedProduct?.toString() == productIdStr) {
+        // If the product ID matches, update the bid amount
+        userOngoingBids[i] = newBid._id;
+        bidReplacedFlag = true;
+        break;
+      }
+    }
+    if (i == foundUser?.ongoingBids.length && !bidReplacedFlag) {
+      // If we reach the end and didn't find a match, push the new bid
+      userOngoingBids.push(newBid?._id);
     }
 
+    console.log("Updated user ongoing bids:", userOngoingBids);
+
+    foundUser.ongoingBids = userOngoingBids;
     await foundUser.save();
 
     res.status(200).json({ message: "Bid Placed Successfully" });
@@ -326,10 +348,18 @@ const updateAllProductStatus = async (req, res) => {
       if (product?.auctionStatus && product?.duration < new Date()) {
         // mark the product as sold
         product.auctionStatus = false;
-
         // Find the highest bid in the bid history of the product (always the last one because we push to the end)
         const highestBidID = product?.bidHistory[product.bidHistory.length - 1];
-
+        // // find the user who placed the highest bid
+        // const foundUser = await bidModel.findById(highestBidID);
+        // if (foundUser) {
+        //   // Update the product's soldTo field with the user's ID
+        //   product.soldTo = foundUser?._id;
+        //   foundUser.ongoingBids?.filter((bid) => !bid.equals(highestBidID));
+        //   await foundUser?.save();
+        // } else {
+        //   console.log("No bids found for this product");
+        // }
         // find the user who placed the highest bid
         const foundUser = await bidModel.findById(highestBidID);
         if (foundUser) {
