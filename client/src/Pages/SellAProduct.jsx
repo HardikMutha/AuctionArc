@@ -25,7 +25,10 @@ export default function SellAProduct() {
     event.preventDefault();
     setLoading(true);
     const data = new FormData(event.currentTarget);
-
+    data.delete("images");
+    images.forEach((image) => {
+      data.append("images", image);
+    });
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/product/add-newproduct`,
@@ -45,6 +48,8 @@ export default function SellAProduct() {
       if (err.response?.status == 409) {
         toast.error(err.response.data.message);
       } else toast.error("An Error Occured Please try again");
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   };

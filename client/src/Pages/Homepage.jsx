@@ -107,7 +107,7 @@ const Homepage = () => {
                     className="w-40 h-40 mb-4"
                   />
                   <h2 className="text-2xl font-semibold text-gray-600">
-                    Oops! No products found matching your search...
+                    Oops! No products found...
                   </h2>
                 </div>
               ) : (
