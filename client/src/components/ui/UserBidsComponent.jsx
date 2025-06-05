@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 const UserBidsComponent = ({ userBids }) => {
   const navigate = useNavigate();
 
-  console.log("UserBids Recieved", userBids);
   return (
     <>
       {userBids?.length != 0 ? (

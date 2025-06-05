@@ -75,4 +75,7 @@ productRoutes
 productRoutes
   .route("/update-products-status")
   .get(updateAllProductStatus);
+
+
+
 module.exports = productRoutes;

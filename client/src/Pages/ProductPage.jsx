@@ -26,9 +26,33 @@ export default function ProductPage() {
   const [bidPopup, setBidPopup] = useState(false);
   const [currentPrice, setCurrentPrice] = useState(0.0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const [currentWinner, setCurrentWinner] = useState(null);
   // Check if auction is active
   const isAuctionActive = product?.auctionStatus !== false;
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function daysLeftUntil(dateString) {
+    const today = new Date();
+    const targetDate = new Date(dateString);
+
+    // Clear time portion to avoid partial-day issues
+    today.setHours(0, 0, 0, 0);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const diffTime = targetDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays;
+  }
 
   function getImageURL(url) {
     if (!url) return null;
@@ -145,6 +169,7 @@ export default function ProductPage() {
       );
       setCurrentPrice(response.data.price);
     };
+
     await fetchProduct();
     await getSimilarProducts();
     await fetchCurrentPrice();
@@ -153,6 +178,33 @@ export default function ProductPage() {
   useEffect(() => {
     fetchAllData();
   }, [id]);
+
+  useEffect(() => {
+    const getCurrentWinner = async () => {
+      if (product?.soldTo) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/user/user-details/${
+              product?.soldTo
+            }`
+          );
+          if (response.status === 200) {
+            console.log("Current Winner:", response?.data?.foundUser?.username);
+            setCurrentWinner(response?.data?.foundUser?.username);
+          } else {
+            setCurrentWinner("N/A");
+            console.error("Error fetching current winner:", response);
+          }
+        } catch (error) {
+          console.error("Error fetching current winner:", error);
+          setCurrentWinner("N/A");
+        }
+      }
+    };
+    if (product?.soldTo) {
+      getCurrentWinner();
+    }
+  }, [product]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -328,8 +380,24 @@ export default function ProductPage() {
               >
                 <TimerIcon className="w-6 h-6" />
                 <span className="font-semibold text-lg">
-                  {!isAuctionActive ? "Auction ended on: " : "Auction ends: "}
-                  {product?.duration?.slice(0, 10) || "N/A"}
+                  {!isAuctionActive ? "Auction ended:  " : "Auction ends: "}
+                  {formatDate(product?.duration?.slice(0, 10)) +
+                    "  (" +
+                    Math.abs(daysLeftUntil(product?.duration?.slice(0, 10))) +
+                    " Days " + (daysLeftUntil(product?.duration?.slice(0, 10)) < 0 ? " Due! )" : " Left!)") || "N/A"}
+                </span>
+              </div>
+
+              <div
+                className={`flex items-center gap-3 rounded-xl p-4 border ${
+                  !isAuctionActive
+                    ? "text-red-600 bg-red-50 border-red-200"
+                    : "text-orange-600 bg-orange-50 border-orange-200"
+                }`}
+              >
+                <span className="font-semibold text-lg">
+                  {!isAuctionActive ? "Sold To: " : "Current Winner: "}
+                  {currentWinner || "N/A"}
                 </span>
               </div>
 

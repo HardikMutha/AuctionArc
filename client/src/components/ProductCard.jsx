@@ -141,17 +141,6 @@ const ProductCard = ({ productDetails }) => {
                 <h2 className="text-xl md:text-2xl font-bold mb-2">
                   {productDetails?.name}
                 </h2>
-                <div className="flex items-center gap-4">
-                  <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5">
-                    {productDetails?.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4 mt-4">
-                  <p className="text-gray-800 text-xl font-semibold">
-                    ${productDetails?.currentPrice}
-                  </p>
-                </div>
               </div>
 
               <div className="flex items-center">
@@ -175,6 +164,13 @@ const ProductCard = ({ productDetails }) => {
                   </span>
                 </div>
               </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <p className="text-gray-600 text-sm md:text-base sm:text-lg w-4/5 w-full">
+                {productDetails?.description.length > 120
+                  ? `${productDetails?.description.substring(0, 120)}...`
+                  : productDetails?.description}
+              </p>
             </div>
 
             {/* Actions */}
